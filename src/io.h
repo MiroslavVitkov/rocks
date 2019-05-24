@@ -4,8 +4,6 @@
 
 #include "except.h"
 
-#include <opencv2/opencv.hpp>
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -21,7 +19,7 @@ enum class Mode
     _grayscale,
 };
 
-
+/*
 struct FrameSource
 {
     virtual FrameSource & operator>>( cv::Mat & frame ) = 0;
@@ -140,7 +138,7 @@ private:
     long unsigned _frame_num;
 };
 
-
+*/
 }  // namespace io
 
 

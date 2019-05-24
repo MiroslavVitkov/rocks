@@ -1,7 +1,5 @@
 #include "cli.h"
 
-#include <opencv2/opencv.hpp>
-
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -14,12 +12,14 @@ namespace cli
 
 std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
 {
+    (void)argc;
+    (void)argv;
     const std::string keys =
         "{help h usage ? |      | print this message}"
         "{train t        |      | train from camera; -t=subject_name}"
         "{recognise r    |      | recognise from camera}"
         ;
-
+/*
     cv::CommandLineParser parser( argc, argv, keys );
 
     if( parser.has( "help" ) )
@@ -45,6 +45,8 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
         return std::make_unique<cmd::CamRecognise>();
     }
 
+    return std::make_unique<cmd::NoOp>();
+*/
     return std::make_unique<cmd::NoOp>();
 }
 

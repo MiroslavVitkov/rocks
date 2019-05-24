@@ -10,7 +10,7 @@
 namespace io
 {
 
-
+/*
 Camera::Camera( Mode mode, Camera::Id id )
     : _video_stream{ static_cast< int >( id ) }
     , _mode{ mode }
@@ -448,6 +448,6 @@ DirWriter & DirWriter::operator<<( const cv::Mat & frame )
 
     return *this;
 }
-
+*/
 
 }  // namespace io

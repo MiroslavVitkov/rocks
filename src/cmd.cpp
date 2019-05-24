@@ -1,10 +1,6 @@
 #include "cmd.h"
 
-#include "algo.h"
 #include "io.h"
-
-#include <opencv2/opencv.hpp>
-#include <opencv2/face.hpp>
 
 #include <iostream>
 
@@ -12,7 +8,7 @@
 namespace cmd
 {
 
-
+/*
 void cam_to_vid( unsigned frames, std::string fname_out )
 {
     fname_out += ".avi";
@@ -237,5 +233,5 @@ void CamRecognise::execute()
 CamRecognise::~CamRecognise()
 {
 }
-
+*/
 }  // namespace cmd
