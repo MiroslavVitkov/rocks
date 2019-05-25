@@ -7,3 +7,4 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors )
 
 add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp )
+target_link_libraries( rocks stdc++fs )
