@@ -2,143 +2,64 @@
 #define IO_H_
 
 
-#include "except.h"
-
-#include <memory>
+#include <array>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 
 namespace io
 {
 
-
-enum class Mode
+// https://physics.nist.gov/cgi-bin/ASD/lines1.pl?compositionCu&spectra=Cu&low_w=180&limits_type=0&upp_w=961&show_av=2&unit=1&resolution=1&temp=1&eden=1e17&libs=1
+// https://www.nist.gov/pml/atomic-spectroscopy-compendium-basic-ideas-notation-data-and-formulas/atomic-spectroscopy
+// https://www.nist.gov/pml/atomic-spectra-database
+// abscissa - from 180.0nm to 960.9nm inclusive with 0.1nm step.
+// ordinate - radiance, W·sr−1·m−2
+// number of points - 7810
+struct Spectrum
 {
-    _colour,
-    _grayscale,
-};
-
-/*
-struct FrameSource
-{
-    virtual FrameSource & operator>>( cv::Mat & frame ) = 0;
-    virtual operator bool() const = 0;  // true if last operation was successful
-    virtual cv::Size get_size() const = 0;
-    virtual ~FrameSource() = default;
-};
-
-
-struct FrameSink
-{
-    virtual FrameSink & operator<<( const cv::Mat & frame ) = 0;
-    virtual ~FrameSink() = default;
-};
-
-
-struct Camera : public FrameSource
-{
-    enum class Id : int
-    {
-        // docs.opencv.org/3.2.0/d8/dfe/classcv_1_1VideoCapture.html#a5d5f5dacb77bbebdcbfb341e3d4355c1
-        _first_usb_camera = 0
-    };
-
-    Camera( Mode = Mode::_colour, Id = Id::_first_usb_camera );
-    operator bool() const override { return true; }
-    cv::Size get_size() const override;
-    Camera & operator>>( cv::Mat & frame ) override;
-
-private:
-    cv::VideoCapture _video_stream;
-    const Mode _mode;
+    static constexpr unsigned _num_points{ 7810 };
+    using Axis = std::array< double, _num_points >;
+//    static constexpr Axis x()
+//    {
+//        Axis ret;
+//        constexpr for (int var = 0; var < total; ++var) {
+//            ret[i] = 180 + 0.1 * i;
+//        }
+//        return ret;
+//    }
+    Axis _y;
 };
 
 
-struct VideoReader : public FrameSource
-{
-    VideoReader( const std::string & path );
-    operator bool() const override;
-    cv::Size get_size() const override;
-    VideoReader & operator>>( cv::Mat & frame ) override;
-
-private:
-    cv::VideoCapture _video_stream;
-    bool _good;
-};
+using Key = std::string;
+using Value = std::vector<Spectrum>;
+using Dataset = std::unordered_map<Key, Value>;
 
 
-// A directory with one subdirectory per subject.
-// Subdirectory names are the labels.
-// Each subdirectory contains cropped faces of that one subject.
-struct DirReader : public FrameSource
-{
-    DirReader( const std::string & path
-             , Mode mode = Mode::_colour
-             , bool calc_size = false );
-    DirReader( DirReader && );
-    ~DirReader() override;
-
-    operator bool() const override;
-    DirReader & operator>>( cv::Mat & face ) override;
-    cv::Size get_size() const override;
-    const std::string & get_label() const;
-
-private:
-    struct Impl;
-    std::unique_ptr<Impl> _impl;
-};
-
-
-std::vector<DirReader> get_subdirs( const std::string & dataset_path
-                                  , Mode mode = Mode::_colour
-                                  , bool calc_size = false );
-
-void draw_rects( cv::Mat & frame, const std::vector<cv::Rect> & rects );
-
-cv::Mat crop( const cv::Mat & frame, const cv::Rect & rect );
-std::vector<cv::Mat> crop( const cv::Mat & frame
-                         , const std::vector<cv::Rect> & rects );
+// Example of the expected file structure.
+//data
+//├── azurite
+//│   ├── spot00
+//│   │   ├── 10.csv
+//│   │   ├── 11.csv
+//│   │   ├── 12.csv
+//│   │   ├── 14.csv
+//│   │   ├── 15.csv
+//│   │   ├── 16.csv
+//│   │   ├── 19.csv
+//│   │   └── 1.csv
+//│   └── spot01
+//│       └── 24.csv
+//└── brochantite
+//    ├── 99.csv
+//    └── spot00
+//        └── 7.csv
+// Any non-directories or non .csv files are ignored.
+Dataset read_dataset( const std::string & path );
 
 
-struct VideoPlayer : FrameSink
-{
-    VideoPlayer( const std::string & window_name = "" );
-    VideoPlayer & operator<<( const cv::Mat & frame ) override;
-
-private:
-    const std::string _window_name;
-};
-
-
-struct VideoWriter : public FrameSink
-{
-    // How to fit smaller frames to the video.
-    enum class Fit{ _border };
-
-    VideoWriter( const std::string & path
-               , cv::Size
-               , Fit fit_mode = Fit::_border );
-    VideoWriter & operator<<( const cv::Mat & frame ) override;
-
-private:
-    cv::VideoWriter _video_stream;
-    const cv::Size _size;
-    const Fit _fit;
-};
-
-
-struct DirWriter : public FrameSink
-{
-    DirWriter( const std::string path );
-    DirWriter & operator<<( const cv::Mat & frame ) override;
-
-private:
-    const std::string _path;
-    long unsigned _frame_num;
-};
-
-*/
 }  // namespace io
 
 
