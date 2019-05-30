@@ -6,5 +6,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors )
 
-add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp )
+add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp src/model.cpp src/score.cpp )
 target_link_libraries( rocks stdc++fs )
