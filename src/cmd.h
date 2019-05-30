@@ -24,9 +24,9 @@ struct NoOp : Base
 };
 
 
-struct Train : Base
+struct RandomChance : Base
 {
-    Train( const std::string & data_dir = "./data/" );
+    RandomChance( const std::string & data_dir = "./data/" );
     void execute() override;
 
 private:

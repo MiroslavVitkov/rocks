@@ -10,17 +10,21 @@ namespace cmd
 {
 
 
-Train::Train(const std::string & data_dir )
+RandomChance::RandomChance(const std::string & data_dir )
     : _data_dir{ data_dir }
 {
 }
 
 
-void Train::execute()
+void RandomChance::execute()
 {
     const auto dataset = io::read_dataset( _data_dir );
-    model::RandomChance m{ io::Dataset{} };
-    std::cout << m.predict( io::Value{} ) << size(dataset);
+    // split into train and test
+    model::RandomChance m{ dataset };
+    std::string s{"azurite"};
+    const auto & az = dataset.at(s);
+    const io::Spectrum & first = az[0];
+    std::cout << m.predict( first );
 }
 
 

@@ -33,9 +33,9 @@ struct Spectrum
 };
 
 
-using Key = std::string;
-using Value = std::vector<Spectrum>;
-using Dataset = std::unordered_map<Key, Value>;
+using Key = std::string;  // label
+using Value = std::vector<Spectrum>;  // datapoint
+using Dataset = std::unordered_map<Key, Value>;  // or std::multimap?
 
 
 // Example of the expected file structure.
