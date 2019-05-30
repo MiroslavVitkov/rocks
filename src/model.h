@@ -12,7 +12,7 @@ namespace model
 {
 
 
-using Prediction = io::Key;  // and confidence  // or prob dist?
+using Prediction = io::Label;  // and confidence  // or prob dist?
 
 
 struct Model
@@ -29,7 +29,7 @@ struct RandomChance : Model
     Prediction predict( const io::Spectrum & ) const override;
 
 private:
-    std::map<io::Key, double> _probs;
+    std::map<io::Label, double> _probs;
 };
 
 
