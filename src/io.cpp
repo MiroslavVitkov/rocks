@@ -23,6 +23,16 @@ inline bool ends_with(std::string const & value, std::string const & ending)
 }
 
 
+double parse( const std::string & line )
+{
+    const size_t comma = line.find_first_of( ',' );
+    const auto sub = line.substr( comma + 1 );
+    const auto d = std::stod( sub );
+
+    return d;
+}
+
+
 Spectrum read_csv( const fs::path & path )
 {
     std::ifstream file{ path };
@@ -35,12 +45,12 @@ Spectrum read_csv( const fs::path & path )
     Spectrum ret;
     auto it = ret._y.begin();
 
-    double wavelength, intensity;
-    char comma;
-    while( file >> wavelength >> comma >> intensity )
+    while( std::getline( file, line) )
     {
-        *it++ = intensity;
+        double d = parse( line );
+        *it++ = d;
     }
+
     // Make sure we read the correct number of datapoints.
     assert( it == ret._y.end() );
 

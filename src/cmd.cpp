@@ -18,6 +18,8 @@ RandomChance::RandomChance(const std::string & data_dir )
 
 void RandomChance::execute()
 {
+    const auto dataset = io::read_dataset( "../rocks/data/" );
+#if 0
     const auto dataset = io::read_dataset( _data_dir );
     // split into train and test
     model::RandomChance m{ dataset };
@@ -25,6 +27,7 @@ void RandomChance::execute()
     const auto & az = dataset.at(s);
     const io::Spectrum & first = az[0];
     std::cout << m.predict( first );
+#endif
 }
 
 
