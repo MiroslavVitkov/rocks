@@ -47,7 +47,7 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
 
     return std::make_unique<cmd::NoOp>();
 */
-    return std::make_unique<cmd::RandomChance>( "../rocks/data" );
+    return std::make_unique<cmd::Correlation>( "../rocks/data" );
 }
 
 

@@ -39,7 +39,7 @@ struct Correlation : Model
     io::Label predict( const io::Spectrum & ) const override;
 
 private:
-    std::map<io::Label, double> _probs;
+    const io::Dataset & _training_set;
 };
 
 

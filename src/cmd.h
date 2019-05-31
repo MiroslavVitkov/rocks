@@ -34,6 +34,16 @@ private:
 };
 
 
+struct Correlation : Base
+{
+    Correlation( const std::string & data_dir = "./data/" );
+    void execute() override;
+
+private:
+    const std::string _data_dir;
+};
+
+
 }  // namespace cmd
 
 
