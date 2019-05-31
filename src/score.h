@@ -2,7 +2,15 @@
 #define SCORE_H_
 
 
-bool is_awesome(){return true; }
+namespace score
+{
+
+
+void train_test_split( double test = 0.2 );
+
+
+
+}  // namespace score
 
 
 #endif  // #ifndef SCORE_H_
