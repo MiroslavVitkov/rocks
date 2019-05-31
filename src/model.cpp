@@ -35,7 +35,7 @@ io::Label RandomChance::predict( const io::Spectrum & ) const
 {
     std::random_device generator;
     std::uniform_real_distribution<double> distribution( 0, 1 );
-    const auto rand = distribution(generator);
+    const auto rand = distribution( generator );
     double total {};
     for( const auto & kv : _probs )
     {
