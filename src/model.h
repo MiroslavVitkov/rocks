@@ -12,12 +12,12 @@ namespace model
 {
 
 
-using Prediction = io::Label;  // and confidence  // or prob dist?
+//using io::Label = io::Label;  // and confidence  // or prob dist?
 
 
 struct Model
 {
-    virtual Prediction predict( const io::Spectrum & ) const = 0;
+    virtual io::Label predict( const io::Spectrum & ) const = 0;
     //virtual void serialise( const std::filesystem::path & ) const = 0;
     //static std::unique_ptr<Model> deserialise( const std::filesystem::path & ) const;
 };
@@ -26,7 +26,17 @@ struct Model
 struct RandomChance : Model
 {
     RandomChance( const io::Dataset & );
-    Prediction predict( const io::Spectrum & ) const override;
+    io::Label predict( const io::Spectrum & ) const override;
+
+private:
+    std::map<io::Label, double> _probs;
+};
+
+
+struct Correlation : Model
+{
+    Correlation( const io::Dataset & );
+    io::Label predict( const io::Spectrum & ) const override;
 
 private:
     std::map<io::Label, double> _probs;
