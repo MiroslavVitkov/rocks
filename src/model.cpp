@@ -58,24 +58,26 @@ Correlation::Correlation( const io::Dataset & d )
 
 io::Label Correlation::predict( const io::Spectrum & test ) const
 {
-    std::vector<double> res;
-
+    double max {};
+    std::string best {};
     for( const auto & kv : _training_set )
     {
         for( const auto & datapoint : kv.second )
         {
-            std::vector<double> t{ test._y.begin()
-                                 , test._y.end() };
+            std::vector<double> te{ test._y.begin()
+                                  , test._y.end() };
             std::vector<double> tr{ datapoint._y.begin()
                                   , datapoint._y.end() };
-            const auto r = dlib::correlation( t, tr );
-            res.push_back( r );
+            const auto r = dlib::correlation( te, tr );
+            if( r > max )
+            {
+                max = r;
+                best = kv.first;
+            }
         }
     }
 
-    const auto me = std::max_element( res.begin(), res.end() );
-    return std::to_string( *me ) + ";" + std::to_string( me - res.begin() );
-
+    return best;
 }
 
 
