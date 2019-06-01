@@ -9,3 +9,4 @@ find_package( dlib REQUIRED )
 
 add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp src/model.cpp src/score.cpp )
 target_link_libraries( rocks stdc++fs dlib::dlib )
+target_include_directories( rocks PRIVATE "../accuracy-evaluation-cpp/src")

@@ -1,5 +1,7 @@
 #include "score.h"
 
+#include <evaluation.hpp>
+
 #include <algorithm>
 #include <cassert>
 #include <random>
@@ -22,7 +24,7 @@ train_test_split( const io::Dataset & d
         std::set<unsigned> indices {};
         std::default_random_engine generator;
         std::uniform_int_distribution<unsigned>
-                distribution( 0, kv.second.size() );
+                distribution( 0, static_cast<unsigned>( kv.second.size() ) );
         while( indices.size() < kv.second.size() * test_proportion )
         {
             const auto rand = distribution( generator );
@@ -47,6 +49,30 @@ train_test_split( const io::Dataset & d
     }
 
     return { train, test };
+}
+
+
+void evaluate_and_print( std::vector<io::Label> targets
+                       , std::vector<io::Label> outputs)
+{
+    // Expected format by the evaluation library.
+    std::vector<std::vector<double>> targ, outp;
+
+    auto it = targets.begin();
+    auto io = outputs.begin();
+    while( it < targets.end() )
+    {
+        if( it->compare( *io ) == 0 )
+        ++it;
+        ++io;
+    }
+
+    Confusion c( targ, outp );
+    Evaluation e( c );
+
+    c.print();
+    e.print();
+
 }
 
 
