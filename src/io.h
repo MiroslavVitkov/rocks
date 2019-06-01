@@ -2,6 +2,8 @@
 #define IO_H_
 
 
+#include "except.h"
+
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -57,6 +59,18 @@ using Dataset = std::unordered_map<Label, std::vector<Spectrum>>;
 //        └── 7.csv
 // Any non-directories or non .csv files are ignored.
 Dataset read_dataset( const std::string & path );
+
+
+struct Transcoder
+{
+    int encode( const io::Label & l );
+    const io::Label & decode( int i );
+
+private:
+    std::unordered_map<io::Label, int> _encoded;
+    std::unordered_map<int, io::Label> _reverse;
+};
+
 
 
 }  // namespace io

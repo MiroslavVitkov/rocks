@@ -96,4 +96,28 @@ Dataset read_dataset( const std::string & path )
 }
 
 
+int Transcoder::encode( const io::Label & l )
+{
+    if( _encoded.count( l ) == 0 )
+    {
+        _encoded[ l ] = static_cast<int>( _encoded.size() );
+        _reverse[ static_cast<int>(  _encoded.size() ) ] = l ;
+    }
+
+    return _encoded[ l ];
+}
+
+
+const io::Label & Transcoder::decode( int i )
+{
+    if( _reverse.count( i ) == 0 )
+    {
+        throw Exception{ "Label decoding failed. "
+                         "Value " + std::to_string( i ) + " not found." };
+    }
+
+    return _reverse[ i ];
+}
+
+
 }  // namespace io
