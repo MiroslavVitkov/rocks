@@ -6,6 +6,7 @@
 
 #include <array>
 #include <string>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -22,7 +23,7 @@ struct Spectrum
     static constexpr unsigned _num_points{ 7810 };
     using Axis = std::array< double, _num_points >;
 
-    static constexpr Axis _x{ [] () constexpr  // wavelength, nm
+    static constexpr Axis _x{ [] ()            // wavelength, nm
         {
             Axis a {};
             for( unsigned i = 0; i < _num_points; ++i )
@@ -35,8 +36,8 @@ struct Spectrum
 };
 
 
-using Label = std::string;
-using Dataset = std::unordered_map<Label, std::vector<Spectrum>>;
+using DatasetRaw = std::unordered_map<std::string, std::vector<Spectrum>>;
+using DatasetEncoded = std::unordered_map<int, std::vector<Spectrum>>;
 
 
 // Example of the expected file structure.
@@ -58,19 +59,26 @@ using Dataset = std::unordered_map<Label, std::vector<Spectrum>>;
 //    └── spot00
 //        └── 7.csv
 // Any non-directories or non .csv files are ignored.
-Dataset read_dataset( const std::string & path );
+DatasetRaw read_dataset( const std::string & path );
 
 
 struct Transcoder
 {
-    int encode( const io::Label & l );
-    const io::Label & decode( int i );
+    int encode( const std::string & l );
+    const std::string & decode( int i );
 
 private:
-    std::unordered_map<io::Label, int> _encoded;
-    std::unordered_map<int, io::Label> _reverse;
+    std::unordered_map<std::string, int> _encoded;
+    std::unordered_map<int, std::string> _reverse;
 };
 
+
+std::tuple<DatasetEncoded, Transcoder> encode_dataset( DatasetRaw & );
+
+
+// Legacy.
+using Label = std::string;
+using Dataset = std::unordered_map<Label, std::vector<Spectrum>>;
 
 
 }  // namespace io

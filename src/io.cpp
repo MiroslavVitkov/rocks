@@ -73,13 +73,13 @@ std::vector< std::string > get_subdirs( const std::string & path )
 }
 
 
-Dataset read_dataset( const std::string & path )
+DatasetRaw read_dataset( const std::string & path )
 {
     // All top-level dirs found in 'path' are label names.
     const auto labels{ get_subdirs( path ) };
 
     // All .csv files under a label are samples of that label.
-    Dataset ret;
+    DatasetRaw ret;
     for( const auto & l : labels )
     {
         for( const auto & file
@@ -117,6 +117,21 @@ const io::Label & Transcoder::decode( int i )
     }
 
     return _reverse[ i ];
+}
+
+
+std::tuple<DatasetEncoded, Transcoder> encode_dataset( DatasetRaw & raw )
+{
+    std::tuple<DatasetEncoded, Transcoder> ret;
+    auto & dataset{ std::get<0>( ret ) };
+    auto & codec{ std::get<1>( ret ) };
+
+    for( auto & kv : raw )
+    {
+        dataset.emplace( codec.encode( kv.first )
+                       , std::move( kv.second )  );
+    }
+    return ret;
 }
 
 
