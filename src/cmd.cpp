@@ -37,14 +37,6 @@ Correlation::Correlation(const std::string & data_dir )
 
 void Correlation::execute()
 {
-#if 0
-    const auto dataset = io::read_dataset( _data_dir );
-    const auto t = score::train_test_split( dataset );
-    const auto train = std::get<0>(t);
-    const auto test = std::get<1>(t);
-    std::cout << "train = " << train.size() << "; test = " << test.size();
-#endif
-
     const auto dataset = io::read_dataset( _data_dir );
     const auto t = score::train_test_split( dataset );
     const auto train = std::get<0>( t );

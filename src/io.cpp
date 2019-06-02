@@ -96,19 +96,57 @@ DatasetRaw read_dataset( const std::string & path )
 }
 
 
-int Transcoder::encode( const io::Label & l )
+Transcoder::Transcoder( const DatasetRaw & dat )
 {
-    if( _encoded.count( l ) == 0 )
+    for( const auto & kv : dat )
     {
-        _encoded[ l ] = static_cast<int>( _encoded.size() );
-        _reverse[ static_cast<int>(  _encoded.size() ) ] = l ;
+        encode( kv.first );
     }
-
-    return _encoded[ l ];
+    assert( dat.size() == _encoding.size() == _reverse.size() );
 }
 
 
-const io::Label & Transcoder::decode( int i )
+Transcoder::Transcoder( std::vector<std::string> a, std::vector<std::string> b )
+{
+    for( const auto & e : a )
+    {
+        encode( e );
+    }
+    for( const auto & e : b )
+    {
+        encode( e );
+    }
+
+    assert( ! a.empty() );
+    assert( ! _encoding.empty() );
+}
+
+
+int Transcoder::encode( const std::string & l )
+{
+    if( _encoding.count( l ) == 0 )
+    {
+        _encoding[ l ] = static_cast<int>( _encoding.size() );
+        _reverse[ static_cast<int>(  _encoding.size() ) ] = l ;
+    }
+
+    return _encoding[ l ];
+}
+
+
+int Transcoder::encode( const std::string & l ) const
+{
+    if( _encoding.count( l ) == 0 )
+    {
+        throw Exception{ "Label encoding failed. "
+                         "Label " + l + " not found." };
+    }
+
+    return _encoding.at( l );
+}
+
+
+const std::string & Transcoder::decode( int i ) const
 {
     if( _reverse.count( i ) == 0 )
     {
@@ -116,7 +154,7 @@ const io::Label & Transcoder::decode( int i )
                          "Value " + std::to_string( i ) + " not found." };
     }
 
-    return _reverse[ i ];
+    return _reverse.at( i );
 }
 
 

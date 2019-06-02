@@ -64,11 +64,16 @@ DatasetRaw read_dataset( const std::string & path );
 
 struct Transcoder
 {
+    Transcoder() = default;
+    Transcoder( const DatasetRaw & );
+    Transcoder( std::vector<std::string>, std::vector<std::string> );
+
     int encode( const std::string & l );
-    const std::string & decode( int i );
+    int encode( const std::string & l ) const;
+    const std::string & decode( int i ) const;
 
 private:
-    std::unordered_map<std::string, int> _encoded;
+    std::unordered_map<std::string, int> _encoding;
     std::unordered_map<int, std::string> _reverse;
 };
 
