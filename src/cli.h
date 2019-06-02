@@ -2,6 +2,9 @@
 #define CLI_H_
 
 
+// In this file: a command line argument parser.
+
+
 #include "cmd.h"
 
 #include <memory>

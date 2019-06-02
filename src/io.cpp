@@ -23,6 +23,7 @@ inline bool ends_with(std::string const & value, std::string const & ending)
 }
 
 
+// "213.00000000,14.0001\r"  ->  14.0001
 double parse( const std::string & line )
 {
     const size_t comma = line.find_first_of( ',' );
@@ -58,9 +59,10 @@ Spectrum read_csv( const fs::path & path )
 }
 
 
-std::vector< std::string > get_subdirs( const std::string & path )
+std::vector< std::string > get_subdirs( const fs::path & path )
 {
     std::vector< std::string > ret;
+
     for( const auto & dir : fs::directory_iterator( path ) )
     {
         if( fs::is_directory( dir ) )
@@ -73,13 +75,13 @@ std::vector< std::string > get_subdirs( const std::string & path )
 }
 
 
-DatasetRaw read_dataset( const std::string & path )
+DataRaw read_dataset( const std::string & path )
 {
     // All top-level dirs found in 'path' are label names.
     const auto labels{ get_subdirs( path ) };
 
     // All .csv files under a label are samples of that label.
-    DatasetRaw ret;
+    DataRaw ret;
     for( const auto & l : labels )
     {
         for( const auto & file
@@ -96,29 +98,14 @@ DatasetRaw read_dataset( const std::string & path )
 }
 
 
-Transcoder::Transcoder( const DatasetRaw & dat )
+Transcoder::Transcoder(const DataRaw &dat )
 {
     for( const auto & kv : dat )
     {
         encode( kv.first );
     }
-    assert( dat.size() == _encoding.size() == _reverse.size() );
-}
-
-
-Transcoder::Transcoder( std::vector<std::string> a, std::vector<std::string> b )
-{
-    for( const auto & e : a )
-    {
-        encode( e );
-    }
-    for( const auto & e : b )
-    {
-        encode( e );
-    }
-
-    assert( ! a.empty() );
-    assert( ! _encoding.empty() );
+    assert( dat.size() == _encoding.size() );
+    assert( _encoding.size() == _reverse.size() );
 }
 
 
@@ -158,18 +145,17 @@ const std::string & Transcoder::decode( int i ) const
 }
 
 
-std::tuple<DatasetEncoded, Transcoder> encode_dataset( DatasetRaw & raw )
+Dataset encode_dataset( DataRaw & raw )
 {
-    std::tuple<DatasetEncoded, Transcoder> ret;
-    auto & dataset{ std::get<0>( ret ) };
-    auto & codec{ std::get<1>( ret ) };
+    Dataset dt;
 
     for( auto & kv : raw )
     {
-        dataset.emplace( codec.encode( kv.first )
-                       , std::move( kv.second )  );
+        dt.first.emplace( dt.second.encode( kv.first )
+                        , std::move( kv.second )  );
     }
-    return ret;
+
+    return dt;
 }
 
 

@@ -5,6 +5,7 @@
 #include "score.h"
 
 #include <iostream>
+#include <vector>
 
 
 namespace cmd
@@ -13,19 +14,33 @@ namespace cmd
 
 RandomChance::RandomChance(const std::string & data_dir )
     : _data_dir{ data_dir }
-{
-}
+{}
 
 
 void RandomChance::execute()
 {
-    const auto dataset = io::read_dataset( _data_dir );
-    // split into train and test
-    model::RandomChance m{ dataset };
-    std::string s{"azurite"};
-    const auto & az = dataset.at(s);
-    const io::Spectrum & first = az[0];
-    std::cout << m.predict( first );
+    // Obtain the dataset.
+    auto raw = io::read_dataset( _data_dir );
+    const auto encoded = io::encode_dataset( raw );
+    const auto traintest = score::train_test_split( encoded );
+
+    // Train the model.
+    model::RandomChance model{ traintest.first };
+
+    // Evaluate the training set.
+    std::vector<int> targets, outputs;
+    for( const auto & lebel_vector : traintest.second.first )
+    {
+        for( const auto & tespoint : lebel_vector.second )
+        {
+            targets.push_back( lebel_vector.first );
+            outputs.push_back( model.predict( tespoint ) );
+        }
+    }
+
+    // Report.
+    std::cout << "Reporting statistics on a RandomChance model.\n";
+    score::evaluate_and_print( targets, outputs );
 }
 
 
@@ -37,21 +52,28 @@ Correlation::Correlation(const std::string & data_dir )
 
 void Correlation::execute()
 {
-    const auto dataset = io::read_dataset( _data_dir );
-    const auto t = score::train_test_split( dataset );
-    const auto train = std::get<0>( t );
-    const auto test = std::get<1>( t );
+    // Obtain the dataset.
+    auto raw = io::read_dataset( _data_dir );
+    const auto encoded = io::encode_dataset( raw );
+    const auto traintest = score::train_test_split( encoded );
 
-    model::Correlation m{ train };
+    // Train the model.
+    model::Correlation model{ traintest.first };
 
-    for( const auto & kv : test )
+    // Evaluate the training set.
+    std::vector<int> targets, outputs;
+    for( const auto & lebel_vector : traintest.second.first )
     {
-        for( const auto & datapoint : kv.second )
+        for( const auto & tespoint : lebel_vector.second )
         {
-            std::cout << "Predicted: " << m.predict( datapoint )
-                      << ", actual: " << kv.first << '\n';
+            targets.push_back( lebel_vector.first );
+            outputs.push_back( model.predict( tespoint ) );
         }
     }
+
+    // Report.
+    std::cout << "Reporting statistics on a Correlation model.\n";
+    score::evaluate_and_print( targets, outputs );
 }
 
 

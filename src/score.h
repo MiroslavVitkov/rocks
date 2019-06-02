@@ -2,21 +2,24 @@
 #define SCORE_H_
 
 
+// In this file: tools to evaluate the performance of a predictive model.
+
+
 #include "io.h"
 
-#include <tuple>
+#include <utility>
 
 
 namespace score
 {
 
 
-std::tuple< io::Dataset, io::Dataset >
+std::pair< io::Dataset, io::Dataset >
 train_test_split( const io::Dataset &
-                , double test = 0.2 );
+                , double test_proportion = 0.2 );
 
-void evaluate_and_print( std::vector<io::Label> targets
-                       , std::vector<io::Label> outputs );
+void evaluate_and_print( const std::vector<int> & targets
+                       , const std::vector<int> & outputs );
 
 
 }  // namespace score

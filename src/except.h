@@ -2,6 +2,9 @@
 #define EXCEPT_H_
 
 
+// In this file: the project throws this exception.
+
+
 #include <stdexcept>
 #include <string>
 

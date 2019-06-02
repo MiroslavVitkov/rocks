@@ -5,38 +5,36 @@
 #include "io.h"
 
 #include <filesystem>
-#include <map>
+#include <unordered_map>
 
 
 namespace model
 {
 
 
-//using io::Label = io::Label;  // and confidence  // or prob dist?
-
-
 struct Model
 {
-    virtual io::Label predict( const io::Spectrum & ) const = 0;
+    virtual int predict( const io::Spectrum & ) const = 0;
     //virtual void serialise( const std::filesystem::path & ) const = 0;
     //static std::unique_ptr<Model> deserialise( const std::filesystem::path & ) const;
+    virtual ~Model() = default;
 };
 
 
 struct RandomChance : Model
 {
     RandomChance( const io::Dataset & );
-    io::Label predict( const io::Spectrum & ) const override;
+    int predict( const io::Spectrum & ) const override;
 
 private:
-    std::map<io::Label, double> _probs;
+    std::unordered_map<int, double> _probs;
 };
 
 
 struct Correlation : Model
 {
     Correlation( const io::Dataset & );
-    io::Label predict( const io::Spectrum & ) const override;
+    int predict( const io::Spectrum & ) const override;
 
 private:
     const io::Dataset & _training_set;
