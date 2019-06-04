@@ -76,9 +76,13 @@ int Correlation::predict( const io::Spectrum & test ) const
 
             const auto r = dlib::correlation( vtrain, vtest );
 
-            if( r > max )
+            // Accuracy before introducing the modulo operation: 98.1468.
+            // Accuracy after: 97.9687.
+            const auto a = std::abs( r );
+
+            if( a > max )
             {
-                max = r;
+                max = a;
                 best = kv.first;
             }
         }
