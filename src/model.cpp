@@ -100,7 +100,57 @@ int Correlation::predict( const io::Spectrum & test ) const
     assert( max != correlations.end() );
     const auto index = max - correlations.begin();
 
-    return labels[ index ];
+    return labels[ static_cast<size_t>( index ) ];
+
+#if 0
+    // Policy similar to World of Darkness.
+    // Doesn't work well.
+    const double treshold = 0.9;
+    std::unordered_map< int, unsigned > counts;
+    for( unsigned i {}; i < correlations.size(); ++i )
+    {
+        if( correlations( 0, i ) >= treshold )
+        {
+            ++counts[ labels[ i ] ];
+        }
+    }
+
+    if( counts.empty() )
+    {
+        // oh shit
+        std::cout << "No class correlates strongly enough. Skipping.\n";
+        return 0;
+    }
+
+    const auto predicted = std::max_element( counts.begin(), counts.end(),
+        [] ( const std::pair<int, unsigned> & p1
+           , const std::pair<int, unsigned> & p2)
+        {
+                return p1.second < p2.second;
+        } );
+    assert( predicted != counts.end() );
+
+    return predicted->first;
+#endif
+#if 0
+    // Sum of correlation coefficients per classes.
+    std::unordered_map< int, unsigned > sums;
+    for( unsigned i {}; i < correlations.size(); ++i )
+    {
+        sums[ labels[ i ] ] += std::abs( correlations( 0, i ) );
+    }
+
+    const auto predicted = std::max_element( sums.begin(), sums.end(),
+        [] ( const std::pair<int, unsigned> & p1
+           , const std::pair<int, unsigned> & p2)
+        {
+                return p1.second < p2.second;
+        } );
+    assert( predicted != sums.end() );
+
+    return predicted->first;
+#endif
+
 }
 
 
