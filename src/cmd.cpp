@@ -27,16 +27,13 @@ void RandomChance::execute()
     // Train the model.
     model::RandomChance model{ traintest.first };
 
-    // Evaluate the training set.
+    // Evaluate the test set.
     std::vector<int> targets, outputs;
-    for( const auto & lebel_vector : traintest.second.first )
-    {
-        for( const auto & tespoint : lebel_vector.second )
-        {
-            targets.push_back( lebel_vector.first );
-            outputs.push_back( model.predict( tespoint ) );
-        }
-    }
+    io::walk( traintest.second, [ & ] ( int label, const io::Spectrum & s )
+            {
+                targets.push_back( label );
+                outputs.push_back( model.predict( s ) );
+            } );
 
     // Report.
     std::cout << "Reporting statistics on a RandomChance model.\n";

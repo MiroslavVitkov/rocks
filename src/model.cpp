@@ -66,27 +66,21 @@ int Correlation::predict( const io::Spectrum & test ) const
 
     double max {};
     int best {};
-    // Walk a map<int, vector<Spectrum>.
-    for( const auto & kv : _training_set.first )
-    {
-        for( const auto & datapoint : kv.second )
-        {
-            std::vector<double> vtrain{ datapoint._y.begin()
-                                      , datapoint._y.end() };
-
-            const auto r = dlib::correlation( vtrain, vtest );
+    io::walk( _training_set, [ & ] ( int l, const io::Spectrum & s )
+         {
+            std::vector<double> vtrain{ s._y.begin(), s._y.end() };
+            const auto r_xy = dlib::correlation( vtrain, vtest );
 
             // Accuracy before introducing the modulo operation: 98.1468.
             // Accuracy after: 97.9687.
-            const auto a = std::abs( r );
+            const auto a = std::abs( r_xy );
 
             if( a > max )
             {
                 max = a;
-                best = kv.first;
+                best = l;
             }
-        }
-    }
+         } );
 
     return best;
 }

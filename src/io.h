@@ -30,6 +30,7 @@
 #include "except.h"
 
 #include <array>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -85,6 +86,9 @@ using Dataset = std::pair< DataEncoded, Transcoder >;
 
 
 Dataset encode_dataset( DataRaw & );
+
+
+void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f );
 
 
 }  // namespace io

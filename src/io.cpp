@@ -159,4 +159,16 @@ Dataset encode_dataset( DataRaw & raw )
 }
 
 
+void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f )
+{
+    for( const auto & lebel_vector : d.first )
+    {
+        for( const auto & s : lebel_vector.second )
+        {
+            f( lebel_vector.first, s );
+        }
+    }
+}
+
+
 }  // namespace io
