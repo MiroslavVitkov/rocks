@@ -40,7 +40,6 @@ void RunModel::execute()
         } );
 
     // Report.
-    std::cout << "Reporting statistics on a RandomChance model.\n";
     score::evaluate_and_print( targets, outputs );
 }
 

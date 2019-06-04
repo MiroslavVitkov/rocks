@@ -58,8 +58,13 @@ inline std::unique_ptr<Model> create( const std::string & name
     {
         return std::make_unique<RandomChance>( RandomChance( d ) );
     }
+    if( is( "correlation" ) )
+    {
+        return std::make_unique<Correlation>( Correlation( d ) );
+    }
 
-    throw Exception( name + ": no such model found." );
+    throw Exception( name + ": no such model found."
+                     "See 'model.h' for a list of all models." );
 }
 
 

@@ -1,5 +1,7 @@
 #include "model.h"
 
+
+#include <dlib/matrix.h>
 #include <dlib/statistics.h>
 
 #include <algorithm>
@@ -62,27 +64,43 @@ Correlation::Correlation( const io::Dataset & d )
 // It does not compute a correlation matrix.
 int Correlation::predict( const io::Spectrum & test ) const
 {
+    // The correlation matrix has one row per test sample
+    // and one column per training sample.
+    const auto rows = 1;
+    const auto cols = [ & ] (  )
+    {
+        unsigned total {};
+        io::walk( _training_set
+                , [ & ] ( int, const io::Spectrum & )
+                { ++total; } );
+        return total;
+    } ();
+    dlib::matrix< double > correlations( rows, cols );
+    std::vector< int > labels;
+    labels.reserve( cols );
+
+    // Compute the matrix.
+    auto it = correlations.begin();
     const std::vector<double> vtest{ test._y.begin(), test._y.end() };
-
-    double max {};
-    int best {};
     io::walk( _training_set, [ & ] ( int l, const io::Spectrum & s )
-         {
-            std::vector<double> vtrain{ s._y.begin(), s._y.end() };
-            const auto r_xy = dlib::correlation( vtrain, vtest );
+     {
+        std::vector<double> vtrain{ s._y.begin(), s._y.end() };
+        const auto r_xy = dlib::correlation( vtrain, vtest );
 
-            // Accuracy before introducing the modulo operation: 98.1468.
-            // Accuracy after: 97.9687.
-            const auto a = std::abs( r_xy );
+        *it++ = r_xy;
+        labels.push_back( l );
+     } );
 
-            if( a > max )
-            {
-                max = a;
-                best = l;
-            }
-         } );
+    // Interpret it.
+    // For now, just find the global maximum.
+    // Should we apply the modulo operation to values?
+    // Accuracy without modulo operation: 98.1468%, with: 97.9687%.
+    const auto max = std::max_element( correlations.begin()
+                                     , correlations.end() );
+    assert( max != correlations.end() );
+    const auto index = max - correlations.begin();
 
-    return best;
+    return labels[ index ];
 }
 
 
