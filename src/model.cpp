@@ -33,7 +33,7 @@ RandomChance::RandomChance( const io::Dataset & d )
 }
 
 
-int RandomChance::predict( const io::Spectrum & ) const
+int RandomChance::predict( const std::vector< io::Spectrum > & ) const
 {
     std::random_device generator;
     std::uniform_real_distribution<double> distribution( 0, 1 );
@@ -60,39 +60,55 @@ Correlation::Correlation( const io::Dataset & d )
 }
 
 
+unsigned num_elements( const io::Dataset & d )
+{
+    unsigned total {};
+    io::walk( d, [ &total ] ( int, const io::Spectrum & ) { ++total; } );
+    return total;
+}
+
+
+std::vector<double> compute_correlation_row( const io::Dataset & train
+                                           , const io::Spectrum & test )
+{
+    std::vector<double> ret;
+
+    const std::vector<double> vtest{ test._y.begin(), test._y.end() };
+    io::walk( train, [ &vtest, &ret ] ( int, const io::Spectrum & s)
+    {
+        std::vector<double> vtrain{ s._y.begin(), s._y.end() };
+        const auto r_xy = dlib::correlation( vtrain, vtest );
+        ret.push_back( r_xy );
+    } );
+
+    return ret;
+}
+
+
 // This function finds the highest correlation coefficient.
 // It does not compute a correlation matrix.
-int Correlation::predict( const io::Spectrum & test ) const
+int Correlation::predict( const std::vector< io::Spectrum > & test ) const
 {
     // The correlation matrix has one row per test sample
     // and one column per training sample.
-    const auto rows = 1;
-    const auto cols = [ & ] (  )
-    {
-        unsigned total {};
-        io::walk( _training_set
-                , [ & ] ( int, const io::Spectrum & )
-                { ++total; } );
-        return total;
-    } ();
+    const auto rows = static_cast<long>( test.size() );
+    const auto cols = num_elements( _training_set );
     dlib::matrix< double > correlations( rows, cols );
+
+    // TODO: ensure consistent walking every time of the map
     std::vector< int > labels;
     labels.reserve( cols );
+    io::walk( _training_set, [ & ] ( int l, const io::Spectrum & )
+        {
+            labels.push_back( l );
+        } );
 
     // Compute the matrix.
-    auto it = correlations.begin();
-    const std::vector<double> vtest{ test._y.begin(), test._y.end() };
-    io::walk( _training_set, [ & ] ( int l, const io::Spectrum & s )
-     {
-        std::vector<double> vtrain{ s._y.begin(), s._y.end() };
-        const auto r_xy = dlib::correlation( vtrain, vtest );
-
-        *it++ = r_xy;
-        labels.push_back( l );
-     } );
+    const auto row = compute_correlation_row( _training_set, test[0] );
+    std::copy( row.cbegin(), row.cend(), correlations.begin() );
 
     // Interpret it.
-    // For now, just find the global maximum.
+    // It seems global maximum element is a good approach.
     // Should we apply the modulo operation to values?
     // Accuracy without modulo operation: 98.1468%, with: 97.9687%.
     const auto max = std::max_element( correlations.begin()

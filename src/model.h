@@ -19,7 +19,7 @@ namespace model
 
 struct Model
 {
-    virtual int predict( const io::Spectrum & ) const = 0;
+    virtual int predict( const std::vector< io::Spectrum > & ) const = 0;
 
     //virtual void serialise( const std::filesystem::path & ) const = 0;
     //static std::unique_ptr<Model> deserialise( const std::filesystem::path & ) const;
@@ -31,7 +31,7 @@ struct Model
 struct RandomChance : Model
 {
     RandomChance( const io::Dataset & );
-    int predict( const io::Spectrum & ) const override;
+    int predict( const std::vector< io::Spectrum > & ) const override;
 
 private:
     std::unordered_map<int, double> _probs;
@@ -41,7 +41,7 @@ private:
 struct Correlation : Model
 {
     Correlation( const io::Dataset & );
-    int predict( const io::Spectrum & ) const override;
+    int predict( const std::vector< io::Spectrum > & ) const override;
 
 private:
     const io::Dataset & _training_set;
