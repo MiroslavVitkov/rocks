@@ -35,7 +35,7 @@ void RunModel::execute()
     io::walk( traintest.second
             , [ & ] ( int label, const io::Spectrum & s )
         {
-            const std::vector<io::Spectrum> v{ s };
+            const std::vector<io::Spectrum> v{ s, s };
 
             targets.push_back( label );
             outputs.push_back(  m->predict( v ) );

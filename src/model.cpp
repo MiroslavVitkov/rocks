@@ -89,8 +89,7 @@ std::vector<double> compute_correlation_row( const io::Dataset & train
 // It does not compute a correlation matrix.
 int Correlation::predict( const std::vector< io::Spectrum > & test ) const
 {
-    // The correlation matrix has one row per test sample
-    // and one column per training sample.
+    // The correlation matrix.
     const auto rows = static_cast<long>( test.size() );
     const auto cols = num_elements( _training_set );
     dlib::matrix< double > correlations( rows, cols );
@@ -102,19 +101,23 @@ int Correlation::predict( const std::vector< io::Spectrum > & test ) const
         {
             labels.push_back( l );
         } );
+    assert( labels.size() == cols );
 
     // Compute the matrix.
-    const auto row = compute_correlation_row( _training_set, test[0] );
-    std::copy( row.cbegin(), row.cend(), correlations.begin() );
+    //for( const auto & sample : test )
+    {
+        const auto row = compute_correlation_row( _training_set, test[0] );
+        std::copy( row.cbegin(), row.cend(), correlations.begin() );
+    }
 
     // Interpret it.
     // It seems global maximum element is a good approach.
     // Should we apply the modulo operation to values?
     // Accuracy without modulo operation: 98.1468%, with: 97.9687%.
-    const auto max = std::max_element( correlations.begin()
-                                     , correlations.end() );
-    assert( max != correlations.end() );
-    const auto index = max - correlations.begin();
+    const auto m = std::max_element( correlations.begin()
+                                    , & correlations(1, 0) );
+    assert( m != correlations.end() );
+    const auto index = std::distance( correlations.begin(), m );
 
     return labels[ static_cast<size_t>( index ) ];
 
