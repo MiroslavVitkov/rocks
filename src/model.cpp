@@ -104,22 +104,29 @@ int Correlation::predict( const std::vector< io::Spectrum > & test ) const
     assert( labels.size() == cols );
 
     // Compute the matrix.
-    //for( const auto & sample : test )
+    std::vector<int> predictions;
+    for( unsigned i {}; i < test.size(); ++i )
     {
-        const auto row = compute_correlation_row( _training_set, test[0] );
-        std::copy( row.cbegin(), row.cend(), correlations.begin() );
+        const auto row = compute_correlation_row( _training_set, test[ i ] );
+        std::copy( row.cbegin(), row.cend(), & correlations(i, 0) );
+
+        // Interpret it.
+        // Accuracy without modulo operation: 98.1468%, with: 97.9687%.
+        const auto m = std::max_element( row.cbegin(), row.cend() );
+        assert( m != row.end() );
+        const auto index = std::distance( row.begin(), m );
+        assert( static_cast<size_t>( index ) < labels.size() );
+        predictions.push_back( labels[ static_cast<size_t>( index ) ] );
     }
 
-    // Interpret it.
-    // It seems global maximum element is a good approach.
-    // Should we apply the modulo operation to values?
-    // Accuracy without modulo operation: 98.1468%, with: 97.9687%.
-    const auto m = std::max_element( correlations.begin()
-                                    , & correlations(1, 0) );
-    assert( m != correlations.end() );
-    const auto index = std::distance( correlations.begin(), m );
+    for( const auto & p : predictions )
+    {
+        std::cout << p << ", ";
+    }
+    std::cout << "\n\n";
 
-    return labels[ static_cast<size_t>( index ) ];
+
+    return predictions.front();
 
 #if 0
     // Policy similar to World of Darkness.

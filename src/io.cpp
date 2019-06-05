@@ -159,6 +159,9 @@ Dataset encode_dataset( DataRaw & raw )
 }
 
 
+// The iteration order of unordered associative containers can only change
+// when rehashing as a result of a mutating operation
+// (as described in C++11 23.2.5/8).
 void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f )
 {
     for( const auto & lebel_vector : d.first )

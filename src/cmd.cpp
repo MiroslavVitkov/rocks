@@ -31,15 +31,15 @@ void RunModel::execute()
     const auto m = model::create( _model_name, traintest.first );
 
     // Evaluate the test set.
-    std::vector<int> targets, outputs;
+    std::vector<int> targets;
+    std::vector<io::Spectrum> flattened;
     io::walk( traintest.second
-            , [ & ] ( int label, const io::Spectrum & s )
+            , [ & ] ( int l, const io::Spectrum & s )
         {
-            const std::vector<io::Spectrum> v{ s, s };
-
-            targets.push_back( label );
-            outputs.push_back(  m->predict( v ) );
+            targets.push_back( l );
+            flattened.push_back( s );
         } );
+    const std::vector outputs( flattened.size(), m->predict( flattened ) );
 
     // Report.
     score::evaluate_and_print( targets, outputs );

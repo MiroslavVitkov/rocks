@@ -19,6 +19,7 @@ namespace model
 
 struct Model
 {
+    // Assumption: all test spectra are drawn from the same population.
     virtual int predict( const std::vector< io::Spectrum > & ) const = 0;
 
     //virtual void serialise( const std::filesystem::path & ) const = 0;
