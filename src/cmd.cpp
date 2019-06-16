@@ -23,8 +23,8 @@ RunModel::RunModel( const std::string & data_dir
 void RunModel::execute()
 {
     // Obtain the dataset.
-    auto raw = io::read_dataset( _data_dir );
-    const auto encoded = io::encode_dataset( raw );
+    auto raw = io::read( _data_dir );
+    const auto encoded = io::encode( raw );
     const auto traintest = score::train_test_split( encoded );
 
     // Train the model.
@@ -33,12 +33,12 @@ void RunModel::execute()
     // Evaluate the test set.
     std::vector<int> targets;
     std::vector<io::Spectrum> flattened;
-    io::walk( traintest.second
-            , [ & ] ( int l, const io::Spectrum & s )
+    io::apply( [ & ] ( int l, const io::Spectrum & s )
         {
             targets.push_back( l );
             flattened.push_back( s );
-        } );
+        }
+             , traintest.second );
     const std::vector outputs( flattened.size(), m->predict( flattened ) );
 
     // Report.

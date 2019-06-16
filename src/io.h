@@ -64,9 +64,6 @@ using DataRaw = std::unordered_map< std::string, std::vector< Spectrum > >;
 using DataEncoded = std::unordered_map< int, std::vector< Spectrum > >;
 
 
-DataRaw read_dataset( const std::string & path );
-
-
 struct Transcoder
 {
     Transcoder() = default;
@@ -85,7 +82,9 @@ private:
 using Dataset = std::pair< DataEncoded, Transcoder >;
 
 
-Dataset encode_dataset( DataRaw & );
+DataRaw read( const std::string & path );
+Dataset encode( DataRaw & );
+void apply( std::function< void( int, const Spectrum & ) >, const Dataset & );
 
 
 void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f );

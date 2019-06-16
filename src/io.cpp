@@ -75,7 +75,7 @@ std::vector< std::string > get_subdirs( const fs::path & path )
 }
 
 
-DataRaw read_dataset( const std::string & path )
+DataRaw read( const std::string & path )
 {
     // All top-level dirs found in 'path' are label names.
     const auto labels{ get_subdirs( path ) };
@@ -145,7 +145,7 @@ const std::string & Transcoder::decode( int i ) const
 }
 
 
-Dataset encode_dataset( DataRaw & raw )
+Dataset encode( DataRaw & raw )
 {
     Dataset dt;
 
@@ -162,7 +162,7 @@ Dataset encode_dataset( DataRaw & raw )
 // The iteration order of unordered associative containers can only change
 // when rehashing as a result of a mutating operation
 // (as described in C++11 23.2.5/8).
-void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f )
+void apply( std::function< void( int, const Spectrum & ) > f, const Dataset & d )
 {
     for( const auto & lebel_vector : d.first )
     {

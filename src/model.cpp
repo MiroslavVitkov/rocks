@@ -63,7 +63,7 @@ Correlation::Correlation( const io::Dataset & d )
 unsigned num_elements( const io::Dataset & d )
 {
     unsigned total {};
-    io::walk( d, [ &total ] ( int, const io::Spectrum & ) { ++total; } );
+    io::apply( [ &total ] ( int, const io::Spectrum & ) { ++total; }, d );
     return total;
 }
 
@@ -74,12 +74,13 @@ std::vector<double> compute_correlation_row( const io::Dataset & train
     std::vector<double> ret;
 
     const std::vector<double> vtest{ test._y.begin(), test._y.end() };
-    io::walk( train, [ &vtest, &ret ] ( int, const io::Spectrum & s)
+    io::apply( [ &vtest, &ret ] ( int, const io::Spectrum & s)
     {
         std::vector<double> vtrain{ s._y.begin(), s._y.end() };
         const auto r_xy = dlib::correlation( vtrain, vtest );
         ret.push_back( r_xy );
-    } );
+    }
+             , train);
 
     return ret;
 }
@@ -97,10 +98,11 @@ int Correlation::predict( const std::vector< io::Spectrum > & test ) const
     // TODO: ensure consistent walking every time of the map
     std::vector< int > labels;
     labels.reserve( cols );
-    io::walk( _training_set, [ & ] ( int l, const io::Spectrum & )
+    io::apply( [ & ] ( int l, const io::Spectrum & )
         {
             labels.push_back( l );
-        } );
+        }
+             , _training_set);
     assert( labels.size() == cols );
 
     // Compute the matrix.
