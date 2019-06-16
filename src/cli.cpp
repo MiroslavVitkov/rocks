@@ -18,8 +18,13 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     dlib::command_line_parser parser;
     parser.add_option( "h", "Print this message." );
     parser.add_option( "help", "Print this message." );
+    parser.add_option( "m", "See 'rocks/src/model.h' for the complete list."
+                     , 1 );
     parser.add_option( "model", "See 'rocks/src/model.h' for the complete list."
                      , 1 );
+    parser.add_option( "o", "Print a report on outliers" );
+    parser.add_option( "outliers", "Print a report on outliers" );
+
     parser.parse( argc, const_cast< char** >( argv ) );
 
     if( parser.option( "h" ) || parser.option( "help" ) )
@@ -28,19 +33,35 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
         return std::make_unique<cmd::NoOp>();
     }
 
-    if( ! parser.option( "model" ) )
+    if( parser.option( "m" ) || parser.option( "model" ) )
     {
-        std::cerr << "No model selected. Exiting.\n";
-        return std::make_unique<cmd::NoOp>();
+        const auto model_name =[ & parser ] ()
+        {
+            if( parser.option( "m" ) )
+            {
+                return parser.option( "m" ).argument();
+            }
+            else
+            {
+                return parser.option( "model" ).argument();
+            }
+
+        } ();
+
+        // Verify such a model exists by creating one with an empy training set.
+        auto m = model::create( model_name, {} );
+
+        return std::make_unique<cmd::RunModel>( "../rocks/data"
+                                              , model_name );
     }
 
-    const auto model_name = parser.option( "model" ).argument();
+    if( parser.option( "o" ) || parser.option( "outliers" ) )
+    {
+        return std::make_unique<cmd::ReportOutliers>( "../rocks/data" );
+    }
 
-    // Verify such a model exists by creating one with empy training set.
-    auto m = model::create( model_name, {} );
-
-    return std::make_unique<cmd::RunModel>( "../rocks/data"
-                                          , model_name );
+    std::cerr << "No action selected. Exiting.\n";
+    return std::make_unique<cmd::NoOp>();
 }
 
 

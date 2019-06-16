@@ -39,6 +39,16 @@ private:
 };
 
 
+struct ReportOutliers : Base
+{
+    ReportOutliers( const std::string & data_dir );
+    void execute() override;
+
+private:
+    const std::string _data_dir;
+};
+
+
 }  // namespace cmd
 
 

@@ -85,10 +85,8 @@ using Dataset = std::pair< DataEncoded, Transcoder >;
 DataRaw read( const std::string & path );
 Dataset encode( DataRaw & );
 void apply( std::function< void( int, const Spectrum & ) >, const Dataset & );
-
-
-void walk( const Dataset & d, std::function< void( int, const Spectrum & ) > f );
-
+void apply( std::function< void( const std::string &, const Spectrum & ) >
+          , const DataRaw & );
 
 }  // namespace io
 

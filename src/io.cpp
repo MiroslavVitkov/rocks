@@ -164,14 +164,28 @@ Dataset encode( DataRaw & raw )
 // (as described in C++11 23.2.5/8).
 void apply( std::function< void( int, const Spectrum & ) > f, const Dataset & d )
 {
-    for( const auto & lebel_vector : d.first )
+    for( const auto & label_vector : d.first )
     {
-        for( const auto & s : lebel_vector.second )
+        for( const auto & s : label_vector.second )
         {
-            f( lebel_vector.first, s );
+            f( label_vector.first, s );
         }
     }
 }
+
+
+void apply( std::function< void( const std::string &, const Spectrum & ) > f
+          , const DataRaw & d )
+{
+    for( const auto & label_vector : d )
+    {
+        for( const auto & s : label_vector.second )
+        {
+            f( label_vector.first, s );
+        }
+    }
+}
+
 
 
 }  // namespace io
