@@ -4,6 +4,10 @@
 #include "model.h"
 #include "score.h"
 
+// TODO: remove those includes, they are here for testing purposes.
+#include <QtCore>
+#include <qwt_plot.h>
+
 #include <iostream>
 #include <numeric>
 #include <vector>
