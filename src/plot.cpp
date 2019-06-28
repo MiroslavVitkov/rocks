@@ -1,7 +1,5 @@
 #include "plot.h"
 
-
-// TODO: remove those includes, they are here for testing purposes.
 #include <QApplication>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -9,19 +7,21 @@
 #include <qwt_symbol.h>
 #include <qwt_legend.h>
 
+#include <string>
+
 
 namespace plot
 {
 
 
-void plot( const io::Spectrum & s )
+void plot( const io::Spectrum & s, const std::string & title )
 {
-    int argc = 7;
-    char ** argv{};
+    int argc {};
+    char ** argv {};
     QApplication a( argc, argv );
 
     QwtPlot plot;
-    plot.setTitle( "Worst offender" );
+    plot.setTitle( title.c_str() );
     plot.setCanvasBackground( Qt::white );
     plot.setAxisScale( QwtPlot::yLeft, -1500.0, 15000.0);
     plot.insertLegend( new QwtLegend() );
@@ -30,8 +30,8 @@ void plot( const io::Spectrum & s )
     grid->attach( &plot );
 
     QwtPlotCurve *curve = new QwtPlotCurve();
-    curve->setTitle( "Pixel Count" );
-    curve->setPen( Qt::blue, 1 ),
+//    curve->setTitle( "Pixel Count" );
+    curve->setPen( Qt::blue, 1 );
     curve->setRenderHint( QwtPlotItem::RenderAntialiased, true );
 
 //    QwtSymbol *symbol = new QwtSymbol( QwtSymbol::Ellipse,
@@ -49,7 +49,7 @@ void plot( const io::Spectrum & s )
 
     curve->attach( &plot );
 
-    plot.resize( 600, 400 );
+    plot.resize( 1920, 1080 - 25 );
     plot.show();
 
     a.exec();
