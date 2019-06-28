@@ -91,4 +91,4 @@ void apply( std::function< void( const std::string &, const Spectrum & ) >
 }  // namespace io
 
 
-#endif // defined(IO_H_)
+#endif // defined( IO_H_ )

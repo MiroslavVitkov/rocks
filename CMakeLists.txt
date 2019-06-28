@@ -11,6 +11,6 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules")
 find_package( Qwt )
 
-add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp src/model.cpp src/score.cpp )
+add_executable( rocks src/cli.cpp src/cmd.cpp src/io.cpp src/main.cpp src/model.cpp src/plot.cpp src/score.cpp )
 target_link_libraries( rocks stdc++fs dlib::dlib Qt5::Core Qt5::Gui Qt5::Widgets ${QWT_LIBRARY} )
 target_include_directories( rocks PRIVATE "../accuracy-evaluation-cpp/src" ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${QWT_INCLUDE_DIR} )
