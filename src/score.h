@@ -7,6 +7,7 @@
 
 #include "io.h"
 
+#include <functional>
 #include <utility>
 
 
@@ -20,6 +21,10 @@ train_test_split( const io::Dataset &
 
 void evaluate_and_print( const std::vector<int> & targets
                        , const std::vector<int> & outputs );
+
+// Return the spectrum which lowest score.
+using Comp = std::function< int( const io::Spectrum & ) >;
+const io::Spectrum & find_worst( Comp, const io::Dataset & d );
 
 
 }  // namespace score

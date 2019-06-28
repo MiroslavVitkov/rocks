@@ -64,4 +64,27 @@ void evaluate_and_print( const std::vector<int> & targets
 }
 
 
+const io::Spectrum & find_worst( Comp c, const io::Dataset & d )
+{
+    using P = std::pair< int, const io::Spectrum & >;
+    std::vector< P > scores;
+    io::apply( [ & ] ( int, const io::Spectrum & s )
+        {
+            scores.emplace_back( c( s ), s );
+        }
+             , d );
+
+    const auto & m = * std::max_element( scores.cbegin()
+                                       , scores.cend()
+                                       , [] ( const P & p1, const P & p2 )
+        {
+            int a = p1.first;
+            int b = p2.first;
+            return a > b;
+            //return p1.first < p2.second;
+        }    );
+
+    return m.second;
+}
+
 }  // namespace score
