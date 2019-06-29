@@ -6,6 +6,7 @@
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
 #include <qwt_legend.h>
+#include <qwt_plot_renderer.h>
 
 #include <string>
 
@@ -16,6 +17,7 @@ namespace plot
 
 void plot( const io::Spectrum & s, const std::string & title )
 {
+    // TODO: try #include <qwt_plot_spectrogram.h>
     int argc {};
     char ** argv {};
     QApplication a( argc, argv );
@@ -49,12 +51,17 @@ void plot( const io::Spectrum & s, const std::string & title )
 
     curve->attach( &plot );
 
-    plot.resize( 1920, 1080 - 25 );
+    const QSize fullscreen{ 1920, 1080 - 25 };
+    plot.resize( fullscreen.width(), fullscreen.height() );
     plot.show();
+
+    QString fileName = "/tmp/bode.pdf";
+
+    QwtPlotRenderer renderer;
+    renderer.renderDocument( & plot,  fileName, fullscreen );
 
     a.exec();
 }
-
 
 
 }  // namespace plot
