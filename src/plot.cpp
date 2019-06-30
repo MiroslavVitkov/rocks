@@ -26,19 +26,15 @@ void plot( const io::Spectrum & s, const std::string & title )
     plot.setTitle( title.c_str() );
     plot.setCanvasBackground( Qt::white );
     plot.setAxisScale( QwtPlot::yLeft, -1500.0, 15000.0);
-    plot.insertLegend( new QwtLegend() );
+    plot.setAxisTitle(QwtPlot::xBottom, "wavelength, nm");
+    plot.setAxisTitle(QwtPlot::yLeft, "intensity");
 
     QwtPlotGrid *grid = new QwtPlotGrid();
     grid->attach( &plot );
 
     QwtPlotCurve *curve = new QwtPlotCurve();
-//    curve->setTitle( "Pixel Count" );
     curve->setPen( Qt::blue, 1 );
     curve->setRenderHint( QwtPlotItem::RenderAntialiased, true );
-
-//    QwtSymbol *symbol = new QwtSymbol( QwtSymbol::Ellipse,
-//        QBrush( Qt::yellow ), QPen( Qt::red, 2 ), QSize( 8, 8 ) );
-//    curve->setSymbol( symbol );
 
     QPolygonF points;
     auto itx = s._x.cbegin();
@@ -56,7 +52,6 @@ void plot( const io::Spectrum & s, const std::string & title )
     plot.show();
 
     QString fileName = "/tmp/bode.pdf";
-
     QwtPlotRenderer renderer;
     plot.replot();
     renderer.renderDocument( & plot,  fileName, fullscreen );
