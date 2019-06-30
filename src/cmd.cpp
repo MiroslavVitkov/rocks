@@ -104,7 +104,7 @@ void ReportOutliers::execute()
 
     const auto dataset = io::encode( spectra );
 
-#define WHICH 0
+#define WHICH 3
 #if WHICH == 0
     plot::plot( score::find_worst( [ & ] ( const io::Spectrum & s )
         {
@@ -150,6 +150,10 @@ void ReportOutliers::execute()
         }
                                  , dataset )
               , "Highest number of negatives." );
+#elif WHICH == 3
+    const auto dat = io::read_long_labels( _data_dir );
+    io::apply( [] ( const std::string & label, const io::Spectrum)
+    { std::cout << label << '\n'; }, dat );
 #endif
 }
 

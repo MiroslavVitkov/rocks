@@ -98,6 +98,22 @@ DataRaw read( const std::string & path )
 }
 
 
+DataRaw read_long_labels( const std::string & path )
+{
+    DataRaw ret;
+    for( const auto & file : fs::recursive_directory_iterator( path ) )
+    {
+        if( ends_with( file.path().filename(), ".csv" ) )
+        {
+            const auto label = fs::relative( file.path(), path );
+            ret[ label ].emplace_back( read_csv( file ) );
+        }
+    }
+
+    return ret;
+}
+
+
 Transcoder::Transcoder(const DataRaw &dat )
 {
     for( const auto & kv : dat )
@@ -185,7 +201,6 @@ void apply( std::function< void( const std::string &, const Spectrum & ) > f
         }
     }
 }
-
 
 
 }  // namespace io
