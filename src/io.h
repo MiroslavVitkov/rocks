@@ -82,8 +82,7 @@ private:
 using Dataset = std::pair< DataEncoded, Transcoder >;
 
 
-DataRaw read( const std::string & path );
-DataRaw read_long_labels( const std::string & path );
+DataRaw read( const std::string & dataset_dir, unsigned labels_depth = 1 );
 Dataset encode( DataRaw & );
 void apply( std::function< void( int, const Spectrum & ) >, const Dataset & );
 void apply( std::function< void( const std::string &, const Spectrum & ) >

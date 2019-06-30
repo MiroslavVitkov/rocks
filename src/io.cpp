@@ -1,8 +1,12 @@
 #include "io.h"
 
+#include "except.h"
+
+#include <algorithm>
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+#include <numeric>
 
 
 namespace io
@@ -59,53 +63,36 @@ Spectrum read_csv( const fs::path & path )
 }
 
 
-std::vector< std::string > get_subdirs( const fs::path & path )
-{
-    std::vector< std::string > ret;
-
-    for( const auto & dir : fs::directory_iterator( path ) )
-    {
-        if( fs::is_directory( dir ) )
-        {
-            ret.push_back( dir.path().filename() );
-        }
-    }
-
-    return ret;
-}
-
-
-DataRaw read( const std::string & path )
-{
-    // All top-level dirs found in 'path' are label names.
-    const auto labels{ get_subdirs( path ) };
-
-    // All .csv files under a label are samples of that label.
-    DataRaw ret;
-    for( const auto & l : labels )
-    {
-        for( const auto & file
-           : fs::recursive_directory_iterator( path + '/' + l ) )
-        {
-            if( ends_with( file.path().filename(), ".csv" ) )
-            {
-                ret[ l ].emplace_back( read_csv( file ) );
-            }
-        }
-    }
-
-    return ret;
-}
-
-
-DataRaw read_long_labels( const std::string & path )
+// By default top-level dirs found in 'path' are label names.
+// All .csv files under a label are samples of that label.
+DataRaw read( const std::string & dataset_dir , unsigned labels_depth )
 {
     DataRaw ret;
-    for( const auto & file : fs::recursive_directory_iterator( path ) )
+    for( const auto & file : fs::recursive_directory_iterator( dataset_dir ) )
     {
         if( ends_with( file.path().filename(), ".csv" ) )
         {
-            const auto label = fs::relative( file.path(), path );
+            const auto full_label = fs::relative( file.path(), dataset_dir );
+            std::string label;
+            try
+            {
+                for( auto it = full_label.begin()
+                   ; std::distance( full_label.begin(), it ) < labels_depth
+                   ; ++it )
+                {
+                    label += '/';
+                    label += *it;
+                }
+            }
+            catch( ... )
+            {
+                throw Exception{ "Requested labels_depth = "
+                               + std::to_string( labels_depth )
+                               + ", but file "
+                               + full_label.string()
+                               + " is located at smaller depth." };
+            }
+
             ret[ label ].emplace_back( read_csv( file ) );
         }
     }

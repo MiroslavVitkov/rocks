@@ -151,7 +151,7 @@ void ReportOutliers::execute()
                                  , dataset )
               , "Highest number of negatives." );
 #elif WHICH == 3
-    const auto dat = io::read_long_labels( _data_dir );
+    const auto dat = io::read( _data_dir, 2 );
     io::apply( [] ( const std::string & label, const io::Spectrum)
     { std::cout << label << '\n'; }, dat );
 #endif
