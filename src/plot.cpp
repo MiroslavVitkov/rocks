@@ -58,6 +58,7 @@ void plot( const io::Spectrum & s, const std::string & title )
     QString fileName = "/tmp/bode.pdf";
 
     QwtPlotRenderer renderer;
+    plot.replot();
     renderer.renderDocument( & plot,  fileName, fullscreen );
 
     a.exec();
