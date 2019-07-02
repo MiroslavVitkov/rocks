@@ -15,7 +15,7 @@ namespace model
 {
 
 
-RandomChance::RandomChance( const io::Dataset & d )
+RandomChance::RandomChance( const dat::Dataset & d )
 {
     // Count instances of each class.
     unsigned datapoints {};
@@ -33,7 +33,7 @@ RandomChance::RandomChance( const io::Dataset & d )
 }
 
 
-int RandomChance::predict( const std::vector< io::Spectrum > & ) const
+int RandomChance::predict( const std::vector< dat::Spectrum > & ) const
 {
     std::random_device generator;
     std::uniform_real_distribution<double> distribution( 0, 1 );
@@ -54,27 +54,27 @@ int RandomChance::predict( const std::vector< io::Spectrum > & ) const
 }
 
 
-Correlation::Correlation( const io::Dataset & d )
+Correlation::Correlation( const dat::Dataset & d )
     : _training_set{ d }
 {
 }
 
 
-unsigned num_elements( const io::Dataset & d )
+unsigned num_elements( const dat::Dataset & d )
 {
     unsigned total {};
-    io::apply( [ &total ] ( int, const io::Spectrum & ) { ++total; }, d );
+    dat::apply( [ &total ] ( int, const dat::Spectrum & ) { ++total; }, d );
     return total;
 }
 
 
-std::vector<double> compute_correlation_row( const io::Dataset & train
-                                           , const io::Spectrum & test )
+std::vector<double> compute_correlation_row( const dat::Dataset & train
+                                           , const dat::Spectrum & test )
 {
     std::vector<double> ret;
 
     const std::vector<double> vtest{ test._y.begin(), test._y.end() };
-    io::apply( [ &vtest, &ret ] ( int, const io::Spectrum & s)
+    dat::apply( [ &vtest, &ret ] ( int, const dat::Spectrum & s)
         {
             std::vector<double> vtrain{ s._y.begin(), s._y.end() };
             const auto r_xy = dlib::correlation( vtrain, vtest );
@@ -88,7 +88,7 @@ std::vector<double> compute_correlation_row( const io::Dataset & train
 
 // This function finds the highest correlation coefficient.
 // It does not compute a correlation matrix.
-int Correlation::predict( const std::vector< io::Spectrum > & test ) const
+int Correlation::predict( const std::vector< dat::Spectrum > & test ) const
 {
     // The correlation matrix.
     const auto rows = static_cast<long>( test.size() );
@@ -99,7 +99,7 @@ int Correlation::predict( const std::vector< io::Spectrum > & test ) const
     // has the same label as the respective training sample.
     std::vector< int > labels;
     labels.reserve( cols );
-    io::apply( [ & ] ( int l, const io::Spectrum & )
+    dat::apply( [ & ] ( int l, const dat::Spectrum & )
         {
             labels.push_back( l );
         }

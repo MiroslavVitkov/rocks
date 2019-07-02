@@ -5,7 +5,7 @@
 // In this file: tools to evaluate the performance of a predictive model.
 
 
-#include "io.h"
+#include "dat.h"
 
 #include <functional>
 #include <utility>
@@ -19,8 +19,8 @@ void evaluate_and_print( const std::vector<int> & targets
                        , const std::vector<int> & outputs );
 
 // Return the spectrum which lowest score.
-using Comp = std::function< int( const io::Spectrum & ) >;
-const io::Spectrum & find_worst( Comp, const io::Dataset & d );
+using Comp = std::function< int( const dat::Spectrum & ) >;
+const dat::Spectrum & find_worst( Comp, const dat::Dataset & d );
 
 
 }  // namespace score

@@ -27,22 +27,22 @@ void RunModel::execute()
     // Obtain the dataset.
     // When encoding, assume the test label is represented in the training set.
     auto raw = io::read( _data_dir, 2 );
-    auto traintest = io::split( raw );
-    const auto train = io::encode( traintest.first );
-    const auto test = io::encode( traintest.second, train.second );
+    auto traintest = dat::split( raw );
+    const auto train = dat::encode( traintest.first );
+    const auto test = dat::encode( traintest.second, train.second );
 
     // Train the model.
     const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
     std::vector<int> targets;
-    std::vector<io::Spectrum> flattened;
-    io::apply( [ & ] ( int l, const io::Spectrum & s )
+    std::vector<dat::Spectrum> flattened;
+    dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             targets.push_back( l );
             flattened.push_back( s );
         }
-             , test );
+                          , test );
     const std::vector outputs( flattened.size(), m->predict( flattened ) );
 
     // Report.
@@ -66,9 +66,9 @@ void ReportOutliers::execute()
     unsigned num_negatives {};
     double sum_negatives {};
     double most_negative {};
-    const io::Spectrum * worst {};
+    const dat::Spectrum * worst {};
 
-    io::apply( [ & ] ( const std::string &, const io::Spectrum & s )
+    dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
         {
             ++num_files;
             sum_intensity = std::accumulate( s._y.cbegin()
@@ -94,17 +94,17 @@ void ReportOutliers::execute()
     // Report.
     std::cout << "Dataset consists of " << num_files << " files.\n"
               << "The global micro average intensity is "
-              << sum_intensity / ( num_files * io::Spectrum::_num_points )
+              << sum_intensity / ( num_files * dat::Spectrum::_num_points )
               << ".\nThe global count of negative values is " << num_negatives
               << ", which is "
-              << num_negatives / ( num_files * io::Spectrum::_num_points * 1.0 )
+              << num_negatives / ( num_files * dat::Spectrum::_num_points * 1.0 )
               << " of all datapoints.\n"
               << "The mean of all negative values is "
               << sum_negatives / num_negatives
               << ".\nThe most extreme negative value is " << most_negative
               << ".\n";
 
-    const auto dataset = io::encode( spectra );
+    const auto dataset = dat::encode( spectra );
 
 #define WHICH 4
 #if WHICH == 0

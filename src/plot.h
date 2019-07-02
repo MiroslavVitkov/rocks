@@ -12,7 +12,7 @@ namespace plot
 {
 
 
-void plot( const io::Spectrum &, const std::string & title = "" );
+void plot( const dat::Spectrum &, const std::string & title = "" );
 
 
 }  // namespace plot

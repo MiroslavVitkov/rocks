@@ -15,7 +15,7 @@ namespace plot
 {
 
 
-void plot( const io::Spectrum & s, const std::string & title )
+void plot( const dat::Spectrum & s, const std::string & title )
 {
     // TODO: try #include <qwt_plot_spectrogram.h>
     int argc {};

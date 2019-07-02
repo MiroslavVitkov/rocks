@@ -23,11 +23,11 @@ void evaluate_and_print( const std::vector<int> & targets
 }
 
 
-const io::Spectrum & find_worst( Comp c, const io::Dataset & d )
+const dat::Spectrum & find_worst( Comp c, const dat::Dataset & d )
 {
-    using P = std::pair< int, const io::Spectrum & >;
+    using P = std::pair< int, const dat::Spectrum & >;
     std::vector< P > scores;
-    io::apply( [ & ] ( int, const io::Spectrum & s )
+    dat::apply( [ & ] ( int, const dat::Spectrum & s )
         {
             scores.emplace_back( c( s ), s );
         }

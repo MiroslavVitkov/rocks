@@ -2,14 +2,12 @@
 #define IO_H_
 
 
-// In this file:
-//     1. fundamental data types, used throughout the project,
-//     2. reading the dataset from disk.
+// In this file: reading the dataset from disk.
 //
 // Example of the expected file structure.
 // data                     <- arbitrary name
 // ├── azurite              <- subdirs are labels
-// │   ├── spot00           <- any subsubdirs are flattened out
+// │   ├── spot00           <- any subsubdirs are sublabels or flattened out
 // │   │   ├── 10.csv
 // │   │   ├── 11.csv
 // │   │   ├── 12.csv
@@ -21,19 +19,15 @@
 // │   └── spot01
 // │       └── 24.csv
 // └── brochantite
-//     ├── 99.csv
-//     └── spot00
+//     ├── 99.csv           <- if we requested sublabes, this
+//     └── spot00              will generate an error
 //         └── 7.csv
 // Any non-directories or non .csv files are ignored.
 
+#include "dat.h"
 
-#include "except.h"
-
-#include <array>
-#include <functional>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 
@@ -41,55 +35,10 @@ namespace io
 {
 
 
-// Each .csv file contains one Spectrum.
-struct Spectrum
-{
-    static constexpr unsigned _num_points{ 7810 };
-    using Axis = std::array< double, _num_points >;
-
-    static constexpr Axis _x{ [] ()            // wavelength, nm
-        {
-            Axis a {};
-            for( unsigned i = 0; i < _num_points; ++i )
-            {
-                a[ i ] = 180 + 0.1 * i;
-            }
-            return a;
-        } () };
-    Axis _y {};                                // radiance, W·sr−1·m−2
-};
-
-
-using DataRaw = std::unordered_map< std::string, std::vector< Spectrum > >;
-using DataEncoded = std::unordered_map< int, std::vector< Spectrum > >;
-
-
-struct Transcoder
-{
-    Transcoder() = default;
-    Transcoder( const DataRaw & );
-
-    int encode( const std::string & l );
-    int encode( const std::string & l ) const;
-    const std::string & decode( int i ) const;
-
-private:
-    std::unordered_map<std::string, int> _encoding;
-    std::unordered_map<int, std::string> _reverse;
-};
-
-
-using Dataset = std::pair< DataEncoded, Transcoder >;
-
-
-DataRaw read( const std::string & dataset_dir, unsigned labels_depth = 1 );
-std::pair< DataRaw, DataRaw > split( const DataRaw & );
-Dataset encode( DataRaw & );
-Dataset encode( DataRaw &, const Transcoder & );
-void apply( std::function< void( int, const Spectrum & ) >
-          , const Dataset & );
-void apply( std::function< void( const std::string &, const Spectrum & ) >
-          , const DataRaw & );
+// 'labels_depth == 1' -> '/azurite'
+// 'labels_depth == 2' -> '/azurite/spot00' and an error for '99.csv'
+dat::DataRaw read( const std::string & dataset_dir
+                     , unsigned labels_depth = 1 );
 
 
 }  // namespace io
