@@ -83,8 +83,11 @@ using Dataset = std::pair< DataEncoded, Transcoder >;
 
 
 DataRaw read( const std::string & dataset_dir, unsigned labels_depth = 1 );
+std::pair< DataRaw, DataRaw > split( const DataRaw & );
 Dataset encode( DataRaw & );
-void apply( std::function< void( int, const Spectrum & ) >, const Dataset & );
+Dataset encode( DataRaw &, const Transcoder & );
+void apply( std::function< void( int, const Spectrum & ) >
+          , const Dataset & );
 void apply( std::function< void( const std::string &, const Spectrum & ) >
           , const DataRaw & );
 

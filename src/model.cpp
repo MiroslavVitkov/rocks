@@ -75,11 +75,11 @@ std::vector<double> compute_correlation_row( const io::Dataset & train
 
     const std::vector<double> vtest{ test._y.begin(), test._y.end() };
     io::apply( [ &vtest, &ret ] ( int, const io::Spectrum & s)
-    {
-        std::vector<double> vtrain{ s._y.begin(), s._y.end() };
-        const auto r_xy = dlib::correlation( vtrain, vtest );
-        ret.push_back( r_xy );
-    }
+        {
+            std::vector<double> vtrain{ s._y.begin(), s._y.end() };
+            const auto r_xy = dlib::correlation( vtrain, vtest );
+            ret.push_back( r_xy );
+        }
              , train);
 
     return ret;
@@ -95,14 +95,15 @@ int Correlation::predict( const std::vector< io::Spectrum > & test ) const
     const auto cols = num_elements( _training_set );
     dlib::matrix< double > correlations( rows, cols );
 
-    // TODO: ensure consistent walking every time of the map
+    // High correlation would meant that the test sample
+    // has the same label as the respective training sample.
     std::vector< int > labels;
     labels.reserve( cols );
     io::apply( [ & ] ( int l, const io::Spectrum & )
         {
             labels.push_back( l );
         }
-             , _training_set);
+             , _training_set );
     assert( labels.size() == cols );
 
     // Compute the matrix.

@@ -25,12 +25,14 @@ RunModel::RunModel( const std::string & data_dir
 void RunModel::execute()
 {
     // Obtain the dataset.
-    auto raw = io::read( _data_dir );
-    const auto encoded = io::encode( raw );
-    const auto traintest = score::train_test_split( encoded );
+    // When encoding, assume the test label is represented in the training set.
+    auto raw = io::read( _data_dir, 2 );
+    auto traintest = io::split( raw );
+    const auto train = io::encode( traintest.first );
+    const auto test = io::encode( traintest.second, train.second );
 
     // Train the model.
-    const auto m = model::create( _model_name, traintest.first );
+    const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
     std::vector<int> targets;
@@ -40,7 +42,7 @@ void RunModel::execute()
             targets.push_back( l );
             flattened.push_back( s );
         }
-             , traintest.second );
+             , test );
     const std::vector outputs( flattened.size(), m->predict( flattened ) );
 
     // Report.
@@ -104,7 +106,7 @@ void ReportOutliers::execute()
 
     const auto dataset = io::encode( spectra );
 
-#define WHICH 3
+#define WHICH 4
 #if WHICH == 0
     plot::plot( score::find_worst( [ & ] ( const io::Spectrum & s )
         {

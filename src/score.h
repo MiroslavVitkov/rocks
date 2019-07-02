@@ -15,10 +15,6 @@ namespace score
 {
 
 
-std::pair< io::Dataset, io::Dataset >
-train_test_split( const io::Dataset &
-                , double test_proportion = 0.2 );
-
 void evaluate_and_print( const std::vector<int> & targets
                        , const std::vector<int> & outputs );
 
