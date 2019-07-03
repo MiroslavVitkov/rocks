@@ -1,6 +1,6 @@
 #include "score.h"
 
-#include <evaluation.hpp>
+#include <dlib/matrix.h>
 
 #include <algorithm>
 #include <cassert>
@@ -10,17 +10,6 @@
 
 namespace score
 {
-
-
-void evaluate_and_print( const std::vector<int> & targets
-                       , const std::vector<int> & outputs)
-{
-    Confusion c( targets, outputs );
-    Evaluation e( c );
-
-    c.print();
-    e.print();
-}
 
 
 const dat::Spectrum & find_worst( Comp c, const dat::Dataset & d )
@@ -86,8 +75,8 @@ dlib::matrix< unsigned > calc_confusion( const std::vector<int> & ground_truth
 
     const auto classes = get_classes( ground_truth, predicted );
     Transcoder t{ classes };
-    dlib::matrix< unsigned > ret( static_cast<long>( classes.size() )
-                                , static_cast<long>( classes.size() ) );
+    const long c = static_cast<long>( classes.size() );
+    dlib::matrix<unsigned> ret = dlib::zeros_matrix<unsigned>( c, c );
 
     for( unsigned i {}; i < ground_truth.size(); ++i )
     {
