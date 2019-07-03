@@ -169,7 +169,7 @@ int Transcoder::encode( const std::string & l )
         _reverse[ static_cast<int>(  _encoding.size() ) ] = l ;
     }
 
-    return 0;//_encoding[ l ];
+    return _encoding[ l ];
 }
 
 
@@ -181,7 +181,7 @@ int Transcoder::encode( const std::string & l ) const
                          "Label '" + l + "' not found." };
     }
 
-    return 0;//_encoding.at( l );
+    return _encoding.at( l );
 }
 
 

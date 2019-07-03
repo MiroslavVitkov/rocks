@@ -122,13 +122,6 @@ int Correlation::predict( const std::vector< dat::Spectrum > & test ) const
         predictions.push_back( labels[ static_cast<size_t>( index ) ] );
     }
 
-    for( const auto & p : predictions )
-    {
-        std::cout << p << ", ";
-    }
-    std::cout << "\n\n";
-
-
     return predictions.front();
 
 #if 0

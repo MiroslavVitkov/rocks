@@ -46,7 +46,8 @@ void RunModel::execute()
     const std::vector outputs( flattened.size(), m->predict( flattened ) );
 
     // Report.
-    score::evaluate_and_print( targets, outputs );
+    const auto conf = score::calc_confusion( targets, outputs );
+    std::cout << conf;
 }
 
 

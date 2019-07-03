@@ -3,6 +3,8 @@
 
 
 // In this file:
+//               1. models predicting the class of stone
+//               2. factory from std::string (at the end)
 
 
 #include "cmd.h"
