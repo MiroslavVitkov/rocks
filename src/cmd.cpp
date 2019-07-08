@@ -47,7 +47,10 @@ void RunModel::execute()
 
     // Report.
     const auto conf = score::calc_confusion( ground_truth, predicted );
-    std::cout << conf;
+
+    std::cout << "Confusion matrix, rows - ground truth, columns - prediction.\n"
+                 "Labels: " << train.second << '\n'
+              << conf;
 }
 
 

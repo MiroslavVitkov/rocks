@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 
-
+#include <iostream>
 namespace dat
 {
 
@@ -52,10 +52,12 @@ struct Transcoder
     int encode( const std::string & l ) const;
     const std::string & decode( int i ) const;
 
+    friend std::ostream & operator<<( std::ostream &, const dat::Transcoder & );
 private:
     std::unordered_map<std::string, int> _encoding;
     std::unordered_map<int, std::string> _reverse;
 };
+std::ostream & operator<<( std::ostream &, const dat::Transcoder& );
 
 
 using DataEncoded = std::unordered_map< int, std::vector< Spectrum > >;

@@ -15,7 +15,7 @@ namespace dat
 // For each label, pick the first subdir as test, the rest as train.
 std::pair< DataRaw, DataRaw > split( const DataRaw & d )
 {
-    // Choose one subfolder.
+    // Choose one subdir.
     const auto labels = [ & d ] ()
         {
             std::vector<std::string> ret;
@@ -110,6 +110,17 @@ const std::string & Transcoder::decode( int i ) const
     }
 
     return _reverse.at( i );
+}
+
+//labels printed should be only those present in the matrix
+std::ostream & operator<<( std::ostream & s, const dat::Transcoder & t )
+{
+    for( const auto & kv : t._reverse )
+    {
+        s << kv.first << ": " << kv.second << ", ";
+    }
+
+    return s;
 }
 
 
