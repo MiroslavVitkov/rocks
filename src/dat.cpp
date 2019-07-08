@@ -166,7 +166,7 @@ int Transcoder::encode( const std::string & l )
     if( _encoding.count( l ) == 0 )
     {
         _encoding[ l ] = static_cast<int>( _encoding.size() );
-        _reverse[ static_cast<int>(  _encoding.size() ) ] = l ;
+        _reverse[ static_cast<int>(  _reverse.size() ) ] = l ;
     }
 
     return _encoding[ l ];
