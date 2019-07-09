@@ -52,6 +52,21 @@ struct Task
     }
 
 
+    // Despite all this effort, moving a Task object
+    // (for example by a vector rellocating its storage)
+    // causes a weird crash.
+    // For now the workaround is to allocate enough memory in the container.
+    Task( Task && t )
+        : _p{ std::move( t._p ) }
+    {
+        _t.swap( t._t );
+    }
+    Task( const Task & ) = delete;
+    ~Task() = default;
+    Task& operator=( Task&& other) = delete;
+    Task& operator=(const Task& other) = delete;
+
+
 private:
     std::promise< label::Num > _p;
     std::thread _t;
@@ -69,21 +84,19 @@ void RunModel::execute()
     const auto test = dat::encode( traintest.second, train.second );
 
     // Train the model.
-    //const auto & m = * model::create( _model_name, train ).get();
-    const auto mm = model::create( _model_name, train );
-    const auto & m = * mm;
+    const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
     std::vector< Task > tasks;
+    tasks.reserve( dat::count( test ) );
 
     print::info( "Evaluating the test set." );
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             ground_truth.push_back( l );
-            tasks.emplace_back( m, s );
-            //predicted.push_back( m.predict( s ) );
+            tasks.emplace_back( * m, s );
         }
               , test );
 

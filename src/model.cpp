@@ -52,17 +52,9 @@ label::Num RandomChance::predict( const dat::Spectrum & ) const
 }
 
 
-unsigned num_elements( const dat::Dataset & d )
-{
-    unsigned total {};
-    dat::apply( [ &total ] ( int, const dat::Spectrum & ) { ++total; }, d );
-    return total;
-}
-
-
 std::vector< label::Num > construct_labels( const dat::Dataset & d )
 {
-    const auto size = num_elements( d );
+    const auto size = count( d );
 
     std::vector< int > labels;
     labels.reserve( size );

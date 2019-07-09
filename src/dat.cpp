@@ -99,4 +99,12 @@ void apply( std::function< void( const std::string &, const Spectrum & ) > f
 }
 
 
+size_t count( const dat::Dataset & d )
+{
+    size_t total {};
+    dat::apply( [ &total ] ( int, const dat::Spectrum & ) { ++total; }, d );
+    return total;
+}
+
+
 }  // namespace dat
