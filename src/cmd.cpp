@@ -35,15 +35,14 @@ void RunModel::execute()
     const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
-    std::vector<int> ground_truth;
-    std::vector<dat::Spectrum> flattened;
+    std::vector< label::Num > ground_truth;
+    std::vector< label::Num > predicted;
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             ground_truth.push_back( l );
-            flattened.push_back( s );
+            predicted.push_back( m->predict( s ) );
         }
-                          , test );
-    const std::vector predicted( flattened.size(), m->predict( flattened ) );
+              , test );
 
     // Report.
     const auto conf = score::calc_confusion( ground_truth, predicted );

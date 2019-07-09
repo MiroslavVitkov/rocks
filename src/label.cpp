@@ -48,7 +48,7 @@ const RawShort & Codec::decode( Num i ) const
 
 std::ostream & operator<<( std::ostream & s, const Codec & t )
 {
-    for( const auto & kv : t._reverse )
+    for( const auto & kv : t._encoding )
     {
         s << kv.first << ": " << kv.second << ", ";
     }

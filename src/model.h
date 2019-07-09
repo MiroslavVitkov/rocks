@@ -14,6 +14,7 @@
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 
 namespace model
@@ -23,7 +24,8 @@ namespace model
 struct Model
 {
     // Assumption: all test spectra are drawn from the same population.
-    virtual int predict( const std::vector< dat::Spectrum > & ) const = 0;
+    // Assumption: all test samples in the vector belong to the same class.
+    virtual label::Num predict( const dat::Spectrum & ) const = 0;
 
     //virtual void serialise( const std::filesystem::path & ) const = 0;
     //static std::unique_ptr<Model> deserialise( const std::filesystem::path & ) const;
@@ -35,7 +37,7 @@ struct Model
 struct RandomChance : Model
 {
     RandomChance( const dat::Dataset & );
-    int predict( const std::vector< dat::Spectrum > & ) const override;
+    label::Num predict( const dat::Spectrum & ) const override;
 
 private:
     std::unordered_map<int, double> _probs;
@@ -45,10 +47,11 @@ private:
 struct Correlation : Model
 {
     Correlation( const dat::Dataset & );
-    int predict( const std::vector< dat::Spectrum > & ) const override;
+    label::Num predict( const dat::Spectrum & ) const override;
 
 private:
     const dat::Dataset & _training_set;
+    const std::vector< label::Num > _labels;
 };
 
 
