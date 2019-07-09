@@ -5,9 +5,10 @@
 // In this file:
 //     operations over the dataset:
 //     1. the datapoint type throughout the project,
-//     2. transcoding the labels between strings and ints,
-//     3. splitting into train and test detasets.
+//     2. splitting into train and test detasets.
 
+
+#include "label.h"
 
 #include <array>
 #include <functional>
@@ -16,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include <iostream>
+
 namespace dat
 {
 
@@ -40,28 +41,9 @@ struct Spectrum
 };
 
 
-using DataRaw = std::unordered_map< std::string, std::vector< Spectrum > >;
-
-
-struct Transcoder
-{
-    Transcoder() = default;
-    Transcoder( const DataRaw & );
-
-    int encode( const std::string & l );
-    int encode( const std::string & l ) const;
-    const std::string & decode( int i ) const;
-
-    friend std::ostream & operator<<( std::ostream &, const dat::Transcoder & );
-private:
-    std::unordered_map<std::string, int> _encoding;
-    std::unordered_map<int, std::string> _reverse;
-};
-std::ostream & operator<<( std::ostream &, const dat::Transcoder& );
-
-
-using DataEncoded = std::unordered_map< int, std::vector< Spectrum > >;
-using Dataset = std::pair< DataEncoded, Transcoder >;
+using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
+using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
+using Dataset = std::pair< DataEncoded, label::Codec >;
 
 
 // For each label, pick the first subdir as test, the rest as train.
@@ -69,7 +51,7 @@ using Dataset = std::pair< DataEncoded, Transcoder >;
 std::pair< DataRaw, DataRaw > split( const DataRaw & );
 
 Dataset encode( DataRaw & );
-Dataset encode( DataRaw &, const Transcoder & );
+Dataset encode( DataRaw &, const label::Codec & );
 
 // Invoke provided functor on every element in a dataset.
 // Walking order is consistent until the dataset is altered.
