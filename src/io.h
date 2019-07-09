@@ -19,16 +19,15 @@
 // │   └── spot01
 // │       └── 24.csv
 // └── brochantite
-//     ├── 99.csv           <- if we requested sublabes, this
+//     ├── 99.csv           <- if we requested sublables, this
 //     └── spot00              will generate an error
 //         └── 7.csv
 // Any non-directories or non .csv files are ignored.
 
+
 #include "dat.h"
 
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 
 namespace io

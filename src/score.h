@@ -18,9 +18,6 @@ namespace score
 {
 
 
-void evaluate_and_print( const std::vector<int> & targets
-                       , const std::vector<int> & outputs );
-
 // Return the spectrum which lowest score.
 using Comp = std::function< int( const dat::Spectrum & ) >;
 const dat::Spectrum & find_worst( Comp, const dat::Dataset & d );

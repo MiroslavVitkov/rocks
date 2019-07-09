@@ -2,7 +2,7 @@
 #define PLOT_H_
 
 
-// In this file: plotting capabilities
+// In this file: plotting capabilities.
 
 
 #include "io.h"
