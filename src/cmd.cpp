@@ -1,12 +1,16 @@
 #include "cmd.h"
 
 #include "io.h"
+#include "label.h"
 #include "model.h"
 #include "plot.h"
 #include "score.h"
 
+#include <functional>
+#include <future>
 #include <iostream>
 #include <numeric>
+#include <thread>
 #include <vector>
 
 
@@ -22,6 +26,37 @@ RunModel::RunModel( const std::string & data_dir
 }
 
 
+void run_async( std::promise< label::Num > & p
+              , const model::Model & m
+              , const dat::Spectrum & s )
+{
+    const auto ret = m.predict( s );
+    p.set_value( ret );
+}
+
+
+struct Task
+{
+    Task( const model::Model & m, const dat::Spectrum & s )
+        :  _p{ }
+        , _t{ run_async, std::ref( _p ), std::ref( m ), std::ref( s ) }
+    {
+    }
+
+
+    label::Num get()
+    {
+        _t.join();
+        return _p.get_future().get();
+    }
+
+
+private:
+    std::promise< label::Num > _p;
+    std::thread _t;
+};
+
+
 void RunModel::execute()
 {
     // Obtain the dataset.
@@ -32,17 +67,26 @@ void RunModel::execute()
     const auto test = dat::encode( traintest.second, train.second );
 
     // Train the model.
-    const auto m = model::create( _model_name, train );
+    //const auto & m = * model::create( _model_name, train ).get();
+    const auto mm = model::create( _model_name, train );
+    const auto & m = * mm;
 
     // Evaluate the test set.
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
+    std::vector< Task > tasks;
+
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             ground_truth.push_back( l );
-            predicted.push_back( m->predict( s ) );
+            tasks.emplace_back( m, s );
         }
               , test );
+
+    for( auto & t : tasks )
+    {
+        predicted.push_back( t.get() );
+    }
 
     // Report.
     const auto conf = score::calc_confusion( ground_truth, predicted );
