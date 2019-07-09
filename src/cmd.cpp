@@ -4,6 +4,7 @@
 #include "label.h"
 #include "model.h"
 #include "plot.h"
+#include "print.h"
 #include "score.h"
 
 #include <functional>
@@ -61,6 +62,7 @@ void RunModel::execute()
 {
     // Obtain the dataset.
     // When encoding, assume the test label is represented in the training set.
+    print::info( "Reading the dataset." );
     auto raw = io::read( _data_dir, 2 );
     auto traintest = dat::split( raw );
     const auto train = dat::encode( traintest.first );
@@ -76,10 +78,12 @@ void RunModel::execute()
     std::vector< label::Num > predicted;
     std::vector< Task > tasks;
 
+    print::info( "Evaluating the test set." );
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             ground_truth.push_back( l );
             tasks.emplace_back( m, s );
+            //predicted.push_back( m.predict( s ) );
         }
               , test );
 
@@ -89,6 +93,7 @@ void RunModel::execute()
     }
 
     // Report.
+    print::info( "Calculating confusion matrix." );
     const auto conf = score::calc_confusion( ground_truth, predicted );
 
     std::cout << "Confusion matrix, rows - ground truth, columns - prediction.\n"

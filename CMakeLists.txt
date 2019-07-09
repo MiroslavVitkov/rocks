@@ -16,6 +16,7 @@ add_executable( rocks src/cli.cpp
                       src/cmd.cpp
                       src/io.cpp
                       src/label.cpp
+                      src/print.cpp
                       src/main.cpp
                       src/model.cpp
                       src/plot.cpp
