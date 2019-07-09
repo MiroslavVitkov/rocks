@@ -38,7 +38,7 @@ namespace io
 // 'labels_depth == 1' -> '/azurite'
 // 'labels_depth == 2' -> '/azurite/spot00' and an error for '99.csv'
 dat::DataRaw read( const std::string & dataset_dir
-                     , unsigned labels_depth = 1 );
+                 , unsigned labels_depth = 1 );
 
 
 }  // namespace io

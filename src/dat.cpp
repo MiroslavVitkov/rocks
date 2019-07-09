@@ -6,30 +6,117 @@
 #include <cassert>
 #include <numeric>
 #include <random>
+#include <set>
 
 
 namespace dat
 {
 
 
-// For each label, pick the first subdir as test, the rest as train.
+void decompose_label_helper( const std::string & label
+                           , size_t start
+                           , std::vector< std::string > & ret )
+{
+    const auto pos = label.find_first_of( '/', start );
+
+    if( pos != std::string::npos )
+    {
+        ret.emplace_back( label.substr( start, pos - start ) );
+        decompose_label_helper( label, pos, ret );
+    }
+    else
+    {
+        return;
+    }
+
+
+}
+
+
+// Decompose a hierarchical label.
+std::vector< std::string > decompose_label( const std::string & label )
+{
+    std::vector< std::string > ret;
+    decompose_label_helper( label, 0, ret );
+    return ret;
+}
+
+
+std::string head( const std::string & full_label )
+{
+    assert( full_label[0] == '/' );
+    const auto pos = full_label.find_first_of( '/', 1 );
+    return full_label.substr( 0, pos );
+}
+
+
+void append( std::vector< Spectrum > v1, const std::vector< Spectrum > v2 )
+{
+    v1.insert( v1.end(), v2.cbegin(), v2.cend() );
+}
+
+
 std::pair< DataRaw, DataRaw > split( const DataRaw & d )
 {
-    // Choose one subdir.
-    const auto labels = [ & d ] ()
-        {
-            std::vector<std::string> ret;
-            for( const auto & kv : d )
-            {
-                ret.emplace_back( kv.first );
-            }
-            return ret;
-        } ();
-    const auto label = labels[ pick_index( labels.size() ) ];
-
-    // Copy all instances of each label.
     DataRaw train, test;
 
+    std::set< std::string > processed;
+    for( const auto & kv : d )
+    {
+        const auto l = head( kv.first );
+
+        if( processed.count( l ) )
+        {
+            append( train[ l ], kv.second );
+        }
+        else
+        {
+            append( test[ l ], kv.second );
+            processed.emplace( l );
+        }
+    }
+
+    return { train, test };
+
+
+//    (void)d;
+//    apply( [ & ] ( const std::string & label
+//                 , const std::vector< Spectrum > & spectra )
+//        {
+//            const auto l = head( label );
+
+//            if( processed.count( l ) )
+//            {
+//                train[ l ].emplace_back( spectra.cbegin(), spectra.cend() );
+//            }
+//            else
+//            {
+//                test[ l ].emplace_back( spectra.cbegin(), spectra.cend() );
+//                processed.emplace( l );
+//            }
+//        }
+//         , d );
+
+//    std::function< void( const std::string &
+//                             , const std::vector< Spectrum > & ) > f =
+//    [ ] ( const std::string &
+//                 , const std::vector< Spectrum > & )
+//        {};
+//    (void)f;
+//    auto ff =
+//    [ ] ( const std::string &
+//                 , const std::vector< Spectrum > & )
+//        { return;  };
+//    (void) ff;
+
+//    apply( f, d );
+
+    // for each label
+    // if first sublabel
+    // then append all datapoints to test
+    // else append all datapoints to train
+
+#if 0
     for( auto & kv : d )
     {
         const auto short_label = [ & kv ] ()
@@ -61,8 +148,7 @@ std::pair< DataRaw, DataRaw > split( const DataRaw & d )
              append( train[ short_label ] );
         }
     }
-
-    return { train, test };
+#endif
 }
 
 

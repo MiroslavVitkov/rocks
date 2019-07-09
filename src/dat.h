@@ -64,11 +64,15 @@ using DataEncoded = std::unordered_map< int, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, Transcoder >;
 
 
+// For each label, pick the first subdir as test, the rest as train.
+// Requires 2 levels of hierarchical labels.
 std::pair< DataRaw, DataRaw > split( const DataRaw & );
 
 Dataset encode( DataRaw & );
 Dataset encode( DataRaw &, const Transcoder & );
 
+// Invoke provided functor on every element in a dataset.
+// Walking order is consistent until the dataset is altered.
 void apply( std::function< void( int, const Spectrum & ) >
           , const Dataset & );
 void apply( std::function< void( const std::string &, const Spectrum & ) >
