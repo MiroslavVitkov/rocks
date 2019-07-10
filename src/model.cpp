@@ -207,14 +207,11 @@ struct NN::Impl
 {
     // Layers.
     using Input = dlib::input< Sample >;
-    using Compute0 = dlib::fc< 30, dlib::relu< Input > >;
-    using Compute1 = dlib::fc< 300, dlib::relu< Compute0 > >;
-    using Compute2 = dlib::fc< 30, dlib::relu< Compute0 > >;
-    using Compute3 = dlib::con< 6, 5, 5, 1, 1, Compute2 >;
-    using Output = dlib::fc< 6, dlib::relu < Compute1 > >;
-    using Loss = dlib::loss_multiclass_log< Output >;
+    using Compute0 = dlib::softmax< dlib::fc< 100, Input > >;
+    using Compute1 = dlib::softmax< dlib::fc< 50, Compute0 > >;
+    using Output = dlib::loss_multiclass_log< dlib::fc< 6, Compute1 > >;
 
-    using Net = Loss;
+    using Net = Output;
     using Trainer = dlib::dnn_trainer< Net >;
 
 
@@ -226,9 +223,9 @@ struct NN::Impl
         }
 
         Trainer t{ _net };
-        t.set_learning_rate( 0.01 );
-        t.set_min_learning_rate( 0.00001 );
-        t.set_mini_batch_size( 1 );
+        t.set_learning_rate( 1e-3 );
+        t.set_min_learning_rate( 1e-6 );
+        t.set_mini_batch_size( 30 );
         t.be_verbose();
 
         using Flattened = std::pair< std::vector< Sample >
@@ -241,6 +238,7 @@ struct NN::Impl
             }     , d );
 
         t.train( fl.first, fl.second );
+        t.get_net();
     }
 
 
