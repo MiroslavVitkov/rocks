@@ -59,11 +59,15 @@ struct SVM : Model
     SVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
 
+    SVM( SVM && ) = default;
+    SVM & operator=( SVM && ) = default;
+    SVM( const SVM & ) = default;
+    SVM & operator=( const SVM & ) = default;
+    ~SVM() override;
+
 private:
-    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
-    using Flattened = std::pair< std::vector< Sample >
-                               , std::vector< label::Num > >;
-    const Flattened _training_set;
+    struct Impl;
+    std::unique_ptr< Impl > _impl;
 };
 
 
@@ -83,7 +87,8 @@ inline std::unique_ptr<Model> create( const std::string & name
     }
     if( is( "svm" ) )
     {
-        return std::make_unique< SVM >( SVM( d ) );
+        // std::make_unique() refuses to work before seing SVM::~Impl().
+        return std::unique_ptr< SVM >( new SVM( d ) );
     }
 
     throw Exception( name + ": no such model found."

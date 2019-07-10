@@ -114,42 +114,78 @@ label::Num Correlation::predict( const dat::Spectrum & test ) const
     return l;
 }
 
+struct SVM::Impl
+{
+    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
+    using Kernel = dlib::linear_kernel< Sample >;
+    using Classifier = dlib::multiclass_linear_decision_function< Kernel, label::Num >;
+    using Trainer = dlib::svm_multiclass_linear_trainer< Kernel, label::Num >;
+    using Flattened = std::pair< std::vector< Sample >
+                               , std::vector< label::Num > >;
+
+
+    Impl( const dat::Dataset & d )
+        : _svm{ [ & ] () -> Classifier
+            {
+                Flattened fl;
+
+                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+                    {
+                        const auto p = reinterpret_cast< const double ( * )
+                                                       [ dat::Spectrum::_num_points ] >
+                                       ( s._y.data() );
+                        assert( p );
+
+                        fl.first.emplace_back( * p );
+                        fl.second.push_back( l );
+                    }     , d );
+
+                if( fl.first.empty() )
+                {
+                    return {};
+                }
+
+                Trainer trainer;
+                trainer.set_num_threads( 10 );
+
+                const Classifier svm = trainer.train( fl.first, fl.second );
+                return svm;
+            } () }
+    {
+    }
+
+
+    Impl( Impl && ) = default;
+    Impl & operator=( Impl && ) = default;
+    Impl( const Impl & ) = default;
+    Impl & operator=( const Impl & ) = default;
+    ~Impl() = default;
+
+
+private:
+    const Classifier _svm;
+};
+
 
 SVM::SVM( const dat::Dataset & d )
-    : _training_set{ [ & ] ()
-        {
-            Flattened ret;
-
-            dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-                {
-                    const auto p = reinterpret_cast< const double ( * )
-                                                   [ dat::Spectrum::_num_points ] >
-                                   ( s._y.data() );
-                    assert( p );
-
-                    ret.first.emplace_back( * p );
-                    ret.second.push_back( l );
-                }     , d );
-
-            using sample_type = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
-            using kernel_type = dlib::linear_kernel< sample_type >;
-            dlib::svm_multiclass_linear_trainer< kernel_type, label::Num > svm_trainer;
-            const auto svm = svm_trainer.train( ret.first, ret.second );
-
-            return ret;
-        } () }
+    : _impl{ std::make_unique< Impl >( d ) }
 {
 }
 
 
 label::Num SVM::predict( const dat::Spectrum & test ) const
 {
-
+//dlib::svm_multiclass_linear_trainer<dlib::linear_kernel<dlib::matrix<double, 7810, 1, dlib::memory_manager_stateless_kernel_1<char>, dlib::row_major_layout> >, int>
 //    Sample s{ test._y.cbegin(), test._y.cend() };
 //    const auto ret = svm.predict( test );
 //    return ret;
     (void)test;
     return 0;
+}
+
+
+SVM::~SVM()
+{
 }
 
 
