@@ -71,6 +71,19 @@ private:
 };
 
 
+struct NN : Model
+{
+    NN( const dat::Dataset & );
+    label::Num predict( const dat::Spectrum & ) const override;
+    ~NN() override;
+
+private:
+    struct Impl;
+    std::unique_ptr< Impl > _impl;
+};
+
+
+
 inline std::unique_ptr<Model> create( const std::string & name
                                     , const dat::Dataset & d )
 {
@@ -81,7 +94,7 @@ inline std::unique_ptr<Model> create( const std::string & name
     {
         return std::make_unique< RandomChance >( RandomChance( d ) );
     }
-    if( is( "correlation" ) )
+    if( is( "cor" ) )
     {
         return std::make_unique< Correlation >( Correlation( d ) );
     }
@@ -89,6 +102,10 @@ inline std::unique_ptr<Model> create( const std::string & name
     {
         // std::make_unique() refuses to work before seing SVM::~Impl().
         return std::unique_ptr< SVM >( new SVM( d ) );
+    }
+    if( is( "nn" ) )
+    {
+        return std::unique_ptr< NN >( new NN( d ) );
     }
 
     throw Exception( name + ": no such model found."

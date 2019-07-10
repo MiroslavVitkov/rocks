@@ -2,6 +2,7 @@
 
 #include "label.h"
 
+#include <dlib/dnn.h>
 #include <dlib/matrix.h>
 #include <dlib/memory_manager.h>
 #include <dlib/statistics.h>
@@ -114,26 +115,29 @@ label::Num Correlation::predict( const dat::Spectrum & test ) const
     return l;
 }
 
+
+using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
+using Flattened = std::pair< std::vector< Sample >
+                           , std::vector< label::Num > >;
+
+
+Sample to_dlib_sample( const dat::Spectrum & s )
+{
+    const auto p = reinterpret_cast< const double ( * )
+                                   [ dat::Spectrum::_num_points ] >
+                   ( s._y.data() );
+    assert( p );
+
+    Sample sam( * p );
+    return sam;
+}
+
+
 struct SVM::Impl
 {
-    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
     using Kernel = dlib::linear_kernel< Sample >;
     using Classifier = dlib::multiclass_linear_decision_function< Kernel, label::Num >;
     using Trainer = dlib::svm_multiclass_linear_trainer< Kernel, label::Num >;
-    using Flattened = std::pair< std::vector< Sample >
-                               , std::vector< label::Num > >;
-
-
-    Sample to_sample( const dat::Spectrum & s ) const
-    {
-        const auto p = reinterpret_cast< const double ( * )
-                                       [ dat::Spectrum::_num_points ] >
-                       ( s._y.data() );
-        assert( p );
-
-        Sample sam( * p );
-        return sam;
-    }
 
 
     Impl( const dat::Dataset & d )
@@ -143,7 +147,7 @@ struct SVM::Impl
 
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                     {
-                        fl.first.emplace_back( to_sample( s ) );
+                        fl.first.emplace_back( to_dlib_sample( s ) );
                         fl.second.push_back( l );
                     }     , d );
 
@@ -164,7 +168,7 @@ struct SVM::Impl
 
     label::Num predict( const dat::Spectrum & test ) const
     {
-        const auto s = to_sample( test );
+        const auto s = to_dlib_sample( test );
         const auto ret = _svm.predict( s ); (void)ret;
         return ret.first;  // what is ret.second?
     }
@@ -195,6 +199,77 @@ label::Num SVM::predict( const dat::Spectrum & test ) const
 
 
 SVM::~SVM()
+{
+}
+
+    using namespace dlib;
+struct NN::Impl
+{
+    // Layers.
+    using Input = dlib::input< Sample >;
+    using Compute0 = dlib::fc< 30, dlib::relu< Input > >;
+    using Compute1 = dlib::fc< 300, dlib::relu< Compute0 > >;
+    using Compute2 = dlib::fc< 30, dlib::relu< Compute0 > >;
+    using Compute3 = dlib::con< 6, 5, 5, 1, 1, Compute2 >;
+    using Output = dlib::fc< 6, dlib::relu < Compute1 > >;
+    using Loss = dlib::loss_multiclass_log< Output >;
+
+    using Net = Loss;
+    using Trainer = dlib::dnn_trainer< Net >;
+
+
+    Impl( const dat::Dataset & d )
+    {
+        if( d.first.empty() )
+        {
+            return;
+        }
+
+        Trainer t{ _net };
+        t.set_learning_rate( 0.01 );
+        t.set_min_learning_rate( 0.00001 );
+        t.set_mini_batch_size( 1 );
+        t.be_verbose();
+
+        using Flattened = std::pair< std::vector< Sample >
+                                   , std::vector< unsigned long > >;
+        Flattened fl;
+        dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+            {
+                fl.first.emplace_back( to_dlib_sample( s ) );
+                fl.second.push_back( static_cast< unsigned long >( l ) );
+            }     , d );
+
+        t.train( fl.first, fl.second );
+    }
+
+
+    label::Num predict( const dat::Spectrum & s ) const
+    {
+        std::vector< Sample > v{ to_dlib_sample( s ) }; (void)v;
+        const auto predicted = _net( v );
+        const auto p = predicted.front();
+        return static_cast< label::Num >( p );
+    }
+
+
+    mutable Net _net {};
+};
+
+
+NN::NN( const dat::Dataset & d )
+    : _impl{ std::make_unique< Impl >( d ) }
+{
+}
+
+
+label::Num NN::predict( const dat::Spectrum & s ) const
+{
+    return _impl->predict( s );
+}
+
+
+NN::~NN()
 {
 }
 
