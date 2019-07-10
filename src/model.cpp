@@ -124,6 +124,18 @@ struct SVM::Impl
                                , std::vector< label::Num > >;
 
 
+    Sample to_sample( const dat::Spectrum & s ) const
+    {
+        const auto p = reinterpret_cast< const double ( * )
+                                       [ dat::Spectrum::_num_points ] >
+                       ( s._y.data() );
+        assert( p );
+
+        Sample sam( * p );
+        return sam;
+    }
+
+
     Impl( const dat::Dataset & d )
         : _svm{ [ & ] () -> Classifier
             {
@@ -131,12 +143,7 @@ struct SVM::Impl
 
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                     {
-                        const auto p = reinterpret_cast< const double ( * )
-                                                       [ dat::Spectrum::_num_points ] >
-                                       ( s._y.data() );
-                        assert( p );
-
-                        fl.first.emplace_back( * p );
+                        fl.first.emplace_back( to_sample( s ) );
                         fl.second.push_back( l );
                     }     , d );
 
@@ -152,6 +159,14 @@ struct SVM::Impl
                 return svm;
             } () }
     {
+    }
+
+
+    label::Num predict( const dat::Spectrum & test ) const
+    {
+        const auto s = to_sample( test );
+        const auto ret = _svm.predict( s ); (void)ret;
+        return ret.first;  // what is ret.second?
     }
 
 
@@ -175,12 +190,7 @@ SVM::SVM( const dat::Dataset & d )
 
 label::Num SVM::predict( const dat::Spectrum & test ) const
 {
-//dlib::svm_multiclass_linear_trainer<dlib::linear_kernel<dlib::matrix<double, 7810, 1, dlib::memory_manager_stateless_kernel_1<char>, dlib::row_major_layout> >, int>
-//    Sample s{ test._y.cbegin(), test._y.cend() };
-//    const auto ret = svm.predict( test );
-//    return ret;
-    (void)test;
-    return 0;
+    return _impl->predict( test );
 }
 
 
