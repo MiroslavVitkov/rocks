@@ -68,8 +68,9 @@ private:
 
 // Challange: some predicted labels may not exist in the ground_truth.
 // Challange: labels can be arbitrary numbers.
-dlib::matrix< unsigned > calc_confusion( const std::vector<int> & ground_truth
-                                       , const std::vector<int> & predicted )
+dlib::matrix< unsigned >
+calc_confusion( const std::vector< label::Num > &ground_truth
+              , const std::vector< label::Num > &predicted )
 {
     assert( ground_truth.size() == predicted.size() );
 

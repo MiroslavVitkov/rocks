@@ -24,8 +24,9 @@ const dat::Spectrum & find_worst( Comp, const dat::Dataset & d );
 
 
 // Each row corresponds to a class of data and each column to a prediction.
-dlib::matrix< unsigned > calc_confusion( const std::vector<int> & ground_truth
-                                       , const std::vector<int> & predicted );
+dlib::matrix< unsigned >
+calc_confusion( const std::vector< label::Num > & ground_truth
+              , const std::vector< label::Num > & predicted );
 
 
 }  // namespace score

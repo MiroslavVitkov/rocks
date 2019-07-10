@@ -3,11 +3,9 @@
 #include "io.h"
 #include "label.h"
 #include "model.h"
-#include "plot.h"
 #include "print.h"
 #include "score.h"
 
-#include <functional>
 #include <future>
 #include <iostream>
 #include <numeric>
@@ -52,10 +50,11 @@ struct Task
     }
 
 
-    // Despite all this effort, moving a Task object
+    // 1. Despite all this effort, moving a Task object
     // (for example by a vector rellocating its storage)
     // causes a weird crash.
     // For now the workaround is to allocate enough memory in the container.
+    // 2. The threads bog down the machine, implement limit on their number.
     Task( Task && t )
         : _p{ std::move( t._p ) }
     {
@@ -84,13 +83,17 @@ void RunModel::execute()
     const auto test = dat::encode( traintest.second, train.second );
 
     // Train the model.
+    print::info( "Training the model." );
     const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
     std::vector< Task > tasks;
-    tasks.reserve( dat::count( test ) );
+    const auto count = dat::count( test );
+    ground_truth.reserve( count );
+    predicted.reserve( count );
+    tasks.reserve( count );
 
     print::info( "Evaluating the test set." );
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
@@ -123,7 +126,7 @@ ReportOutliers::ReportOutliers( const std::string & data_dir )
 
 void ReportOutliers::execute()
 {
-    auto spectra = io::read( _data_dir );
+    const auto spectra = io::read( _data_dir );
 
     // Measure.
     unsigned num_files {};
@@ -168,60 +171,6 @@ void ReportOutliers::execute()
               << sum_negatives / num_negatives
               << ".\nThe most extreme negative value is " << most_negative
               << ".\n";
-
-    const auto dataset = dat::encode( spectra );
-
-#define WHICH 4
-#if WHICH == 0
-    plot::plot( score::find_worst( [ & ] ( const io::Spectrum & s )
-        {
-            if( std::find( s._y.cbegin(), s._y.cend(), most_negative ) != s._y.cend() )
-            {
-                return -1;
-            }
-
-            return 0;
-        }
-                                 , dataset )
-              , "Highest negative amplitude." );
-#elif WHICH == 1
-
-    const auto neg_energy = [] ( double init, double intensity )
-    {
-        if( intensity < 0 )
-        {
-            init += intensity * intensity;
-        }
-        return init;
-    };
-
-    plot::plot( score::find_worst( [ & ] ( const io::Spectrum & s )
-        {
-            return - std::accumulate( s._y.cbegin()
-                                    , s._y.cend()
-                                    , 0.0
-                                    , neg_energy );
-        }
-                                 , dataset )
-              , "Highest negative energy." );
-#elif WHICH == 2
-    plot::plot( score::find_worst( [ & ] ( const io::Spectrum & s )
-        {
-            return std::count_if( s._y.cbegin()
-                                , s._y.cend()
-                                , [] ( double d )
-                {
-                    return d < 0;
-                }
-                                );
-        }
-                                 , dataset )
-              , "Highest number of negatives." );
-#elif WHICH == 3
-    const auto dat = io::read( _data_dir, 2 );
-    io::apply( [] ( const std::string & label, const io::Spectrum)
-    { std::cout << label << '\n'; }, dat );
-#endif
 }
 
 

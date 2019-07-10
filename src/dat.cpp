@@ -1,11 +1,5 @@
 #include "dat.h"
 
-#include "except.h"
-
-#include <algorithm>
-#include <cassert>
-#include <numeric>
-#include <random>
 #include <set>
 
 

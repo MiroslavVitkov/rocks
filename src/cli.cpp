@@ -51,8 +51,8 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
         // Verify such a model exists by creating one with an empy training set.
         auto m = model::create( model_name, {} );
 
-        return std::make_unique<cmd::RunModel>( "../rocks/data"
-                                              , model_name );
+        return std::make_unique< cmd::RunModel >( "../rocks/data"
+                                                , model_name );
     }
 
     if( parser.option( "o" ) || parser.option( "outliers" ) )

@@ -5,7 +5,8 @@
 // In this file:
 //     operations over the dataset:
 //     1. the datapoint type throughout the project,
-//     2. splitting into train and test detasets.
+//     2. splitting into train and test detasets
+//     3. walking the dataset sequentially.
 
 
 #include "label.h"
@@ -14,7 +15,6 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 

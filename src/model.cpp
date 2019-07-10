@@ -2,6 +2,7 @@
 
 #include "label.h"
 
+#include <dlib/matrix.h>
 #include <dlib/memory_manager.h>
 #include <dlib/statistics.h>
 #include <dlib/svm_threaded.h>

@@ -7,11 +7,8 @@
 //               2. factory from std::string (at the end).
 
 
-#include "cmd.h"
 #include "dat.h"
 #include "except.h"
-
-#include <dlib/matrix.h>
 
 #include <filesystem>
 #include <memory>
