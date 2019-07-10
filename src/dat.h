@@ -55,9 +55,9 @@ Dataset encode( DataRaw &, const label::Codec & );
 
 // Invoke provided functor on every element in a dataset.
 // Walking order is consistent until the dataset is altered.
-void apply( std::function< void( int, const Spectrum & ) >
+void apply( std::function< void ( label::Num, const Spectrum & ) >
           , const Dataset & );
-void apply( std::function< void( const std::string &, const Spectrum & ) >
+void apply( std::function< void ( const label::Raw &, const Spectrum & ) >
           , const DataRaw & );
 
 // Count total number of spectra.

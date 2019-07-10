@@ -1,6 +1,10 @@
 #include "model.h"
 
+#include "label.h"
+
+#include <dlib/memory_manager.h>
 #include <dlib/statistics.h>
+#include <dlib/svm_threaded.h>
 
 #include <algorithm>
 #include <cassert>
@@ -107,6 +111,44 @@ label::Num Correlation::predict( const dat::Spectrum & test ) const
     const auto l = _labels[ static_cast<size_t>( index ) ];
 
     return l;
+}
+
+
+SVM::SVM( const dat::Dataset & d )
+    : _training_set{ [ & ] ()
+        {
+            Flattened ret;
+
+            dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+                {
+                    const auto p = reinterpret_cast< const double ( * )
+                                                   [ dat::Spectrum::_num_points ] >
+                                   ( s._y.data() );
+                    assert( p );
+
+                    ret.first.emplace_back( * p );
+                    ret.second.push_back( l );
+                }     , d );
+
+            using sample_type = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
+            using kernel_type = dlib::linear_kernel< sample_type >;
+            dlib::svm_multiclass_linear_trainer< kernel_type, label::Num > svm_trainer;
+            const auto svm = svm_trainer.train( ret.first, ret.second );
+
+            return ret;
+        } () }
+{
+}
+
+
+label::Num SVM::predict( const dat::Spectrum & test ) const
+{
+
+//    Sample s{ test._y.cbegin(), test._y.cend() };
+//    const auto ret = svm.predict( test );
+//    return ret;
+    (void)test;
+    return 0;
 }
 
 

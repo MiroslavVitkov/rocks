@@ -11,6 +11,8 @@
 #include "dat.h"
 #include "except.h"
 
+#include <dlib/matrix.h>
+
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -55,6 +57,19 @@ private:
 };
 
 
+struct SVM : Model
+{
+    SVM( const dat::Dataset & );
+    label::Num predict( const dat::Spectrum & ) const override;
+
+private:
+    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
+    using Flattened = std::pair< std::vector< Sample >
+                               , std::vector< label::Num > >;
+    const Flattened _training_set;
+};
+
+
 inline std::unique_ptr<Model> create( const std::string & name
                                     , const dat::Dataset & d )
 {
@@ -68,6 +83,10 @@ inline std::unique_ptr<Model> create( const std::string & name
     if( is( "correlation" ) )
     {
         return std::make_unique< Correlation >( Correlation( d ) );
+    }
+    if( is( "svm" ) )
+    {
+        return std::make_unique< SVM >( SVM( d ) );
     }
 
     throw Exception( name + ": no such model found."

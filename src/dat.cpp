@@ -74,7 +74,8 @@ Dataset encode( DataRaw & raw, const label::Codec & t )
 // The iteration order of unordered associative containers can only change
 // when rehashing as a result of a mutating operation
 // (as described in C++11 23.2.5/8).
-void apply( std::function< void( int, const Spectrum & ) > f, const Dataset & d )
+void apply( std::function< void ( label::Num, const Spectrum & ) > f
+          , const Dataset & d )
 {
     for( const auto & label_vector : d.first )
     {
@@ -86,7 +87,7 @@ void apply( std::function< void( int, const Spectrum & ) > f, const Dataset & d 
 }
 
 
-void apply( std::function< void( const std::string &, const Spectrum & ) > f
+void apply(std::function< void ( const label::Raw &, const Spectrum & ) > f
           , const DataRaw & d )
 {
     for( const auto & label_vector : d )
