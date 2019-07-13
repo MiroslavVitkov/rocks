@@ -84,6 +84,19 @@ private:
 
 
 
+struct Forest : Model
+{
+    Forest( const dat::Dataset & );
+    label::Num predict( const dat::Spectrum & ) const override;
+    ~Forest() override;
+
+private:
+    struct Impl;
+    std::unique_ptr< Impl > _impl;
+};
+
+
+
 inline std::unique_ptr<Model> create( const std::string & name
                                     , const dat::Dataset & d )
 {
@@ -107,8 +120,12 @@ inline std::unique_ptr<Model> create( const std::string & name
     {
         return std::unique_ptr< NN >( new NN( d ) );
     }
+    if( is( "forest" ) )
+    {
+        return std::unique_ptr< Forest >( new Forest( d ) );
+    }
 
-    throw Exception( name + ": no such model found."
+    throw Exception( name + ": no such model found. "
                      "See 'model.h' for a list of all models." );
 }
 
