@@ -7,8 +7,6 @@
 #include <dlib/memory_manager.h>
 #include <dlib/statistics.h>
 #include <dlib/svm_threaded.h>
-#include <opencv2/core.hpp>
-#include <opencv2/ml.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -276,55 +274,15 @@ NN::~NN()
 
 struct Forest::Impl
 {
-    Impl( const dat::Dataset & d )
+    Impl( const dat::Dataset & )
     {
-        // Format the training data.
-        const auto num_samples = static_cast< int >( dat::count( d ) );
-        cv::Mat samples( num_samples, dat::Spectrum::_num_points, CV_32F );
-        cv::Mat labels( num_samples, 1, CV_32S );
-                        cv::Mat m( 1, dat::Spectrum::_num_points, CV_32F );
-        long row = 0;
-        dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-            {
-            if(row > 10) return;
-                std::copy( s._y.cbegin()
-                         , s._y.cend()
-                         , m.begin<float>() + row );
-                std::copy( & l
-                         , & l + 1
-                         , labels.begin< label::Num >() + row );
-                ++row;
-            }     , d );
-        const auto conf = cv::ml::TrainData::create( samples
-                                                   , cv::ml::ROW_SAMPLE
-                                                   , labels );
-
-        // Train the model.
-//        _model->setMaxDepth( 20 );
-//        _model->setMinSampleCount( 10 );
-//        _model->setMaxCategories( 15 );
-        if(samples.empty()) return;
-
-
-        _model->train( conf );
     }
 
 
-    label::Num predict( const dat::Spectrum & s ) const
+    label::Num predict( const dat::Spectrum & ) const
     {
-        cv::Mat m( 1, dat::Spectrum::_num_points, CV_32F );
-        std::copy( s._y.cbegin()
-                 , s._y.cend()
-                 , m.begin<float>() );
-
-        const auto pred = _model->predict( m );
-        const auto cast = static_cast< label::Num >
-                          ( static_cast< double >( pred ) + 0.5 );
-        return cast;
+        return 0;
     }
-
-
-    cv::Ptr< cv::ml::SVM > _model = cv::ml::SVM::create();
 };
 
 
