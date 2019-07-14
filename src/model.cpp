@@ -202,7 +202,7 @@ SVM::~SVM()
 {
 }
 
-    using namespace dlib;
+
 struct NN::Impl
 {
     // Layers.
