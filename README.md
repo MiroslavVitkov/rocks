@@ -7,7 +7,7 @@ libsqlite3-dev
 libdlib-dev - no, compile it from source with cuda support: 1. nvidia-cuda-dev, nvidia-smi 2.(need to register) https://developer.nvidia.com/rdp/cudnn-download
       3. https://github.com/davisking/dlib     CC=gcc-7 CXX=g++-7 cmake .. -DUSE_AVX_INSTRUCTIONS=1  
 https://github.com/ashokpant/accuracy-evaluation-cpp  
-libqwt-qt5-dev
+libqwt-qt5-dev  
 
 
 # Introduction to the domain
