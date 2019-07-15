@@ -2,6 +2,8 @@
 
 #include "label.h"
 
+#include <andres/ml/decision-trees.hxx>
+
 #include <dlib/dnn.h>
 #include <dlib/matrix.h>
 #include <dlib/memory_manager.h>
@@ -274,15 +276,54 @@ NN::~NN()
 
 struct Forest::Impl
 {
-    Impl( const dat::Dataset & )
+    using Feature = double;
+    using Label = label::Num;
+    using Probability = double;
+
+
+    Impl( const dat::Dataset & d )
     {
+        const auto num_samples = dat::count( d );
+        if( ! num_samples )
+        {
+            return;
+        }
+
+        const auto num_features = dat::Spectrum::_num_points;
+        andres::Matrix< Feature > f( num_samples, num_features );
+        auto f_it = f.begin();
+
+        andres::Vector< Label > l( num_samples );
+        auto l_it = l.begin();
+
+        dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+            {
+                std::copy( s._y.cbegin(), s._y.cend(), f_it );
+                f_it += num_features;
+
+                * l_it = l;
+                ++l_it;
+            }     , d );
+
+        _model.learn( f, l );
     }
 
 
-    label::Num predict( const dat::Spectrum & ) const
+    label::Num predict( const dat::Spectrum & s ) const
     {
-        return 0;
+        andres::Matrix< Feature > f( 1, dat::Spectrum::_num_points );
+        std::copy( s._y.cbegin(), s._y.cend(), f.begin() );
+
+        andres::Matrix< Probability > p( 1, 6 );
+        _model.predict( f, p );
+
+        const auto it = std::max_element( p.begin(), p.end() );
+        const auto predicted = it - p.begin();
+
+        return static_cast< label::Num >( predicted );
     }
+
+    andres::ml::DecisionForest< Feature, Label, Probability > _model;
 };
 
 
