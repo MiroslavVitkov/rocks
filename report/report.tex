@@ -1,6 +1,13 @@
 \documentclass{article}
+
+
+\usepackage[table]{xcolor}
+
+
 \title{Comparisson of methods for multiclass classification of multi-dimensional data}
 \author{Miroslav Vitkov}
+
+
 \begin{document}
 \maketitle
 
@@ -19,34 +26,52 @@ The reference number of the dataset is 190401.
 The data is not being preprocessed, despite obvious indicators of noise.
 
 
-\section{Random Chance}
-First, for sanity checking of the system, a random chance model was developed.
-It looks only at the distribution of training labels and produces a similar distribution at prediction time.
-One example output is <>.
+\section{Models}
+The following algorithms were tried with default parameters from the corresponding libraries implementing them.
+Accuracy is calculated as:
+Prediction time is:
+Training time is:
+Computational mode illustrates how much room for improvement there is in the used implementation.
+\\ \par
+\rowcolors{1}{white}{lightgray}
+\begin{tabular}{ c | c | c | c | c }
+algorithm      & accuracy & prediction time & training time & computational model \\
+random chance  & & & & single thread \\
+correlation    & & & & multithreaded \\
+SVM            & & & & GPU \\ verify!!
+neural network & & & & GPU \\  verify!!
+random forest  & & & & multithreaded \\
+\end{tabular}
+
+
+\subsection{Random Chance}
+Firstly, for sanity checking of the system, a random chance model was developed.
+It looks only at the distribution of training labels and produces a similar stochastic distribution at prediction time.
 
 
 \section{Correlation}
-With such a small dataset, correlation is feisable.
+With such a small dataset, correlation is feasible.
 It yields good results, but is not scalable.
 
 
 \section{SVM}
 The SVM model performs well and runs quickly at prediction time.
-maximum-margin classifier
-kernel trick
-hard/soft margin
-Radial basis function kernel
-http://webspace.ulbsibiu.ro/lucian.vintan/html/sci.pdf
-one vs one / one vs many
-curse of dimensionality
-https://stats.stackexchange.com/questions/77876/why-would-scaling-features-decrease-svm-performance?rq=1
-https://arxiv.org/pdf/0810.4752v1.pdf
-https://stats.stackexchange.com/questions/10423/number-of-features-vs-number-of-observations/10426#10426
-https://stats.stackexchange.com/a/10426/208261
-https://stats.stackexchange.com/questions/186184/does-dimensionality-curse-effect-some-models-more-than-others
-choice of regularization coefficient c
-choice of kernel
-choice of kernel parameters
+%maximum-margin classifier
+%kernel trick
+%hard/soft margin
+%Radial basis function kernel
+%http://webspace.ulbsibiu.ro/lucian.vintan/html/sci.pdf
+%one vs one / one vs many
+%curse of dimensionality
+%https://stats.stackexchange.com/questions/77876/why-would-scaling-features-decrease-svm-performance?rq=1
+%https://arxiv.org/pdf/0810.4752v1.pdf
+%https://stats.stackexchange.com/questions/10423/number-of-features-vs-number-of-observations/10426#10426
+%https://stats.stackexchange.com/a/10426/208261
+%https://stats.stackexchange.com/questions/186184/does-dimensionality-curse-effect-some-models-more-than-others
+%choice of regularization coefficient c
+%choice of kernel
+%choice of kernel parameters
+% probabilistic classifier
 
 \section{Neural Network}
 A naive model with two hidden layers with relu activations performed extremely poorly: <>.
