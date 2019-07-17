@@ -94,10 +94,32 @@ void apply(std::function< void ( const label::Raw &, const Spectrum & ) > f
 }
 
 
+void mutate( std::function< void ( const label::Raw &, Spectrum & ) > f
+           , DataRaw & d )
+{
+    for( auto & label_vector : d )
+    {
+        for( auto & s : label_vector.second )
+        {
+            f( label_vector.first, s );
+        }
+    }
+}
+
+
 size_t count( const dat::Dataset & d )
 {
     size_t total {};
     dat::apply( [ &total ] ( int, const dat::Spectrum & ) { ++total; }, d );
+    return total;
+}
+
+
+size_t count( const dat::DataRaw & d )
+{
+    size_t total {};
+    dat::apply( [ & total ] ( const std::string &, const dat::Spectrum & )
+        { ++total; }, d );
     return total;
 }
 

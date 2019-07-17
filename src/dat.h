@@ -60,9 +60,12 @@ void apply( std::function< void ( label::Num, const Spectrum & ) >
 void apply( std::function< void ( const label::Raw &, const Spectrum & ) >
           , const DataRaw & );
 
-// Count total number of spectra.
-size_t count( const dat::Dataset & d );
+void mutate ( std::function< void ( const label::Raw &, Spectrum & ) >
+            , DataRaw & );
 
+// Count total number of spectra.
+size_t count( const dat::Dataset & );
+size_t count( const dat::DataRaw & );
 
 }  // namespace dataset
 
