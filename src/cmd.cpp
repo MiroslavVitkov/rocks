@@ -3,6 +3,7 @@
 #include "io.h"
 #include "label.h"
 #include "model.h"
+#include "pre.h"
 #include "print.h"
 #include "score.h"
 
