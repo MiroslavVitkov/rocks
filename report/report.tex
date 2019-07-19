@@ -1,15 +1,27 @@
 \documentclass{article}
 
 
+\usepackage[backend=bibtex]{biblatex}
 \usepackage[table]{xcolor}
 
 
+\bibliography{report}
 \title{Comparisson of methods for multiclass classification of multi-dimensional data}
 \author{Miroslav Vitkov}
 
 
 \begin{document}
 \maketitle
+
+
+\begin{abstract}
+This is an exploratory analysis of classical machine learning algorithms.
+The problem is multiclass classification with about 8000 features and at least 2000 training samples.
+First several algorithm families are tried with default coefficients.
+The best performing of them (SVM) is then tuned - kernel type, kernel parameters, data preprocessing.
+Lastly, statistical analysis on the real-world problem is carried on.
+\end{abstract}
+
 
 \section{Introduction}
 The task is to classify rock samples in one of six classes.
@@ -18,7 +30,12 @@ The SVM model showed best promise.
 
 
 \section{Dataset}
-The dataset consists of 2362 datapoints all classified within the 6 labels and 45 sublabels.
+The data represents Laser-induced breakdown spectroscopy\cite{libs_intro} measurements.
+For every measured region on every rock 7810 numbers have been recorded.
+They correspond to radiant intensities, centered at [180, 960.9] nanometers wavelength.
+%Those intensities are radiance of the plasma [W·sr−1·m−2], convolved with the unknown impulse response of the measurement equipment.  % TODO: use \watt etc. 
+\\
+The dataset consists of 2362 datapoints all classified within the 6 labels and 45 sublabels(regions).
 The reference number of the dataset is 190401.
 
 
@@ -84,6 +101,10 @@ A OpenMP-based random forest classifier took extremely long to train and yielded
 
 \section{Conclusion}
 An SVM is a suitable baseline model for multiclass classification of high dimensionality objects.
+
+
+%\bibliographystyle{te}
+\printbibliography
 
 
 \end{document}
