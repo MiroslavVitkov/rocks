@@ -7,6 +7,8 @@
 
 #include "dat.h"
 
+#include <vector>
+
 
 namespace pre
 {
@@ -14,6 +16,10 @@ namespace pre
 
 void logarithm( dat::DataRaw & );
 void normalize( dat::DataRaw & );
+
+// 'ret[ 0 ]' is the index of most important frequency.
+// Next is 'ret[ 1 ]' etc.
+std::vector< size_t > rank_features( const dat::Dataset & );
 
 
 }  // namespace pre

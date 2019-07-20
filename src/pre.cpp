@@ -1,5 +1,10 @@
 #include "pre.h"
 
+#include "label.h"
+
+#include <dlib/statistics.h>
+#include <dlib/svm.h>
+
 #include <cassert>
 #include <cmath>
 
@@ -94,5 +99,54 @@ void normalize( dat::DataRaw & d )
             }
         }      , d );
 }
+
+
+std::vector< size_t > rank_features( const dat::Dataset & d )
+{
+    // Most naive approach - look at only the first two classes.
+    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
+    using Kernel = dlib::radial_basis_kernel< Sample >;
+
+    std::vector< Sample > samples;
+    std::vector< label::Num > labels;
+    dat::apply( [ & ] ( const label::Num l, const dat::Spectrum & s )
+        {
+            labels.push_back( l );
+            Sample sample;
+            std::copy( s._y.cbegin(), s._y.cend(), sample.begin() );
+            samples.push_back( sample );
+        }     , d );
+
+    // Normalize the data.
+    const Sample m(dlib::mean(dlib::mat(samples)));  // compute a mean vector
+    const Sample sd(dlib::reciprocal(dlib::stddev(dlib::mat(samples)))); // compute a standard deviation vector
+    for (unsigned long i = 0; i < samples.size(); ++i)
+    {
+        samples[i] = pointwise_multiply(samples[i] - m, sd);
+        for( const auto ss : samples[i] )
+        {
+        if( std::isnan( ss ) )
+        {
+            throw 7;
+        }
+        }
+    }
+    dlib::randomize_samples(samples,labels);
+
+    const auto gamma = dlib::verbose_find_gamma_with_big_centroid_gap( samples
+                                                                     , labels );
+    dlib::kcentroid< Kernel > kc( Kernel( gamma ), 0.001, 25 );
+     const auto rank = dlib::rank_features( kc, samples, labels );
+
+    std::vector< size_t > ret;
+    for( auto i = 0u; i < dat::Spectrum::_num_points; ++i )
+    {
+        ret.push_back( static_cast< size_t >( rank( i, 0 ) ) );
+    }
+
+
+    return ret;
+}
+
 
 }  // namespace pre
