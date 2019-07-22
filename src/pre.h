@@ -20,7 +20,7 @@ void normalize( dat::DataRaw & );
 // 'ret[ 0 ]' is the index of most important frequency.
 // Next is 'ret[ 1 ]' etc.
 std::vector< size_t > rank_features( const dat::Dataset & );
-
+dat::Dataset lda( const dat::Dataset & d );
 
 }  // namespace pre
 

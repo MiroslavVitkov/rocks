@@ -83,8 +83,8 @@ void RunModel::execute()
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
 
-    const auto rank = pre::rank_features( train );
-    std::cout << rank[0] << ", " << rank[1] << std::endl;
+    const auto rank = pre::lda( train );
+//    std::cout << rank[0] << ", " << rank[1] << std::endl;
 
     // Train the model.
     print::info( "Training an " + _model_name + " model." );

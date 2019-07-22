@@ -101,52 +101,37 @@ void normalize( dat::DataRaw & d )
 }
 
 
-std::vector< size_t > rank_features( const dat::Dataset & d )
+std::vector< size_t > rank_features( const dat::Dataset & )
 {
-    // Most naive approach - look at only the first two classes.
-    using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
-    using Kernel = dlib::radial_basis_kernel< Sample >;
-
-    std::vector< Sample > samples;
-    std::vector< label::Num > labels;
-    dat::apply( [ & ] ( const label::Num l, const dat::Spectrum & s )
-        {
-            labels.push_back( l );
-            Sample sample;
-            std::copy( s._y.cbegin(), s._y.cend(), sample.begin() );
-            samples.push_back( sample );
-        }     , d );
-
-    // Normalize the data.
-    const Sample m(dlib::mean(dlib::mat(samples)));  // compute a mean vector
-    const Sample sd(dlib::reciprocal(dlib::stddev(dlib::mat(samples)))); // compute a standard deviation vector
-    for (unsigned long i = 0; i < samples.size(); ++i)
-    {
-        samples[i] = pointwise_multiply(samples[i] - m, sd);
-        for( const auto ss : samples[i] )
-        {
-        if( std::isnan( ss ) )
-        {
-            throw 7;
-        }
-        }
-    }
-    dlib::randomize_samples(samples,labels);
-
-    const auto gamma = dlib::verbose_find_gamma_with_big_centroid_gap( samples
-                                                                     , labels );
-    dlib::kcentroid< Kernel > kc( Kernel( gamma ), 0.001, 25 );
-     const auto rank = dlib::rank_features( kc, samples, labels );
-
-    std::vector< size_t > ret;
-    for( auto i = 0u; i < dat::Spectrum::_num_points; ++i )
-    {
-        ret.push_back( static_cast< size_t >( rank( i, 0 ) ) );
-    }
-
-
-    return ret;
+    return {};
 }
 
+
+dat::Dataset lda( const dat::Dataset & d )
+{
+    dlib::matrix< double > samples;
+    samples.set_size( static_cast< long >( dat::count( d ) )
+                    , dat::Spectrum::_num_points );
+    std::vector< unsigned long > labels;
+    auto i = 0u;
+    dat::apply( [ & ] ( const label::Num l, const dat::Spectrum & s )
+        {
+            labels.push_back( static_cast< unsigned long >( l ) );
+            std::copy( s._y.cbegin()
+                     , s._y.cend()
+                     , samples.begin() + dat::Spectrum::_num_points * i++ );
+        }     , d );
+    const auto samples2 = samples;
+
+    dlib::matrix< double, 0, 1 > means;
+    dlib::compute_lda_transform( samples, means, labels );
+
+    dlib::matrix< double > ret = samples2 * samples - means;
+    std::cout << samples.nc() << ", " << samples.nr() << std::endl;
+    std::cout << samples2.nc() << ", " << samples2.nr() << std::endl;
+    std::cout << ret.nc() << ", " << ret.nr() << std::endl;
+
+    return {};
+}
 
 }  // namespace pre
