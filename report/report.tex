@@ -24,6 +24,9 @@ The business application accuracy is theoretically derived from the per sample a
 \end{abstract}
 
 
+\section{Introduction}
+
+
 \section{Dataset}
 Laser-induced breakdown spectroscopy\cite{libs_intro} involves turning some matter into plasma and observing it's radiant spectrum.
 That is measured by a spectrometer and discretized into 7810 bins of central frequency from  \SI{180}{\nano\metre} upward in steps of \SI{0.1}{\nano\metre}.
@@ -34,6 +37,7 @@ The 7810 measured values for each spectrum represent the radiance\cite{radiance}
 The dataset consists of 2362 datapoints all classified within the 6 labels and 45 sublabels(regions).
 The reference number of the dataset is 190401.
 The excitation laser wavelength is \SI{1064}{\nano\metre}.
+
 
 \section{Preprocessing}
 Boiling plasma is not theoretically expected to absorb light of any wavelenght.
@@ -46,57 +50,48 @@ The global count of negative values is 2442125, which is 0.115385 of all datapoi
 The mean of all negative values is -9.10135.
 The most extreme negative value is -1042.48.
 \end{verbatim}
-\par
-One model of the noise is harmonics of the exciting laser.
-This  hypothesys fails due to it operating at \SI{1064}{\nano\metre}.
-\par
-Another model is Gaussian noise with $\mu=\SI{440}{\nano\metre}, \sigma=\SI{40}{\nano\metre}$.
-It has not been tested.
-\par
-Another model is uniform noise, multiplied by the impulse response of the measurement equipment.
-This should be trivial to implement, with each ferquency's mean value being the mean of all sampls (i.e. stochastic mean).
-
+\begin{itemize}
+\item{One model of the noise is harmonics of the exciting laser.
+This hypothesys fails due to it operating at \SI{1064}{\nano\metre}, which is not a multiple of the observed spikes' frequency.}
+\item{Another model is Gaussian noise with $\mu=\SI{440}{\nano\metre}, \sigma=\SI{40}{\nano\metre}$.}
+\item{Another model is uniform noise, multiplied by the impulse response of the measurement equipment.
+Instrument IR can be recovered by averaging each ferquency's mean value over all sampls (i.e. stochastic mutidimensional mean).}
+\end{itemize}
 \begin{figure}
 \caption{Most extreme negative intensity}
 \centering
 \includegraphics[width=1.25\textwidth]{img/negatives}
 \end{figure}
-\par
-Other considered but unimplemented models of the noice include:
-\begin{itemize}
-\item{kur}
-\end{itemize}
+Noise filtering has not been implemented.
+
 
 \section{Models}
 The following algorithms were tried with default parameters from the corresponding libraries implementing them.
-Accuracy is calculated as:
-Prediction time is:
-Training time is:
-Computational mode illustrates how much room for improvement there is in the used implementation.
 \\ \par
 \rowcolors{1}{white}{lightgray}
 \begin{tabular}{ c | c | c | c | c }
-algorithm      & accuracy & prediction time & training time & computational model \\
-random chance  & & & & single thread \\
-correlation    & & & & multithreaded \\
-SVM            & & & & GPU \\ verify!!
-neural network & & & & GPU \\  verify!!
-random forest  & & & & multithreaded \\
+algorithm      & macro averaged accuracy & prediction time  & training time                    & computational model \\
+random chance  & 0.1609                  & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
+correlation    & 0.8678                  & \SI{16}{\second} & \SI{0}{\second}                  & multithreaded \\
+SVM            & 0.9828                  & \SI{0}{\second}  & \SI{3}{\minute} \SI{27}{\second} & GPU \\
+neural network & 0.2098                  & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\
+random forest  & 0.1695                  & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multithreaded \\
 \end{tabular}
 
 
 \subsection{Random Chance}
-Firstly, for sanity checking of the system, a random chance model was developed.
+For sanity checking of the system, a random chance model was developed.
 It looks only at the distribution of training labels and produces a similar stochastic distribution at prediction time.
 
 
-\section{Correlation}
+\subsection{Correlation}
 With such a small dataset, correlation is feasible.
 It yields good results, but is not scalable.
 
 
-\section{SVM}
+\subsection{SVM}
 The SVM model performs well and runs quickly at prediction time.
+This model is selected for parameter tuning.
 %maximum-margin classifier
 %kernel trick
 %hard/soft margin
@@ -114,17 +109,24 @@ The SVM model performs well and runs quickly at prediction time.
 %choice of kernel parameters
 % probabilistic classifier
 
-\section{Neural Network}
-A naive model with two hidden layers with relu activations performed extremely poorly: <>.
+
+\subsection{Neural Network}
+A naive model with two hidden layers with relu activations performed extremely poorly.
 It is unclear if this is due to programming errors or due to wrong architecture of the network.
 
 
-\section{Random Forest}
-A OpenMP-based random forest classifier took extremely long to train and yielded the following result:
+\subsection{Random Forest}
+A OpenMP-based random forest classifier took extremely long to train and yielded poor results.
+
+
+\section{Implementation}
+
+
+
+\section{Implications}
 
 
 \section{Conclusion}
-An SVM is a suitable baseline model for multiclass classification of high dimensionality objects.
 
 
 %\bibliographystyle{te}

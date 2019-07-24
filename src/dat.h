@@ -25,7 +25,7 @@ namespace dat
 // Each .csv file contains one Spectrum.
 struct Spectrum
 {
-    static constexpr unsigned _num_points{ 7810 };
+    static constexpr unsigned _num_points{ 7810  };
     using Axis = std::array< double, _num_points >;
 
     static constexpr Axis _x{ [] ()            // wavelength, nm
