@@ -2,12 +2,14 @@
 
 
 \usepackage[backend=bibtex]{biblatex}
-\usepackage[table]{xcolor}
+\usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage[table]{xcolor}
 
 
 \bibliography{report}
-\title{Comparisson of methods for multiclass classification of multi-dimensional data}
+\title{Classifying rocks via 7810-dimensional spectroscopy}
 \author{Miroslav Vitkov}
 
 
@@ -16,33 +18,54 @@
 
 
 \begin{abstract}
-This is an exploratory analysis of classical machine learning algorithms.
-The problem is multiclass classification with about 8000 features and at least 2000 training samples.
-Firstly, several algorithm families are tried with default coefficients.
-The best performing of them (SVM) is then tuned - kernel type, kernel parameters, data preprocessing.
-Lastly, statistical analysis on the real-world problem is carried on.
+Several machine learning models in various C++ libraries are tried.
+The most promising one is then tuned - kernel type, kernel parameters, data preprocessing.
+The business application accuracy is theoretically derived from the per sample accuracy.
 \end{abstract}
 
 
-\section{Introduction}
-The task is to classify rock samples in one of six classes.
-The input datapoints are 7810-element arrays.
-The SVM model showed best promise.
-
-
 \section{Dataset}
-The data represents Laser-induced breakdown spectroscopy\cite{libs_intro} measurements.
-For every measured region on every rock 7810 numbers have been recorded.
-They correspond to radiant intensities, centered at [180, 960.9] nanometers wavelength.
-%Those intensities are radiance of the plasma [W·sr−1·m−2], convolved with the unknown impulse response of the measurement equipment.  % TODO: use \watt etc. 
-\\
+Laser-induced breakdown spectroscopy\cite{libs_intro} involves turning some matter into plasma and observing it's radiant spectrum.
+That is measured by a spectrometer and discretized into 7810 bins of central frequency from  \SI{180}{\nano\metre} upward in steps of \SI{0.1}{\nano\metre}.
+The spectrometer has an apparent peak in sensitivity around \SI{440}{\nano\metre} but important spectral lines are spread through the whole measurement range.
+\par
+The 7810 measured values for each spectrum represent the radiance\cite{radiance} of the plasma convoluted with the \textbf{unknown} impulse response of the measurement equipment.
+\par
 The dataset consists of 2362 datapoints all classified within the 6 labels and 45 sublabels(regions).
 The reference number of the dataset is 190401.
-
+The excitation laser wavelength is \SI{1064}{\nano\metre}.
 
 \section{Preprocessing}
-The data is not being preprocessed, despite obvious indicators of noise.
+Boiling plasma is not theoretically expected to absorb light of any wavelenght.
+The dataset violates this assumpmpion!
+\par
+\begin{verbatim}
+Dataset consists of 2710 files.
+The global micro average intensity is 114.398.
+The global count of negative values is 2442125, which is 0.115385 of all datapoints.
+The mean of all negative values is -9.10135.
+The most extreme negative value is -1042.48.
+\end{verbatim}
+\par
+One model of the noise is harmonics of the exciting laser.
+This  hypothesys fails due to it operating at \SI{1064}{\nano\metre}.
+\par
+Another model is Gaussian noise with $\mu=\SI{440}{\nano\metre}, \sigma=\SI{40}{\nano\metre}$.
+It has not been tested.
+\par
+Another model is uniform noise, multiplied by the impulse response of the measurement equipment.
+This should be trivial to implement, with each ferquency's mean value being the mean of all sampls (i.e. stochastic mean).
 
+\begin{figure}
+\caption{Most extreme negative intensity}
+\centering
+\includegraphics[width=1.25\textwidth]{img/negatives}
+\end{figure}
+\par
+Other considered but unimplemented models of the noice include:
+\begin{itemize}
+\item{kur}
+\end{itemize}
 
 \section{Models}
 The following algorithms were tried with default parameters from the corresponding libraries implementing them.
