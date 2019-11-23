@@ -16,6 +16,7 @@ find_package( OpenMP REQUIRED )
 
 add_executable( rocks src/cli.cpp
                       src/dat.cpp
+                      src/dim.cpp
                       src/cmd.cpp
                       src/io.cpp
                       src/label.cpp
