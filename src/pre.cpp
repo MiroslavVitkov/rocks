@@ -126,7 +126,7 @@ dat::Dataset lda( const dat::Dataset & d )
     dlib::matrix< double, 0, 1 > means;
     dlib::compute_lda_transform( samples, means, labels );
 
-    dlib::matrix< double > ret = samples2 * samples - means;
+    dlib::matrix< double > ret = samples2 * samples - means; //crash
     std::cout << samples.nc() << ", " << samples.nr() << std::endl;
     std::cout << samples2.nc() << ", " << samples2.nr() << std::endl;
     std::cout << ret.nc() << ", " << ret.nr() << std::endl;

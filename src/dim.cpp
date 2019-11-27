@@ -2,15 +2,113 @@
 
 #include "dat.h"
 
+#include <dlib/matrix.h>
 #include <dlib/statistics.h>
+
+#include <algorithm>
+#include <tuple>
 
 
 namespace dim
 {
-/*
-std::vector<std::vector<int>> foo(std::vector<dat::Spectrum> &)
+
+
+std::pair< dlib::matrix< value_type >
+         , std::vector< unsigned long > > dataset_to_mat( const dat::Dataset & d )
 {
-    using T = int;
+    const auto nrows = static_cast< long >( dat::count( d ) );
+    const auto ncols = dat::Spectrum::_num_points;
+    dlib::matrix< double > X( nrows , ncols );
+
+    unsigned row {};
+    std::vector< unsigned long > labels;
+    dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+    {
+        // Too bad std::copy() doesn't work with dlib::matrix.
+        unsigned col {};
+        for( const auto a: s._y )
+        {
+            X( row, col++ ) = a;
+        }
+
+        labels.push_back( static_cast< unsigned long >( l ) );
+        ++row;
+
+    }, d );
+
+    return { X, labels };
+}
+
+
+
+LDA::LDA( const dat::Dataset & d )
+{
+    const auto X = dataset_to_mat( d );
+    _Z = X.first;
+    const auto row_labels = X.second;
+    assert( row_labels.size() == static_cast< size_t >( X.first.nr() ) );
+    dlib::compute_lda_transform( _Z, _M, row_labels );
+    // _Z is 5x2346 and x is 1x2346
+}
+
+
+Compressed LDA::operator()( const dat::Spectrum & s ) const
+{
+    // No ranged initialization available?!
+    dlib::matrix< T, 1, dat::Spectrum::_num_points > sample;
+    auto writer = sample.begin();
+    for( const auto & a : s._y )
+    {
+        *writer++ = a;
+    }
+
+    dlib::matrix< T > ret1 =_Z * sample;
+    dlib::matrix< T > ret2 = ret1 - _M;
+
+    Compressed ret;
+    assert( static_cast< size_t  >( ret2.size() ) == ret.size() );
+    std::copy( ret2.begin(), ret2.end(), ret.begin() );
+    return ret;
+}
+
+
+/*
+struct LDA
+{
+    using T = double;
+
+
+    LDA( const dlib::matrix< T > & X
+       , const std::vector< unsigned long > & row_labels )
+        : _Z{ X }
+    {
+        assert( row_labels.size() == X.nr() );
+        dlib::compute_lda_transform( _Z, _M, row_labels );
+    }
+
+
+    dlib::matrix< T > foreward( dlib::matrix< T > x )
+    {
+        assert( _Z.size() != 0 );
+        assert( x.nr() == 1 );
+        assert( _Z.nc() == x.nr() );
+        dlib::matrix<T> ret1 =_Z * x;
+        dlib::matrix<T> ret2 = ret1 - _M;
+        return ret2;
+    }
+
+
+private:
+    dlib::matrix< T > _Z;
+    dlib::matrix< T, 0, 1 > _M;
+};
+*/
+
+dlib::matrix< double >
+//std::vector<std::vector<double>>
+foo(std::vector<dat::Spectrum> &)
+{
+    using T = double;
     dlib::matrix< T > X;  // Each row of X is one input vector. Output Z in it.
     dlib::matrix< T, 0, 1 > M;  // Output.
     std::vector< unsigned long > row_labels;
@@ -21,7 +119,7 @@ std::vector<std::vector<int>> foo(std::vector<dat::Spectrum> &)
 
     return {};
 }
-*/
+
 
 #include <dlib/statistics.h>
 #include <iostream>

@@ -1,5 +1,6 @@
 #include "cmd.h"
 
+#include "dim.h"
 #include "io.h"
 #include "label.h"
 #include "model.h"
@@ -83,8 +84,13 @@ void RunModel::execute()
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
 
-    const auto rank = pre::lda( train );
+    //const auto rank = pre::lda( train );
 //    std::cout << rank[0] << ", " << rank[1] << std::endl;
+    const dim::LDA lda{ train };
+    dat::Spectrum s;
+    const auto encoded = lda( s );
+    (void) encoded;
+
 
     // Train the model.
     print::info( "Training an " + _model_name + " model." );
