@@ -43,6 +43,11 @@ std::pair< dlib::matrix< value_type >
 
 LDA::LDA( const dat::Dataset & d )
 {
+    if( d.first.empty() )
+    {
+        return;
+    }
+
     const auto X = dataset_to_mat( d );
     _Z = X.first;
     const auto row_labels = X.second;
