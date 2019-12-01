@@ -22,13 +22,26 @@ namespace dat
 {
 
 
-// Each .csv file contains one Spectrum.
-struct Spectrum
+// A single spectroscope measurement for a single point.
+// In some representation.
+template < typename ElemT, unsigned num_dims >
+struct Sample
 {
-    static constexpr unsigned _num_points{ 7810  };
-    using Axis = std::array< double, _num_points >;
+    using value_type = ElemT;
+    static constexpr auto _num_points{ num_dims };
+    using Axis = std::array< ElemT, num_dims >;
 
-    static constexpr Axis _x{ [] ()            // wavelength, nm
+    Axis _y {};
+};
+
+
+// Each .csv file contains one Spectrum.
+// Each spectrum contains 7810 intensity values from 180nm to 960.9nm.
+// _x: wavelength, nm
+// _y: radiance, W·sr−1·m−2
+struct Spectrum : Sample< double, 7810 >
+{
+    static constexpr Axis _x{ [] ()
         {
             Axis a {};
             for( unsigned i = 0; i < _num_points; ++i )
@@ -37,8 +50,13 @@ struct Spectrum
             }
             return a;
         } () };
-    Axis _y {};                                // radiance, W·sr−1·m−2
 };
+
+
+struct Compressed : Sample< float, 5 >
+{
+};
+
 
 
 using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
@@ -66,6 +84,7 @@ void mutate ( std::function< void ( const label::Raw &, Spectrum & ) >
 // Count total number of spectra.
 size_t count( const dat::Dataset & );
 size_t count( const dat::DataRaw & );
+
 
 }  // namespace dataset
 
