@@ -114,8 +114,8 @@ private:
 
 
 
-inline std::unique_ptr<Model> create( const std::string & name
-                                    , const dat::Dataset & d )
+inline std::unique_ptr< Model > create( const std::string & name
+                                      , const dat::Dataset & d )
 {
     const auto is = [ & name ] ( const char * p )
         { return ( name.compare( p ) == 0 ); };
@@ -132,6 +132,10 @@ inline std::unique_ptr<Model> create( const std::string & name
     {
         // std::make_unique() refuses to work before seing SVM::~Impl().
         return std::unique_ptr< SVM >( new SVM( d ) );
+    }
+    if( is( "lda" ) )
+    {
+        return std::unique_ptr< LDAandSVM >( new LDAandSVM( d ) );
     }
     if( is( "nn" ) )
     {
