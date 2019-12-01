@@ -1,5 +1,6 @@
 #include "model.h"
 
+#include "dim.h"
 #include "label.h"
 
 #include <andres/ml/decision-trees.hxx>
@@ -201,6 +202,91 @@ label::Num SVM::predict( const dat::Spectrum & test ) const
 
 
 SVM::~SVM()
+{
+}
+
+
+struct LDAandSVM::Impl
+{
+    using Sample = dlib::matrix< dat::Compressed::value_type
+                               , dat::Compressed::_num_points
+                               , 1 >;
+    using Kernel = dlib::linear_kernel< Sample >;
+    using Classifier = dlib::multiclass_linear_decision_function< Kernel
+                                                                , label::Num >;
+    using Trainer = dlib::svm_multiclass_linear_trainer< Kernel
+                                                       , label::Num >;
+
+
+    Impl( const dat::Dataset & d )
+        : _lda{ d }
+        , _svm{ [ & ] () -> Classifier
+            {
+                using Flattened = std::pair< std::vector< Sample >
+                                           , std::vector< label::Num > >;
+
+                Flattened fl;
+
+                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & )
+                    {
+                        //const auto lda{ _lda( s ) };
+                        //fl.first.emplace_back( lda );
+                        fl.second.push_back( l );
+                    }     , d );
+
+                if( fl.first.empty() )
+                {
+                    return {};
+                }
+
+                Trainer trainer;
+                trainer.set_num_threads( 10 );
+
+                const Classifier svm = trainer.train( fl.first, fl.second );
+                return svm;
+            } () }
+    {
+    }
+
+
+    label::Num predict( const dat::Spectrum & test ) const
+    {
+        const auto compressed = _lda( test );
+        Sample m; (void)compressed;
+//        for( const auto a : m )
+//        {
+
+//        }
+        const auto ret = _svm.predict( m );
+        return ret.first;  // what is ret.second?
+    }
+
+
+    Impl( Impl && ) = default;
+    Impl & operator=( Impl && ) = default;
+    Impl( const Impl & ) = default;
+    Impl & operator=( const Impl & ) = default;
+    ~Impl() = default;
+
+
+private:
+    const dim::LDA _lda;
+    const Classifier _svm;
+};
+
+LDAandSVM::LDAandSVM( const dat::Dataset & d )
+    : _impl{ std::make_unique< Impl >( d ) }
+{
+}
+
+
+label::Num LDAandSVM::predict( const dat::Spectrum & test ) const
+{
+    return _impl->predict( test );
+}
+
+
+LDAandSVM::~LDAandSVM()
 {
 }
 

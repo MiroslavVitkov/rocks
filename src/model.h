@@ -71,6 +71,23 @@ private:
 };
 
 
+struct LDAandSVM : Model
+{
+    LDAandSVM( const dat::Dataset & );
+    label::Num predict( const dat::Spectrum & ) const override;
+
+    LDAandSVM( LDAandSVM && ) = default;
+    LDAandSVM & operator=( LDAandSVM && ) = default;
+    LDAandSVM( const LDAandSVM & ) = default;
+    LDAandSVM & operator=( const LDAandSVM & ) = default;
+    ~LDAandSVM() override;
+
+private:
+    struct Impl;
+    std::unique_ptr< Impl > _impl;
+};
+
+
 struct NN : Model
 {
     NN( const dat::Dataset & );
