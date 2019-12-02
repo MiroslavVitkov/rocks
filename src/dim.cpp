@@ -53,8 +53,9 @@ LDA::LDA( const dat::Dataset & d )
     _Z = X.first;
     const auto row_labels = X.second;
     assert( row_labels.size() == static_cast< size_t >( X.first.nr() ) );
-    dlib::compute_lda_transform( _Z, _M, row_labels );
-    // _Z is 5x2346 and x is 1x2346
+    dlib::compute_lda_transform( _Z, _M, row_labels, dat::Compressed::_num_points );
+    assert( _Z.nr() == dat::Compressed::_num_points
+         && _Z.nc() == dat::Spectrum::_num_points );
 }
 
 
