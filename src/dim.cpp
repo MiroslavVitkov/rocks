@@ -13,12 +13,12 @@ namespace dim
 {
 
 
-std::pair< dlib::matrix< value_type >
+std::pair< dlib::matrix< float >
          , std::vector< unsigned long > > dataset_to_mat( const dat::Dataset & d )
 {
     const auto nrows = static_cast< long >( dat::count( d ) );
     const auto ncols = dat::Spectrum::_num_points;
-    dlib::matrix< double > X( nrows , ncols );
+    dlib::matrix< float > X( nrows , ncols );
 
     unsigned row {};
     std::vector< unsigned long > labels;
@@ -33,6 +33,7 @@ std::pair< dlib::matrix< value_type >
 
         labels.push_back( static_cast< unsigned long >( l ) );
         ++row;
+        col = 0;
 
     }, d );
 
@@ -57,7 +58,7 @@ LDA::LDA( const dat::Dataset & d )
 }
 
 
-Compressed LDA::operator()( const dat::Spectrum & s ) const
+dat::Compressed LDA::operator()( const dat::Spectrum & s ) const
 {
     // No ranged initialization available?!
     dlib::matrix< T, 1, dat::Spectrum::_num_points > sample;
@@ -70,9 +71,9 @@ Compressed LDA::operator()( const dat::Spectrum & s ) const
     dlib::matrix< T > ret1 =_Z * sample;
     dlib::matrix< T > ret2 = ret1 - _M;
 
-    Compressed ret;
-    assert( static_cast< size_t  >( ret2.size() ) == ret.size() );
-    std::copy( ret2.begin(), ret2.end(), ret.begin() );
+    dat::Compressed ret;
+    assert( static_cast< size_t  >( ret2.size() ) == ret._y.size() );
+    std::copy( ret2.begin(), ret2.end(), ret._y.begin() );
     return ret;
 }
 
