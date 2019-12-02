@@ -79,6 +79,18 @@ dat::Compressed LDA::operator()( const dat::Spectrum & s ) const
 }
 
 
+PCA::PCA( const dat::Dataset & )
+{
+
+}
+
+
+dat::Compressed PCA::operator()( const dat::Spectrum & ) const
+{
+    return {};
+}
+
+
 /*
 struct LDA
 {

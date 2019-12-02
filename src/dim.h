@@ -33,6 +33,23 @@ private:
 };
 
 
+// Principal Component Analysis
+// Based on the paper:
+// 'A New Discriminant Principal Component Analysis Method with
+// Partial Supervision (2009) by Dan Sun and Daoqiang Zhang'
+struct PCA
+{
+    using T = dat::Compressed::value_type;
+
+    PCA( const dat::Dataset & );
+    dat::Compressed operator()( const dat::Spectrum & ) const;
+
+private:
+    dlib::matrix< T > _Z;
+    dlib::matrix< T, 0, 1 > _M;
+};
+
+
 }  // namespace dim
 
 

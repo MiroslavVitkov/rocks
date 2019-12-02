@@ -88,6 +88,23 @@ private:
 };
 
 
+struct PCAandSVM : Model
+{
+    PCAandSVM( const dat::Dataset & );
+    label::Num predict( const dat::Spectrum & ) const override;
+
+    PCAandSVM( PCAandSVM && ) = default;
+    PCAandSVM & operator=( PCAandSVM && ) = default;
+    PCAandSVM( const PCAandSVM & ) = default;
+    PCAandSVM & operator=( const PCAandSVM & ) = default;
+    ~PCAandSVM() override;
+
+private:
+    struct Impl;
+    std::unique_ptr< Impl > _impl;
+};
+
+
 struct NN : Model
 {
     NN( const dat::Dataset & );
@@ -136,6 +153,10 @@ inline std::unique_ptr< Model > create( const std::string & name
     if( is( "lda" ) )
     {
         return std::unique_ptr< LDAandSVM >( new LDAandSVM( d ) );
+    }
+    if( is( "pca" ) )
+    {
+        return std::unique_ptr< PCAandSVM >( new PCAandSVM( d ) );
     }
     if( is( "nn" ) )
     {

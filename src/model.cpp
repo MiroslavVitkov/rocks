@@ -229,7 +229,7 @@ struct LDAandSVM::Impl
 
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                     {
-                        const auto lda{ _lda( s ) }; (void)lda;
+                        const auto lda{ _lda( s ) };
 
                         Sample sample;
                         unsigned row {};
@@ -296,6 +296,100 @@ label::Num LDAandSVM::predict( const dat::Spectrum & test ) const
 
 
 LDAandSVM::~LDAandSVM()
+{
+}
+
+
+struct PCAandSVM::Impl
+{
+    using Sample = dlib::matrix< dat::Compressed::value_type
+                               , dat::Compressed::_num_points
+                               , 1 >;
+    using Kernel = dlib::linear_kernel< Sample >;
+    using Classifier = dlib::multiclass_linear_decision_function< Kernel
+                                                                , label::Num >;
+    using Trainer = dlib::svm_multiclass_linear_trainer< Kernel
+                                                       , label::Num >;
+
+
+    Impl( const dat::Dataset & d )
+        : _pca{ d }
+        , _svm{ [ & ] () -> Classifier
+            {
+                using Flattened = std::pair< std::vector< Sample >
+                                           , std::vector< label::Num > >;
+
+                Flattened fl;
+
+                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+                    {
+                        const auto pca{ _pca( s ) };
+
+                        Sample sample;
+                        unsigned row {};
+                        for( const auto a : pca._y )
+                        {
+                            sample( row++ ) = a;
+                        }
+
+                        fl.first.emplace_back( sample );
+                        fl.second.push_back( l );
+                    }     , d );
+
+                if( fl.first.empty() )
+                {
+                    return {};
+                }
+
+                Trainer trainer;
+                trainer.set_num_threads( 10 );
+
+                const Classifier svm = trainer.train( fl.first, fl.second );
+                return svm;
+            } () }
+    {
+    }
+
+
+    label::Num predict( const dat::Spectrum & test ) const
+    {
+        const auto compressed = _pca( test );
+        Sample m; (void)compressed;
+        unsigned row {};
+        for( const auto a : m )
+        {
+            m( row++ ) = a;
+        }
+        const auto ret = _svm.predict( m );
+        return ret.first;  // what is ret.second?
+    }
+
+
+    Impl( Impl && ) = default;
+    Impl & operator=( Impl && ) = default;
+    Impl( const Impl & ) = default;
+    Impl & operator=( const Impl & ) = default;
+    ~Impl() = default;
+
+
+private:
+    const dim::PCA _pca;
+    const Classifier _svm;
+};
+
+PCAandSVM::PCAandSVM( const dat::Dataset & d )
+    : _impl{ std::make_unique< Impl >( d ) }
+{
+}
+
+
+label::Num PCAandSVM::predict( const dat::Spectrum & test ) const
+{
+    return _impl->predict( test );
+}
+
+
+PCAandSVM::~PCAandSVM()
 {
 }
 
