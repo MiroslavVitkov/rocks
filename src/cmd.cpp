@@ -84,9 +84,6 @@ void RunModel::execute()
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
 
-    model::LDAandSVM lda( train );
-    const auto pred = lda.predict( {} );(void)pred;
-
     // Train the model.
     print::info( "Training an " + _model_name + " model." );
     const auto m = model::create( _model_name, train );
