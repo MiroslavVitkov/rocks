@@ -227,10 +227,18 @@ struct LDAandSVM::Impl
 
                 Flattened fl;
 
-                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & )
+                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                     {
-                        //const auto lda{ _lda( s ) };
-                        //fl.first.emplace_back( lda );
+                        const auto lda{ _lda( s ) }; (void)lda;
+
+                        Sample sample;
+                        unsigned row {};
+                        for( const auto a : lda._y )
+                        {
+                            sample( row++ ) = a;
+                        }
+
+                        fl.first.emplace_back( sample );
                         fl.second.push_back( l );
                     }     , d );
 
@@ -253,10 +261,11 @@ struct LDAandSVM::Impl
     {
         const auto compressed = _lda( test );
         Sample m; (void)compressed;
-//        for( const auto a : m )
-//        {
-
-//        }
+        unsigned row {};
+        for( const auto a : m )
+        {
+            m( row++ ) = a;
+        }
         const auto ret = _svm.predict( m );
         return ret.first;  // what is ret.second?
     }
