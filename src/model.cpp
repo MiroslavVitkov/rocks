@@ -327,6 +327,7 @@ struct PCAandSVM::Impl
 
                         Sample sample;
                         unsigned row {};
+                        //std::copy( pca._y.cbegin(), pca._y.cend(), sample( row++ ) );
                         for( const auto a : pca._y )
                         {
                             sample( row++ ) = a;
@@ -354,9 +355,10 @@ struct PCAandSVM::Impl
     label::Num predict( const dat::Spectrum & test ) const
     {
         const auto compressed = _pca( test );
-        Sample m; (void)compressed;
+        Sample m;
+        //std::copy( compressed._y.cbegin(), compressed._y.cend(), m.begin() );
         unsigned row {};
-        for( const auto a : m )
+        for( const auto a : compressed._y )
         {
             m( row++ ) = a;
         }
@@ -376,6 +378,7 @@ private:
     const dim::PCA _pca;
     const Classifier _svm;
 };
+
 
 PCAandSVM::PCAandSVM( const dat::Dataset & d )
     : _impl{ std::make_unique< Impl >( d ) }

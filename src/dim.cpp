@@ -5,6 +5,8 @@
 #include <dlib/matrix.h>
 #include <dlib/statistics.h>
 
+#include <opencv2/core.hpp>
+
 #include <algorithm>
 #include <tuple>
 
@@ -84,7 +86,14 @@ dat::Compressed LDA::operator()( const dat::Spectrum & s ) const
 
 cv::PCA init_pca( const dat::Dataset & d )
 {
-    cv::Mat dataset;
+    if( ! dat::count( d ) )
+    {
+        return {};
+    }
+
+    cv::Mat dataset( static_cast< int >( dat::count( d ) )
+                   , dat::Spectrum::_num_points
+                   , CV_64FC1 );
     int row {};
     dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
     {
@@ -104,7 +113,9 @@ PCA::PCA( const dat::Dataset & d )
 
 dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
 {
-    const auto projected = _pca.project( s._y );
+    cv::Mat m( 1, dat::Spectrum::_num_points, CV_64FC1 );
+    std::copy( s._y.cbegin(), s._y.cend(), m.data );
+    const auto projected = _pca.project( m );
     dat::Compressed ret;
     projected.copyTo( ret._y );
     return ret;

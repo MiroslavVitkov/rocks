@@ -85,7 +85,7 @@ void RunModel::execute()
     const auto test = dat::encode( traintest.second, train.second );
 
     // Train the model.
-    print::info( "Training an " + _model_name + " model." );
+    print::info( "Training a " + _model_name + " model." );
     const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
