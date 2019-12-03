@@ -53,6 +53,9 @@ LDA::LDA( const dat::Dataset & d )
     _Z = X.first;
     const auto row_labels = X.second;
     assert( row_labels.size() == static_cast< size_t >( X.first.nr() ) );
+
+    // LDA (at least the implementation in sklearn) can produce at most
+    // k-1 components (where k is number of classes).
     dlib::compute_lda_transform( _Z, _M, row_labels, dat::Compressed::_num_points );
     assert( _Z.nr() == dat::Compressed::_num_points
          && _Z.nc() == dat::Spectrum::_num_points );
@@ -87,6 +90,8 @@ PCA::PCA( const dat::Dataset & )
 
 dat::Compressed PCA::operator()( const dat::Spectrum & ) const
 {
+    dlib::discriminant_pca< dlib::matrix< double > > dpca;
+    const auto m = dpca.dpca_matrix_of_size( dat::Compressed::_num_points );
     return {};
 }
 

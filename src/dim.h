@@ -33,8 +33,6 @@ private:
 };
 
 
-// Principal Component Analysis
-// Based on the paper:
 // 'A New Discriminant Principal Component Analysis Method with
 // Partial Supervision (2009) by Dan Sun and Daoqiang Zhang'
 struct PCA
