@@ -9,6 +9,8 @@
 
 #include <dlib/matrix.h>
 
+#include <opencv2/core.hpp>
+
 #include <array>
 #include <vector>
 
@@ -43,8 +45,7 @@ struct PCA
     dat::Compressed operator()( const dat::Spectrum & ) const;
 
 private:
-    dlib::matrix< T > _Z;
-    dlib::matrix< T, 0, 1 > _M;
+    cv::PCA _pca;
 };
 
 

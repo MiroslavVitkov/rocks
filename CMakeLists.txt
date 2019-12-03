@@ -10,9 +10,10 @@ add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors ${OpenMP_CXX
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules" )
 
 find_package( dlib REQUIRED )
-find_package( Qt5 COMPONENTS Core Gui Widgets REQUIRED )
+find_package( Qt5 COMPONENTS Core Gui Widgets REQUIRED )  # needed by Qwt
 find_package( Qwt REQUIRED )
-find_package( OpenMP REQUIRED )
+find_package( OpenCV REQUIRED )
+find_package( OpenMP REQUIRED )  # needed by dlib
 
 add_executable( rocks src/cli.cpp
                       src/dat.cpp
@@ -28,6 +29,7 @@ add_executable( rocks src/cli.cpp
                       src/score.cpp )
 target_link_libraries( rocks PUBLIC stdc++fs
                                      dlib::dlib
+                                     ${OpenCV_LIBS}
                                      OpenMP::OpenMP_CXX
                                      Qt5::Core Qt5::Gui Qt5::Widgets
                                      ${QWT_LIBRARY} )
