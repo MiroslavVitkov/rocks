@@ -368,9 +368,9 @@ struct PCAandSVM::Impl
 
 
     Impl( Impl && ) = default;
-    Impl & operator=( Impl && ) = default;
+    Impl & operator=( Impl && ) = delete;
     Impl( const Impl & ) = default;
-    Impl & operator=( const Impl & ) = default;
+    Impl & operator=( const Impl & ) = delete;
     ~Impl() = default;
 
 

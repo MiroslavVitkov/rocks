@@ -61,8 +61,8 @@ struct SVM : Model
 
     SVM( SVM && ) = default;
     SVM & operator=( SVM && ) = default;
-    SVM( const SVM & ) = default;
-    SVM & operator=( const SVM & ) = default;
+    SVM( const SVM & ) = delete;
+    SVM & operator=( const SVM & ) = delete;
     ~SVM() override;
 
 private:
@@ -78,8 +78,8 @@ struct LDAandSVM : Model
 
     LDAandSVM( LDAandSVM && ) = default;
     LDAandSVM & operator=( LDAandSVM && ) = default;
-    LDAandSVM( const LDAandSVM & ) = default;
-    LDAandSVM & operator=( const LDAandSVM & ) = default;
+    LDAandSVM( const LDAandSVM & ) = delete;
+    LDAandSVM & operator=( const LDAandSVM & ) = delete;
     ~LDAandSVM() override;
 
 private:
@@ -95,8 +95,8 @@ struct PCAandSVM : Model
 
     PCAandSVM( PCAandSVM && ) = default;
     PCAandSVM & operator=( PCAandSVM && ) = default;
-    PCAandSVM( const PCAandSVM & ) = default;
-    PCAandSVM & operator=( const PCAandSVM & ) = default;
+    PCAandSVM( const PCAandSVM & ) = delete;
+    PCAandSVM & operator=( const PCAandSVM & ) = delete;
     ~PCAandSVM() override;
 
 private:

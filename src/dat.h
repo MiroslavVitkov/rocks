@@ -58,7 +58,6 @@ struct Compressed : Sample< float, 5 >
 };
 
 
-
 using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
 using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, label::Codec >;

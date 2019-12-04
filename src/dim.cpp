@@ -30,7 +30,7 @@ std::pair< dlib::matrix< float >
         unsigned col {};
         for( const auto a: s._y )
         {
-            X( row, col++ ) = a;
+            X( row, col++ ) = static_cast< float >( a );
         }
 
         labels.push_back( static_cast< unsigned long >( l ) );
@@ -97,8 +97,11 @@ cv::PCA init_pca( const dat::Dataset & d )
     int row {};
     dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
     {
-        std::copy( s._y.cbegin(), s._y.cend(), dataset.row( row++ ).data );
+        std::copy( s._y.cbegin()
+                 , s._y.cend()
+                 , dataset.row( row++ ).begin< double >() );
     }, d );
+
     cv::PCA pca( dataset, cv::Mat{}, cv::PCA::DATA_AS_ROW
                , static_cast< int >( dat::Compressed::_num_points ) );
     return pca;
@@ -115,7 +118,9 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
 {
     cv::Mat m( 1, dat::Spectrum::_num_points, CV_64FC1 );
     std::copy( s._y.cbegin(), s._y.cend(), m.data );
+
     const auto projected = _pca.project( m );
+
     dat::Compressed ret;
     projected.copyTo( ret._y );
     return ret;
