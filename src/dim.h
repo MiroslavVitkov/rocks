@@ -35,7 +35,6 @@ private:
 };
 
 
-// Principal Component Analysis
 struct PCA
 {
     using T = dat::Compressed::value_type;

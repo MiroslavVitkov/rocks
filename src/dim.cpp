@@ -122,7 +122,10 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
     const auto projected = _pca.project( m );
 
     dat::Compressed ret;
-    projected.copyTo( ret._y );
+    assert( projected.rows == 1 );
+    const dat::Compressed::value_type * p{ reinterpret_cast< const float * >( projected.ptr() ) };
+    std::copy( p, p + dat::Compressed::_num_points, ret._y.begin() );
+
     return ret;
 }
 
