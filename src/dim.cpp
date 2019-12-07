@@ -117,7 +117,7 @@ PCA::PCA( const dat::Dataset & d )
 dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
 {
     cv::Mat m( 1, dat::Spectrum::_num_points, CV_64FC1 );
-    std::copy( s._y.cbegin(), s._y.cend(), m.data );
+    std::copy( s._y.cbegin(), s._y.cend(), m.begin< double >() );
 
     const auto projected = _pca.project( m );
 
