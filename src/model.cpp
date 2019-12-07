@@ -176,13 +176,6 @@ struct SVM::Impl
     }
 
 
-    Impl( Impl && ) = default;
-    Impl & operator=( Impl && ) = default;
-    Impl( const Impl & ) = default;
-    Impl & operator=( const Impl & ) = default;
-    ~Impl() = default;
-
-
 private:
     const Classifier _svm;
 };
@@ -268,13 +261,6 @@ struct LDAandSVM::Impl
         const auto ret = _svm.predict( m );
         return ret.first;  // what is ret.second?
     }
-
-
-    Impl( Impl && ) = default;
-    Impl & operator=( Impl && ) = default;
-    Impl( const Impl & ) = default;
-    Impl & operator=( const Impl & ) = default;
-    ~Impl() = default;
 
 
 private:
@@ -364,13 +350,6 @@ struct PCAandSVM::Impl
         const auto ret = _svm.predict( m );
         return ret.first;  // what is ret.second?
     }
-
-
-    Impl( Impl && ) = default;
-    Impl & operator=( Impl && ) = delete;
-    Impl( const Impl & ) = default;
-    Impl & operator=( const Impl & ) = delete;
-    ~Impl() = default;
 
 
 private:

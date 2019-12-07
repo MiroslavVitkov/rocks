@@ -58,11 +58,6 @@ struct SVM : Model
 {
     SVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
-
-    SVM( SVM && ) = default;
-    SVM & operator=( SVM && ) = default;
-    SVM( const SVM & ) = delete;
-    SVM & operator=( const SVM & ) = delete;
     ~SVM() override;
 
 private:
@@ -75,11 +70,6 @@ struct LDAandSVM : Model
 {
     LDAandSVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
-
-    LDAandSVM( LDAandSVM && ) = default;
-    LDAandSVM & operator=( LDAandSVM && ) = default;
-    LDAandSVM( const LDAandSVM & ) = delete;
-    LDAandSVM & operator=( const LDAandSVM & ) = delete;
     ~LDAandSVM() override;
 
 private:
@@ -92,11 +82,6 @@ struct PCAandSVM : Model
 {
     PCAandSVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
-
-    PCAandSVM( PCAandSVM && ) = default;
-    PCAandSVM & operator=( PCAandSVM && ) = default;
-    PCAandSVM( const PCAandSVM & ) = delete;
-    PCAandSVM & operator=( const PCAandSVM & ) = delete;
     ~PCAandSVM() override;
 
 private:
