@@ -13,7 +13,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <random>
 #include <vector>
 
@@ -323,12 +322,12 @@ struct PCAandSVM::Impl
 
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                     {
-                        const auto pca{ _pca( s ) };
+                        const auto compressed{ _pca( s ) };
 
                         Sample sample;
                         unsigned row {};
                         //std::copy( pca._y.cbegin(), pca._y.cend(), sample( row++ ) );
-                        for( const auto a : pca._y )
+                        for( const auto a : compressed._y )
                         {
                             sample( row++ ) = a;
                         }
