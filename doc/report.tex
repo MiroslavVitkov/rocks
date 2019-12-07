@@ -174,8 +174,14 @@ This results in even a simple model like an SVM solving the problem practiacally
 Customarily machine learning is done in Python.
 Those are our observations over the suitability of C++ for such tasks.
 \begin{itemize}
-\item{Central repository - Python comes "with batteries included". Somewhat mitigating this, the project uses a pletora of libraries known to be open-source, with persmissive license, easy to use, efficient.}
-\item{Type safety - little is gained by labling lists of numbers.}
+\item{Central repository - Python "comes with the batteries included".
+                           Somewhat mitigating this, this project uses a pletora of libraries known to be open-source, with persmissive license, easy to use, efficient.
+                           The project thus can be used as a demo of C++ ML libraries.
+}
+\item{Type safety - due to the nature of matrix multiplication, the result is rarely in the same form as the input.
+                    Thus new types need to be created between any two operations, making pipelining more tedious.
+                    Overall little is gained by labling lists of numbers which change their representation but preserve their meaning.}
+\item{Plotting - plotting libraries for C++ are scarce, one of the moest popular candidates being the bindings to matplotlib.}
 \end{itemize}
 
 
