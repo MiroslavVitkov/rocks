@@ -64,15 +64,16 @@ Noise filtering has not been implemented.
 
 
 \subsection{Normalization}
-Surprizingly worsened SVM performance. <TODO: quote results>
+Surprizingly worsened SVM performance.
+TODO: quote results
 
 
 \subsection{Feature selection}
-PCA is applied in an attempt to automatically identify the important spectral lines.
+TODO: PCA is applied in an attempt to automatically identify the important spectral lines.
 
 
 \subsection{Dimensionality Reduction}
-For comparisson, a t-distributed stochastic neighbor embedding is ran.
+TODO: For comparisson, a t-distributed stochastic neighbor embedding is ran.
 
 
 \section{Models}
@@ -133,10 +134,11 @@ An OpenMP-based random forest classifier took extremely long to train and yielde
 The SVM model performs well and runs quickly at prediction time.
 This model is selected for parameter tuning.
 However, the implementation allows the use of only a linar kernel (why)?
-A gri search for the regularization coefficient c in the range [1e-5, 1e3] indicates 1e-4 as best performing.
-
+A grid search for the regularization coefficient c in the range [1e-5, 1e3] indicates 1e-4 as best performing.
+TODO: more details
 
 \section{Implementation}
+TODO:
 <List of used libraries>
 <List of data structures>
 <List of design patterns>
@@ -185,9 +187,7 @@ Those are our observations over the suitability of C++ for such tasks.
 \end{itemize}
 
 
-%\bibliographystyle{te}
 \printbibliography
 
 
 \end{document}
-
