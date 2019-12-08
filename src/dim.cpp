@@ -125,6 +125,13 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
     assert( projected.rows == 1 );
     const dat::Compressed::value_type * p{ reinterpret_cast< const float * >( projected.ptr() ) };
     std::copy( p, p + dat::Compressed::_num_points, ret._y.begin() );
+    // We are converting from double to float - make sure it worked.
+    for( unsigned i {}; i < dat::Compressed::_num_points; ++i )
+    {
+        assert( static_cast< double >( ret._y[i] )
+                                     -  projected.at< double >( static_cast<int>(i) )
+                                     <  1e-6 );
+    }
 
     return ret;
 }
