@@ -252,13 +252,17 @@ struct LDAandSVM::Impl
     label::Num predict( const dat::Spectrum & test ) const
     {
         const auto compressed = _lda( test );
-        Sample m; (void)compressed;
+
+        Sample m;
+
         unsigned row {};
-        for( const auto a : m )
+        for( const auto & a : compressed._y )
         {
             m( row++ ) = a;
         }
+
         const auto ret = _svm.predict( m );
+
         return ret.first;  // what is ret.second?
     }
 
