@@ -101,7 +101,7 @@ It yields good results, but is not scalable.
 
 
 \subsection{SVM}
-A multiclass SVM is tested with a linear kernel.
+A multiclass SVM is tested with a linear kernel because that is the only one dlib supports.
 
 %maximum-margin classifier
 %kernel trick
@@ -137,11 +137,40 @@ However, the implementation allows the use of only a linar kernel (why)?
 A grid search for the regularization coefficient c in the range [1e-5, 1e3] indicates 1e-4 as best performing.
 TODO: more details
 
+
 \section{Implementation}
-TODO:
-<List of used libraries>
-<List of data structures>
-<List of design patterns>
+\subsection{Language}
+C++ was chosen as the language of the implementation.
+
+
+\subsection{Design}
+The program ues the \textbf{Command} design pattern to fit different working modes into one executable.
+
+The classifier models follow the Open/Close OOP principle.
+They should have worked with either raw spectra or with preprocessed data, but that would have complicated the interface desing.
+Thus preprocessing techniques were tested in hardcoded SVMandX models.
+
+To separate interface from implementation \textbf{pImpl} is used.
+Not only do implementation details remain hidden, external includes also remain oly in the .cpp file.
+
+The \textbf{Factory} model::create() connects seamlessly with the command line parser module.
+
+\subsection{Reproducability}
+Probably due to programming errors on our part, the PCA and SVM models produce slightly different results from run to run.
+The presented results are averaged over several runs.
+
+\subsection{Libraries}
+\begin{itemize}
+\item{dlib - a small mathematical library, used for correlation, neural networks, SVM.}
+\item{Qwt - a native plottng library. It's main rival are the C++ bindings for pyplot.}
+\item{OpenCV - used for PCA, because dlib's methods only work for binary classification out of the box.}
+\end{itemize}
+
+\subsection{Data structures}
+Traditionally a dataframe is used to store and represent a dataset.
+To the contrary we used a map from labels to a set of observations.
+A function was provided for walking this structure.
+Overall this setup performs well except when the shape of the dataframe needs to change.
 
 
 \section{Implications}
@@ -184,6 +213,7 @@ Those are our observations over the suitability of C++ for such tasks.
                     Thus new types need to be created between any two operations, making pipelining more tedious.
                     Overall little is gained by labling lists of numbers which change their representation but preserve their meaning.}
 \item{Plotting - plotting libraries for C++ are scarce, one of the moest popular candidates being the bindings to matplotlib.}
+\item{Dataframes - matrix calculations, consistency between test run results.}
 \end{itemize}
 
 
