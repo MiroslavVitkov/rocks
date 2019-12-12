@@ -18,7 +18,7 @@
 
 
 \begin{abstract}
-Several machine learning models in various C++ libraries are tried.
+Several machine learning models in various C++ libraries are utilized.
 The most promising one is then tuned - kernel type, kernel parameters, data preprocessing.
 The business application accuracy is theoretically derived from the per sample accuracy.
 \end{abstract}
@@ -36,8 +36,7 @@ The reference number of the dataset is 190401.
 The excitation laser wavelength is \SI{1064}{\nano\metre}.
 
 
-\section{Preprocessing}
-\subsection{Noise}
+\section{Noise}
 Boiling plasma is not theoretically expected to absorb light of any wavelenght.
 The dataset violates this assumpmpion!
 \par
@@ -63,6 +62,28 @@ Instrument IR can be recovered by averaging each ferquency's mean value over all
 Noise filtering has not been implemented.
 
 
+\section{Dimensionality Reduction}
+\subsection{Akaike information criterion}
+Information gain was not used as prominent feature selector due to time constraints.
+
+
+\subsection{Principal component analysis}
+Plotting a few samples illustrates the data is not linearly separable.
+The used SVM must be using a soft margin.
+\\
+\includegraphics[width=0.9\textwidth]{img/pca}
+
+
+\subsection{Linear discriminant analysis}
+
+
+
+\subsection{t-SNE}
+For comparisson, a t-distributed stochastic neighbor embedding should have been run.
+But due to time constraints was not.
+
+
+\section{Preprocessing}
 \subsection{Normalization}
 Does not significantly affect the classifier performance.
 However, it has a stabilyzing effect on the svm's inconsistent output.
@@ -74,9 +95,6 @@ Compressing the signal range worsened the accuracy by 14\%.
 \subsection{Feature selection}
 TODO: PCA is applied in an attempt to automatically identify the important spectral lines.
 
-
-\subsection{Dimensionality Reduction}
-TODO: For comparisson, a t-distributed stochastic neighbor embedding is ran.
 
 
 \section{Models}
