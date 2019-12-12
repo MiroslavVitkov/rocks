@@ -131,6 +131,11 @@ Sample to_dlib_sample( const dat::Spectrum & s )
     assert( p );
 
     Sample sam( * p );
+    for( unsigned i {}; i < dat::Spectrum::_num_points; ++i )
+    {
+        assert( abs( s._y[ i ] - sam( i ) ) < 1e-9 );
+    }
+
     return sam;
 }
 
@@ -148,10 +153,10 @@ struct SVM::Impl
                 Flattened fl;
 
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-                    {
-                        fl.first.emplace_back( to_dlib_sample( s ) );
-                        fl.second.push_back( l );
-                    }     , d );
+                {
+                    fl.first.push_back( to_dlib_sample( s ) );
+                    fl.second.push_back( l );
+                }         , d );
 
                 if( fl.first.empty() )
                 {
