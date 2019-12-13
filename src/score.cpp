@@ -90,4 +90,12 @@ calc_confusion( const std::vector< label::Num > &ground_truth
 }
 
 
+double accuracy( const Confusion & c )
+{
+    const auto t{ dlib::trace( c ) };
+    const auto s{ dlib::sum( c ) };
+    return 1.0 * t / s;
+}
+
+
 }  // namespace score

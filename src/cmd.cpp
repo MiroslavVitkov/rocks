@@ -116,7 +116,8 @@ void RunModel::execute()
 
     std::cout << "Confusion matrix, rows - ground truth, columns - prediction.\n"
                  "Labels: " << train.second << '\n'
-              << conf;
+              << conf
+              << "\naccuracy: " << score::accuracy( conf ) << '\n';
 }
 
 
