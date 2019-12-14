@@ -65,6 +65,7 @@ Noise filtering has not been implemented.
 \section{Dimensionality Reduction}
 \subsection{Akaike information criterion}
 Information gain was not used as prominent feature selector due to time constraints.
+It could have identified important spectral lines.
 
 
 \subsection{Principal component analysis}
@@ -72,10 +73,11 @@ Plotting a few samples illustrates the data is not linearly separable.
 The used SVM must be using a soft margin.
 \\
 \includegraphics[width=0.9\textwidth]{img/pca}
+\\
+When attmepting to classify only by the top 5 basis vectors, the accuracy TODO
 
 
 \subsection{Linear discriminant analysis}
-
 
 
 \subsection{t-SNE}
@@ -91,10 +93,6 @@ However, it has a stabilyzing effect on the svm's inconsistent output.
 
 \subsection{Logaritm}
 Compressing the signal range worsened the accuracy by 14\%.
-
-\subsection{Feature selection}
-TODO: PCA is applied in an attempt to automatically identify the important spectral lines.
-
 
 
 \section{Models}
