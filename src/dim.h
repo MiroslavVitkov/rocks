@@ -7,8 +7,6 @@
 
 #include "dat.h"
 
-#include <dlib/matrix.h>
-
 #include <opencv2/core.hpp>
 
 #include <array>
@@ -22,6 +20,8 @@ namespace dim
 // Linear Discriminant Analysis
 // Z*x-M maps x into a space where x vectors that share the same class label
 // are near each other.
+// LDA (at least the implementation in sklearn) can produce at most
+// k-1 components (where k is number of classes).
 struct LDA
 {
     using T = dat::Compressed::value_type;
@@ -30,8 +30,7 @@ struct LDA
     dat::Compressed operator()( const dat::Spectrum & ) const;
 
 private:
-    dlib::matrix< T > _Z;
-    dlib::matrix< T, 0, 1 > _M;
+    mutable cv::LDA _lda;
 };
 
 
