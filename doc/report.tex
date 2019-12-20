@@ -113,7 +113,7 @@ SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \S
 neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\  % doesn't work!! evil dlib!
 random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multithreaded \\  % doesn't work! evil andres::trees
 \end{tabular}
-TODO: describe our sampling "first folder of each label"
+
 
 \subsection{Random Chance}
 For sanity checking of the system, a random chance model was developed.
@@ -224,6 +224,11 @@ $ calc "2710 / 45"
 
 
 \section{Conclusion}
+\subsection{Sampling}
+To keep the test annvironment close to the intended operaton of the device, the following partitioning policy is adopted.
+For each label, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
+
+
 \subsection{Experimental}
 A large number of test points which are guarangteed to be of the same label is provided during real world operation.
 This results in even a simple model like an SVM solving the problem practiacally perfectly.
