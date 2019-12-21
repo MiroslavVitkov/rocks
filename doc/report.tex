@@ -64,11 +64,14 @@ Noise filtering has not been implemented.
 
 \section{Dimensionality Reduction}
 The number of features (7810) is larger than the dataset size(2711).
+Thus better performance is expected from the classifiers after dimensionality reduction.
+
+On the other hand, feature selection techniquies should point to prominent spectral lines.
+Those could be valuable to domain experts.
 
 
 \subsection{Akaike information criterion}
 Information gain was not used as prominent feature selector due to time constraints.
-It could have identified important spectral lines.
 
 
 \subsection{Principal component analysis}
@@ -77,13 +80,13 @@ The used SVM must be using a soft margin.
 \\
 \includegraphics[width=0.9\textwidth]{img/pca}
 \\
-When attmepting to classify only by the top 5 basis vectors, the SVM accuracy fell to 35\%.
+When attmepting to classify only by the top 5 basis vectors, the SVM accuracy fell from 0.97 to 0.51.
 
 
 \subsection{Linear discriminant analysis}
 Like \textit{sklearn}'s LDA implementation, \textit{OpenCV}'s results in at most (num classes - 1) dimensional transformed space.
 For the examined dataset \textit{d=5}.
-The classification accuracy of the SVM dropped to 23\%.
+The classification accuracy of the SVM dropped from 0.97 to 0.18.
 
 
 \subsection{t-SNE}
@@ -93,12 +96,11 @@ But due to time constraints was not.
 
 \section{Preprocessing}
 \subsection{Normalization}
-Slightly improved accuracy( by 4\% ) as expected.
-Furthermore, it had a stabilyzing effect on the svm's inconsistent output.
+Normalization surprisingly worsened performance from 0.97 to 0.93.
 
 
 \subsection{Logaritm}
-Compressing the signal range worsened the accuracy by 14\%.
+Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 
 \section{Models}
@@ -110,7 +112,7 @@ algorithm      & macro averaged accuracy & prediction time  & training time     
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
 correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multithreaded \\
 SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multithread \\
-neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\  % doesn't work!! evil dlib!
+neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\  % doesn't work anymore!! evil dlib!
 random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multithreaded \\  % doesn't work! evil andres::trees
 \end{tabular}
 
