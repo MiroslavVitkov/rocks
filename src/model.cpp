@@ -156,19 +156,64 @@ struct SVM::Impl
                     return {};
                 }
 
-                Flattened train, validate;
 
+#if 0
+                const auto validate_prop = 0.3;
+                Flattened train, validate;
+#endif
+                Flattened all;
+                std::vector< unsigned > i( d.first.size(), 0 );
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                 {
-                    train.first.push_back( to_dlib_sample( s ) );
-                    train.second.push_back( l );
+#if 0
+                    const auto ll = static_cast< unsigned >( l );
+                    if( i[ ll ]++ < d.first.at( l ).size() * validate_prop )
+                    {
+                        addto( validate, l, s );
+                    }
+                    else
+                    {
+                        addto( train, l, s );
+                    }
+#endif
+                    addto( all, l, s );
                 }         , d );
+
+#if 0
+                print::info( "Performing grid search for coefficient c." );
+                const double C[] = { 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0
+                                   , 1e1, 1e2, 1e3, 1e4, 1e5 };
+                std::vector< double > accuracy;
+                for( const auto c : C )
+                {
+                    Trainer trainer;
+                    trainer.set_c( c );
+                    trainer.set_num_threads( 10 );
+                    const Classifier svm = trainer.train( train.first, train.second );
+
+                    // Test.
+                    unsigned correct{}, total{};
+                    for( unsigned i{}; i < validate.first.size(); ++i )
+                    {
+                        const auto pred = svm.predict( validate.first[ i ] );
+                        const auto truth = validate.second[ i ];
+                        if( truth == pred.first )
+                        {
+                            ++correct;
+                        }
+                        ++total;
+                    }
+                    const auto a = 1.0 * correct / total;
+                    accuracy.push_back( a );
+                    std::cout << "c = " << c << ", accuracy = " << a << std::endl;
+                }
+#endif
 
                 Trainer trainer;
                 trainer.set_num_threads( 10 );
-                trainer.set_c( 1e5 );
+                trainer.set_c( 1e0 );
 
-                const Classifier svm = trainer.train( train.first, train.second );
+                const Classifier svm = trainer.train( all.first, all.second );
                 return svm;
             } () }
     {
@@ -180,6 +225,14 @@ struct SVM::Impl
         const auto s = to_dlib_sample( test );
         const auto ret = _svm.predict( s );
         return ret.first;  // what is ret.second?
+    }
+
+
+private:
+    void addto( Flattened & f, label::Num l, const dat::Spectrum & s )
+    {
+        f.first.push_back( to_dlib_sample( s ) );
+        f.second.push_back( l );
     }
 
 

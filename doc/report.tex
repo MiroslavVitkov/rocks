@@ -162,9 +162,23 @@ An OpenMP-based random forest classifier took extremely long to train and yielde
 \section{Tuning the model}
 The SVM model performs well and runs quickly at prediction time.
 This model is selected for parameter tuning.
-However, the implementation allows the use of only a linar kernel (why)?
+However, the used implementation allows the use only linar kernels for multiclass SVMs (why)?
 A grid search for the regularization coefficient c in the range [1e-5, 1e5] indicates said space is rather flat.
-\begin{tabular}
+Also notice the drop in accuracy compated to the results reported in chapter 'Model'.
+This is due to training on a smaller dataset, due to witholding the validation partition.
+\begin{tabular}{ c | c }
+c & accuracy  \\
+1e-5 & 0.788652  \\
+1e-4 & 0.780142  \\
+1e-3 & 0.798582  \\
+1e-2 & 0.794326  \\
+1e-1 & 0.798582  \\
+1e0 & 0.802837  \\
+1e1 & 0.792908  \\
+1e2 & 0.801418  \\
+1e3 & 0.791489  \\
+1e4 & 0.807092  \\
+1e5 & 0.798582  \\
 \end{tabular}
 
 
