@@ -2,6 +2,7 @@
 
 #include "dim.h"
 #include "label.h"
+#include "print.h"
 
 #include <andres/ml/decision-trees.hxx>
 
@@ -150,23 +151,24 @@ struct SVM::Impl
     Impl( const dat::Dataset & d )
         : _svm{ [ & ] () -> Classifier
             {
-                Flattened fl;
-
-                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-                {
-                    fl.first.push_back( to_dlib_sample( s ) );
-                    fl.second.push_back( l );
-                }         , d );
-
-                if( fl.first.empty() )
+                if( d.first.empty() )
                 {
                     return {};
                 }
 
+                Flattened train, validate;
+
+                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+                {
+                    train.first.push_back( to_dlib_sample( s ) );
+                    train.second.push_back( l );
+                }         , d );
+
                 Trainer trainer;
                 trainer.set_num_threads( 10 );
+                trainer.set_c( 1e5 );
 
-                const Classifier svm = trainer.train( fl.first, fl.second );
+                const Classifier svm = trainer.train( train.first, train.second );
                 return svm;
             } () }
     {
@@ -176,7 +178,7 @@ struct SVM::Impl
     label::Num predict( const dat::Spectrum & test ) const
     {
         const auto s = to_dlib_sample( test );
-        const auto ret = _svm.predict( s ); (void)ret;
+        const auto ret = _svm.predict( s );
         return ret.first;  // what is ret.second?
     }
 

@@ -65,6 +65,7 @@ using Dataset = std::pair< DataEncoded, label::Codec >;
 
 // For each label, pick the first subdir as test, the rest as train.
 // Requires 2 levels of hierarchical labels.
+// Trims the labels to only the major part.
 std::pair< DataRaw, DataRaw > split( const DataRaw & );
 
 Dataset encode( DataRaw & );
