@@ -105,7 +105,7 @@ Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 \section{Models}
 The following algorithms were tried with default parameters from the corresponding libraries implementing them.
-As is evident, GPU acceleration hasn't been reliably easblished.
+As is evident, GPU acceleration hasn't been reliably established.
 \\ \par
 \rowcolors{1}{white}{lightgray}
 \begin{tabular}{ c | c | c | c | c }
@@ -216,10 +216,6 @@ To separate interface from implementation \textbf{pImpl} is used.
 Not only do implementation details remain hidden, external includes also remain only in the .cpp file.
 
 The \textbf{Factory} model::create() connects seamlessly with the command line parser module.
-
-\subsection{Reproducibility}
-Probably due to programming errors on our part, the PCA and SVM models produce slightly different results from run to run.
-The presented results are averaged over several runs.
 
 \subsection{Libraries}
 \begin{itemize}
