@@ -231,6 +231,17 @@ A function was provided for walking this structure.
 Overall this setup performs well except when the shape of the dataframe needs to change.
 
 
+\subsection{Reproducibility}
+The presented results are averaged over several runs.
+Small variations of calculated accuracy were observed.
+Possible explaination:
+\begin{itemize}
+\item{Programming error on our part.}
+\item{Inconsistency over reading and splitting the dataset.}
+\item{Internal non-determinism of the used SVM implementation i.e. numeric instability.}
+\end{itemize}
+
+
 \section{Voting}
 Majority voting with n=60 samples and accuracy a=0.9828 yields overall expected error rate of
 \begin{verbatim}
@@ -258,6 +269,15 @@ $ calc "2710 / 45"
 \subsection{Experimental}
 A large number of test points which are guaranteed to be of the same label is provided during real world operation.
 This results in even a simple model like an SVM solving the problem practically perfectly.
+A typical confusion matrix looks like this:
+\begin{verbatim}
+52  0  0  0  0  2
+ 0 63  0  0  0  0
+ 0  0 57  1  0  0
+ 0  0  0 64  0  0
+ 0  0  0  4 59  1
+ 2  0  0  0  0 62
+\end{verbatim}
 
 \subsection{Language}
 Customarily machine learning is done in Python.
