@@ -105,15 +105,16 @@ Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 \section{Models}
 The following algorithms were tried with default parameters from the corresponding libraries implementing them.
+As is evident, GPU acceleration hasn't been reliably easblished.
 \\ \par
 \rowcolors{1}{white}{lightgray}
 \begin{tabular}{ c | c | c | c | c }
 algorithm      & micro averaged accuracy & prediction time  & training time                    & computational model \\
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
-correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-threaded \\
+correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-thread \\
 SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multi-thread \\
-neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & multi-threaded \\  % doesn't work anymore!! evil dlib!
-random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multi-threaded \\  % doesn't work! evil andres::trees
+neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & multi-thread \\
+random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multi-thread \\
 \end{tabular}
 
 
@@ -160,7 +161,7 @@ An OpenMP-based random forest classifier took extremely long to train and yielde
 
 
 \section{Measuring Accuracy}
-Accuracy in the case of multiclass classification is not uniquely defined.
+Accuracy, as well as the other summary statistics, in the case of multiclass classification is not uniquely defined.
 Those are the two approaches:
 \begin{itemize}
 \item{Micro average - record a True Positive and Total statistics among all classes. }
@@ -168,9 +169,14 @@ Those are the two approaches:
 \end{itemize}
 
 
+\section{Sampling}
+To keep the test environment close to the intended operation of the device, the following partitioning policy is adopted.
+For each label, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
+
+
 \section{Tuning the model}
-The SVM model performs well and runs quickly at prediction time.
-This model is selected for parameter tuning.
+The SVM model performed well and runs quickly at prediction time.
+This model was selected for parameter tuning.
 However, the used implementation allows the use only linear kernels for multiclass SVMs (why)?
 A grid search for the regularization coefficient c in the range [1e-5, 1e5] indicates said space is rather flat.
 
@@ -218,8 +224,8 @@ The presented results are averaged over several runs.
 \subsection{Libraries}
 \begin{itemize}
 \item{dlib - a small mathematical library, used for correlation, neural networks, SVM.}
-\item{Qwt - a native plotting library. It's main rival are the C++ bindings for pyplot.}
-\item{OpenCV - used for PCA, because dlib's methods only work for binary classification out of the box.}
+\item{Qwt - a native plotting library. It's main rival is the C++ bindings for pyplot.}
+\item{OpenCV - used for PCA, because dlib's methods only work for binary classification problems out of the box.}
 \end{itemize}
 
 \subsection{Data structures}
@@ -229,7 +235,7 @@ A function was provided for walking this structure.
 Overall this setup performs well except when the shape of the dataframe needs to change.
 
 
-\section{Implications}
+\section{Voting}
 Majority voting with n=60 samples and accuracy a=0.9828 yields overall expected error rate of
 \begin{verbatim}
 $ find . -name *.csv | wc -l
@@ -253,11 +259,6 @@ $ calc "2710 / 45"
 
 
 \section{Conclusion}
-\subsection{Sampling}
-To keep the test environment close to the intended operation of the device, the following partitioning policy is adopted.
-For each label, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
-
-
 \subsection{Experimental}
 A large number of test points which are guaranteed to be of the same label is provided during real world operation.
 This results in even a simple model like an SVM solving the problem practically perfectly.
