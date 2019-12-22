@@ -75,7 +75,7 @@ Information gain was not used as prominent feature selector due to time constrai
 
 
 \subsection{Principal component analysis}
-Plotting a few samples illustrates the data is not linearly separable.
+Plotting a few samples from 2 classes illustrates the data is not linearly separable.
 The used SVM must be using a soft margin.
 \\
 \includegraphics[width=0.9\textwidth]{img/pca}
@@ -108,7 +108,7 @@ The following algorithms were tried with default parameters from the correspondi
 \\ \par
 \rowcolors{1}{white}{lightgray}
 \begin{tabular}{ c | c | c | c | c }
-algorithm      & macro averaged accuracy & prediction time  & training time                    & computational model \\
+algorithm      & micro averaged accuracy & prediction time  & training time                    & computational model \\
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
 correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-threaded \\
 SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multi-thread \\
@@ -159,13 +159,21 @@ It is unclear if this is due to programming errors or due to wrong architecture 
 An OpenMP-based random forest classifier took extremely long to train and yielded poor results.
 
 
+\section{Measuring Accuracy}
+Accuracy in the case of multiclass classification is not uniquely defined.
+Those are the two approaches:
+\begin{itemize}
+\item{Micro average - record a True Positive and Total statistics among all classes. }
+\item{Macro average - compute the accuracy for each class, then average those.}
+\end{itemize}
+
+
 \section{Tuning the model}
 The SVM model performs well and runs quickly at prediction time.
 This model is selected for parameter tuning.
 However, the used implementation allows the use only linear kernels for multiclass SVMs (why)?
 A grid search for the regularization coefficient c in the range [1e-5, 1e5] indicates said space is rather flat.
-Also notice the drop in accuracy compated to the results reported in chapter 'Model'.
-This is due to training on a smaller dataset, due to withholding the validation partition.
+
 \begin{tabular}{ c | c }
 c & accuracy  \\
 1e-5 & 0.788652  \\
@@ -180,6 +188,10 @@ c & accuracy  \\
 1e4 & 0.807092  \\
 1e5 & 0.798582  \\
 \end{tabular}
+
+Also notice the drop in accuracy compared to the results reported in chapter 'Model'.
+This is due to training on a smaller dataset, due to withholding the validation partition.
+Naturally, both the training and validation partitions sets are used to train the final classifier.
 
 
 \section{Implementation}
