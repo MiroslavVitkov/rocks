@@ -112,7 +112,7 @@ algorithm      & micro averaged accuracy & prediction time  & training time     
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
 correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-threaded \\
 SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multi-thread \\
-neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\  % doesn't work anymore!! evil dlib!
+neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & multi-threaded \\  % doesn't work anymore!! evil dlib!
 random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multi-threaded \\  % doesn't work! evil andres::trees
 \end{tabular}
 
@@ -275,6 +275,7 @@ Those are our observations over the suitability of C++ for such tasks.
                     Overall little is gained by labelling lists of numbers which change their representation but preserve their meaning.}
 \item{Plotting - plotting libraries for C++ are scarce, one of the most popular candidates being the bindings to matplotlib.}
 \item{Dataframes - matrix calculations, consistency between test run results.}
+\item{GPU access - OS and hardware abstraction is almost impossible}
 \end{itemize}
 
 
