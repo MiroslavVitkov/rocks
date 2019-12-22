@@ -18,7 +18,7 @@
 
 
 \begin{abstract}
-Several machine learning models in various C++ libraries are utilized.
+Several machine learning models in various C++ libraries are utilised\footnote{https://github.com/MiroslavVitkov/rocks}.
 The most promising one is then tuned - kernel type, kernel parameters, data preprocessing.
 The business application accuracy is theoretically derived from the per sample accuracy.
 \end{abstract}
@@ -37,8 +37,8 @@ The excitation laser wavelength is \SI{1064}{\nano\metre}.
 
 
 \section{Noise}
-Boiling plasma is not theoretically expected to absorb light of any wavelenght.
-The dataset violates this assumpmpion!
+Boiling plasma is not theoretically expected to absorb light of any wavelength.
+The dataset violates this assumption!
 \par
 \begin{verbatim}
 Dataset consists of 2710 files.
@@ -49,10 +49,10 @@ The most extreme negative value is -1042.48.
 \end{verbatim}
 \begin{itemize}
 \item{One model of the noise is harmonics of the exciting laser.
-This hypothesys fails due to it operating at \SI{1064}{\nano\metre}, which is not a multiple of the observed spikes' frequency.}
+This hypothesis fails due to it operating at \SI{1064}{\nano\metre}, which is not a multiple of the observed spikes' frequency.}
 \item{Another model is Gaussian noise with $\mu=\SI{440}{\nano\metre}, \sigma=\SI{40}{\nano\metre}$.}
 \item{Another model is uniform noise, multiplied by the impulse response of the measurement equipment.
-Instrument IR can be recovered by averaging each ferquency's mean value over all sampls (i.e. stochastic mutidimensional mean).}
+Instrument IR can be recovered by averaging each frequency's mean value over all samples (i.e. stochastic multidimensional mean).}
 \end{itemize}
 \begin{figure}
 \caption{Most extreme negative intensity}
@@ -66,7 +66,7 @@ Noise filtering has not been implemented.
 The number of features (7810) is larger than the dataset size(2711).
 Thus better performance is expected from the classifiers after dimensionality reduction.
 
-On the other hand, feature selection techniquies should point to prominent spectral lines.
+On the other hand, feature selection techniques should point to prominent spectral lines.
 Those could be valuable to domain experts.
 
 
@@ -80,7 +80,7 @@ The used SVM must be using a soft margin.
 \\
 \includegraphics[width=0.9\textwidth]{img/pca}
 \\
-When attmepting to classify only by the top 5 basis vectors, the SVM accuracy fell from 0.97 to 0.51.
+When attempting to classify only by the top 5 basis vectors, the SVM accuracy fell from 0.97 to 0.51.
 
 
 \subsection{Linear discriminant analysis}
@@ -90,7 +90,7 @@ The classification accuracy of the SVM dropped from 0.97 to 0.18.
 
 
 \subsection{t-SNE}
-For comparisson, a t-distributed stochastic neighbor embedding should have been run.
+For comparison, a t-distributed stochastic neighbour embedding should have been run.
 But due to time constraints was not.
 
 
@@ -110,10 +110,10 @@ The following algorithms were tried with default parameters from the correspondi
 \begin{tabular}{ c | c | c | c | c }
 algorithm      & macro averaged accuracy & prediction time  & training time                    & computational model \\
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
-correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multithreaded \\
-SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multithread \\
+correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-threaded \\
+SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multi-thread \\
 neural network & 0.20                    & \SI{0}{\second}  & \SI{2}{\minute} \SI{7}{\second}  & GPU \\  % doesn't work anymore!! evil dlib!
-random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multithreaded \\  % doesn't work! evil andres::trees
+random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{49}{\minute}   & multi-threaded \\  % doesn't work! evil andres::trees
 \end{tabular}
 
 
@@ -121,7 +121,7 @@ random forest  & 0.17                    & \SI{21}{\second} & \SI{1}{\hour} \SI{
 For sanity checking of the system, a random chance model was developed.
 It looks only at the distribution of training labels and produces a similar stochastic distribution at prediction time.
 An alternative would have been to always predict the most common class.
-That would have improved repetability between runs, but the generated distribution would have been too different than that of a predictive model.
+That would have improved repeatability between runs, but the generated distribution would have been too different than that of a predictive model.
 
 
 \subsection{Correlation}
@@ -162,10 +162,10 @@ An OpenMP-based random forest classifier took extremely long to train and yielde
 \section{Tuning the model}
 The SVM model performs well and runs quickly at prediction time.
 This model is selected for parameter tuning.
-However, the used implementation allows the use only linar kernels for multiclass SVMs (why)?
+However, the used implementation allows the use only linear kernels for multiclass SVMs (why)?
 A grid search for the regularization coefficient c in the range [1e-5, 1e5] indicates said space is rather flat.
 Also notice the drop in accuracy compated to the results reported in chapter 'Model'.
-This is due to training on a smaller dataset, due to witholding the validation partition.
+This is due to training on a smaller dataset, due to withholding the validation partition.
 \begin{tabular}{ c | c }
 c & accuracy  \\
 1e-5 & 0.788652  \\
@@ -188,25 +188,25 @@ C++ was chosen as the language of the implementation.
 
 
 \subsection{Design}
-The program ues the \textbf{Command} design pattern to fit different working modes into one executable.
+The program uses the \textbf{Command} design pattern to fit different working modes into one executable.
 
 The classifier models follow the Open/Close OOP principle.
-They should have worked with either raw spectra or with preprocessed data, but that would have complicated the interface desing.
+They should have worked with either raw spectra or with preprocessed data, but that would have complicated the interface design.
 Thus preprocessing techniques were tested in hardcoded SVMandX models.
 
 To separate interface from implementation \textbf{pImpl} is used.
-Not only do implementation details remain hidden, external includes also remain oly in the .cpp file.
+Not only do implementation details remain hidden, external includes also remain only in the .cpp file.
 
 The \textbf{Factory} model::create() connects seamlessly with the command line parser module.
 
-\subsection{Reproducability}
+\subsection{Reproducibility}
 Probably due to programming errors on our part, the PCA and SVM models produce slightly different results from run to run.
 The presented results are averaged over several runs.
 
 \subsection{Libraries}
 \begin{itemize}
 \item{dlib - a small mathematical library, used for correlation, neural networks, SVM.}
-\item{Qwt - a native plottng library. It's main rival are the C++ bindings for pyplot.}
+\item{Qwt - a native plotting library. It's main rival are the C++ bindings for pyplot.}
 \item{OpenCV - used for PCA, because dlib's methods only work for binary classification out of the box.}
 \end{itemize}
 
@@ -242,26 +242,26 @@ $ calc "2710 / 45"
 
 \section{Conclusion}
 \subsection{Sampling}
-To keep the test annvironment close to the intended operaton of the device, the following partitioning policy is adopted.
+To keep the test environment close to the intended operation of the device, the following partitioning policy is adopted.
 For each label, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
 
 
 \subsection{Experimental}
-A large number of test points which are guarangteed to be of the same label is provided during real world operation.
-This results in even a simple model like an SVM solving the problem practiacally perfectly.
+A large number of test points which are guaranteed to be of the same label is provided during real world operation.
+This results in even a simple model like an SVM solving the problem practically perfectly.
 
 \subsection{Language}
 Customarily machine learning is done in Python.
 Those are our observations over the suitability of C++ for such tasks.
 \begin{itemize}
 \item{Central repository - Python "comes with the batteries included".
-                           Somewhat mitigating this, this project uses a pletora of libraries known to be open-source, with persmissive license, easy to use, efficient.
+                           Somewhat mitigating this, this project uses a plethora of libraries known to be open-source, with permissive license, easy to use, efficient.
                            The project thus can be used as a demo of C++ ML libraries.
 }
 \item{Type safety - due to the nature of matrix multiplication, the result is rarely in the same form as the input.
                     Thus new types need to be created between any two operations, making pipelining more tedious.
-                    Overall little is gained by labling lists of numbers which change their representation but preserve their meaning.}
-\item{Plotting - plotting libraries for C++ are scarce, one of the moest popular candidates being the bindings to matplotlib.}
+                    Overall little is gained by labelling lists of numbers which change their representation but preserve their meaning.}
+\item{Plotting - plotting libraries for C++ are scarce, one of the most popular candidates being the bindings to matplotlib.}
 \item{Dataframes - matrix calculations, consistency between test run results.}
 \end{itemize}
 
