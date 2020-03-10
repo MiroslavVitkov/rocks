@@ -84,6 +84,8 @@ When attempting to classify only by the top 5 basis vectors, the SVM accuracy fe
 
 
 \subsection{Linear discriminant analysis}
+$$ \frac{ \mu_1 - \mu_2 } { s^1 + s^2 } $$  % \goesto max
+
 Like \textit{sklearn}'s LDA implementation, \textit{OpenCV}'s results in at most (num classes - 1) dimensional transformed space.
 For the examined dataset \textit{d=5}.
 The classification accuracy of the SVM dropped from 0.97 to 0.18.
