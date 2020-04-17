@@ -26,10 +26,26 @@ A secondary goal is overview of modern free C++ machine learning libraries.
 \end{abstract}
 
 
+\section{Introduction}
+Identication of rocks is currently being done by bulky equipment after rock sample collection.
+This text explores the machine learning side of designing a device, which is:
+\begin{itemize}
+\item{hand-held}
+\item{accurate to less than 1 failure per year of constant usage}
+\item{afordable - an Android smartphone used for data processing}
+\end{itemize}
+
+The theoretical conclusion is that the device is possible.
+% beаm diameter, duration
+
+
 \section{Dataset}
 Laser-induced breakdown spectroscopy\cite{libs_intro} involves turning some matter into plasma and observing it's radiant spectrum.
 That is measured by a spectrometer and discretized into 7810 buckets of central frequency from  \SI{180}{\nano\metre} upward in steps of \SI{0.1}{\nano\metre}.
 The spectrometer has an apparent peak in sensitivity around \SI{440}{\nano\metre} but important spectral lines are spread through the whole measurement range.
+\par
+Key variables in LIBS are beam power, diameter; burn time(the spectrum changes with time during the burn).
+They are held constant and unknown in this study.
 \par
 The 7810 measured values for each spectrum represent the radiance\cite{radiance} of the plasma convoluted with the \textbf{unknown} impulse response of the measurement equipment.
 \par
@@ -103,7 +119,7 @@ But due to time constraints was not.
 Normalization surprisingly worsened performance from 0.97 to 0.93.
 
 
-\subsection{Logaritm}
+\subsection{Logarithm}
 Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 
