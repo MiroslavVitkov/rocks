@@ -55,6 +55,7 @@ void normalize( dat::DataRaw & d )
     {
         point /= c;
     }
+
     dat::Spectrum variance;
     dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
         {
@@ -76,6 +77,7 @@ void normalize( dat::DataRaw & d )
         point = sqrt( point / ( c - 1 ) );
         assert( point >= 0 );
     }
+
     dat::mutate( [ & ] ( const std::string &, dat::Spectrum & s )
         {
             auto src = s._y.begin();
