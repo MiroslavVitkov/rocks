@@ -109,8 +109,9 @@ Information gain was not used as prominent feature selector due to time constrai
 
 
 \subsection{Principal component analysis}
-Plotting a few samples from 2 classes illustrates the data is not linearly separable.
+Plotting a few samples from 2 classes illustrates the data is not linearly separable in 2 dimensions.
 The used SVM must be using a soft margin.
+Also we can't nicely plot the data and see clusters.
 \\
 \includegraphics[width=0.9\textwidth]{img/pca}
 \\
@@ -132,6 +133,7 @@ But due to time constraints was not.
 
 \section{Preprocessing}
 \subsection{Normalization}
+$$ \vec{y} = (\vec{x} - \vec{E}) / \vec{\sigma} $$
 Normalization surprisingly worsened performance from 0.97 to 0.93.
 
 
