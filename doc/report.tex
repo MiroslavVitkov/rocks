@@ -80,7 +80,7 @@ The global micro average intensity is 114.398.
 The global count of negative values is 2442125, which is 0.115385 of all datapoints.
 The mean of all negative values is -9.10135.
 The most extreme negative value is -1042.48.
-\end{verbatim}
+\end{verbatim}s
 \begin{itemize}
 \item{One model of the noise is harmonics of the exciting laser.
 This hypothesis fails due to it operating at \SI{1064}{\nano\metre}, which is not a multiple of the observed spikes' frequency.}
@@ -142,12 +142,14 @@ Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 
 \section{Models}
+Each model conceptually accepts a single spectrum vector of 7810 real numbers.
+Later in this text ensemble voting is discussed.
+\par
 The following algorithms were tried with default parameters from the corresponding libraries implementing them.
-As is evident, GPU acceleration hasn't been reliably established.
 \\ \par
 \rowcolors{1}{white}{lightgray}
 \begin{tabular}{ c | c | c | c | c }
-algorithm      & micro averaged accuracy & prediction time  & training time                    & computational model \\
+algorithm      & micro averaged accuracy & predict          & train                            & acceleration \\
 random chance  & 0.16                    & \SI{0}{\second}  & \SI{0}{\second}                  & single thread \\
 correlation    & 0.85                    & \SI{76}{\second} & \SI{0}{\second}                  & multi-thread \\
 SVM            & 0.97                    & \SI{0}{\second}  & \SI{3}{\minute} \SI{21}{\second} & multi-thread \\
