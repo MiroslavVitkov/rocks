@@ -133,6 +133,7 @@ For comparison, a t-distributed stochastic neighbour embedding should have been 
 \section{Preprocessing}
 \subsection{Normalization}
 $$ \vec{y} = (\vec{x} - \vec{E}) / \vec{\sigma} $$
+, where all operations are performed element-wise.
 Normalization surprisingly worsened performance from 0.97 to 0.93.
 
 
@@ -142,7 +143,7 @@ Compressing the signal range worsened the accuracy from 0.97 to 0.77.
 
 \section{Models}
 Each model conceptually accepts a single spectrum vector of 7810 real numbers.
-Later in this text ensemble voting is discussed.
+Later in this text the sampling strategy and ensemble voting are discussed.
 \par
 The following algorithms were tried with default parameters, this is the micro averaged accuracy:
 \\ \par
@@ -210,7 +211,8 @@ Those are the two approaches:
 
 \section{Sampling}
 To keep the test environment close to the intended operation of the device, the following partitioning policy is adopted.
-For each label, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
+For each rock type, the first measured spot (with up to 64 measured spectra) is the test sample, the rest is training data.
+That is, the first sublabel for each label form the test set.
 
 
 \section{Tuning the model}
