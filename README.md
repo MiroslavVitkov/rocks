@@ -8,6 +8,7 @@ libdlib-dev - no, compile it from source with cuda support: 1. nvidia-cuda-dev, 
       3. https://github.com/davisking/dlib     CC=gcc-7 CXX=g++-7 cmake .. -DUSE_AVX_INSTRUCTIONS=1  
 https://github.com/ashokpant/accuracy-evaluation-cpp  
 libqwt-qt5-dev  
+https://github.com/bjoern-andres/random-forest.git
 
 
 # Introduction to the domain

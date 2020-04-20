@@ -37,4 +37,4 @@ target_include_directories( rocks PUBLIC ${Qt5Core_INCLUDE_DIRS}
                                           ${Qt5Gui_INCLUDE_DIRS}
                                           ${Qt5Widgets_INCLUDE_DIRS}
                                           ${QWT_INCLUDE_DIR} )
-target_include_directories( rocks SYSTEM PRIVATE "/home/vorac/proj/random-forest/include" )
+target_include_directories( rocks SYSTEM PRIVATE "../random-forest/include" )
