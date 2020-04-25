@@ -8,13 +8,17 @@
 #include "print.h"
 #include "score.h"
 
+#include <shark/Data/Csv.h>
+#include <shark/Algorithms/Trainers/LDA.h>
+#include <shark/ObjectiveFunctions/Loss/ZeroOneLoss.h>
+
 #include <future>
 #include <iostream>
 #include <numeric>
 #include <thread>
 #include <vector>
 
-
+shark::ClassificationDataset data;
 namespace cmd
 {
 
@@ -76,6 +80,8 @@ private:
 
 void RunModel::execute()
 {
+
+
     // Obtain the dataset.
     // When encoding, assume the test label is represented in the training set.
     print::info( "Reading the dataset." );

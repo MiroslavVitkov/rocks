@@ -14,6 +14,8 @@ find_package( Qt5 COMPONENTS Core Gui Widgets REQUIRED )  # needed by Qwt
 find_package( Qwt REQUIRED )
 find_package( OpenCV REQUIRED )
 find_package( OpenMP REQUIRED )  # needed by dlib
+find_package( Shark REQUIRED )  # random forests and more
+include( ${SHARK_USE_FILE} )
 
 add_executable( rocks src/cli.cpp
                       src/dat.cpp
@@ -32,7 +34,8 @@ target_link_libraries( rocks PUBLIC stdc++fs
                                      ${OpenCV_LIBS}
                                      OpenMP::OpenMP_CXX
                                      Qt5::Core Qt5::Gui Qt5::Widgets
-                                     ${QWT_LIBRARY} )
+                                     ${QWT_LIBRARY}
+                                     ${SHARK_LIBRARIES} )
 target_include_directories( rocks PUBLIC ${Qt5Core_INCLUDE_DIRS}
                                           ${Qt5Gui_INCLUDE_DIRS}
                                           ${Qt5Widgets_INCLUDE_DIRS}
