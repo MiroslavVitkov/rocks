@@ -12,6 +12,10 @@
 #include <dlib/statistics.h>
 #include <dlib/svm_threaded.h>
 
+#include <shark/Data/Csv.h> //importing the file
+#include <shark/Algorithms/Trainers/RFTrainer.h> //the random forest trainer
+#include <shark/ObjectiveFunctions/Loss/ZeroOneLoss.h> //zero one loss for evaluation
+
 #include <algorithm>
 #include <cassert>
 #include <random>
@@ -517,6 +521,30 @@ struct Forest::Impl
 
     Impl( const dat::Dataset & d )
     {
+        shark::ClassificationDataset data;
+        //shark::importCSV(data, "data/mnist_subset.libsvm", shark::LAST_COLUMN, ' ');
+        const std::string fn{ "../rocks/data/C.csv" };
+//        std::cout <<fn<<std::endl;
+//        std::ifstream stream(fn.c_str());
+//        (void)stream;
+        shark::importCSV(data, fn, shark::LAST_COLUMN, ' ');
+
+        //Split the dataset into a training and a test dataset
+        shark::ClassificationDataset dataTest = shark::splitAtElement(data,311);
+
+        shark::RFTrainer<unsigned int> trainer;
+        shark::RFClassifier<unsigned int> model;
+        trainer.train(model, data);
+
+        shark::ZeroOneLoss<> loss;
+        auto prediction = model(data.inputs());
+        std::cout << "Random Forest on training set accuracy: " << 1. - loss.eval(data.labels(), prediction) << std::endl;
+
+        prediction = model(dataTest.inputs());
+        std::cout << "Random Forest on test set accuracy:     " << 1. - loss.eval(dataTest.labels(), prediction) << std::endl;
+        std::exit( 0 );
+        //
+        //
         const auto num_samples = dat::count( d );
         if( ! num_samples )
         {
