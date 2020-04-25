@@ -18,7 +18,7 @@
 #include <thread>
 #include <vector>
 
-shark::ClassificationDataset data;
+
 namespace cmd
 {
 
@@ -80,6 +80,28 @@ private:
 
 void RunModel::execute()
 {
+    shark::ClassificationDataset data;
+    const std::string fname{ "" };
+    try
+    {
+        importCSV( data, fname, shark::LAST_COLUMN, ' ' );
+    }
+    catch (...)
+    {
+            std::cerr << "unable to read data from file " <<  fname << std::endl;
+            exit( EXIT_FAILURE );
+    }
+    //create a classifier for the problem
+    shark::LinearClassifier<> classifier;
+    //create the lda trainer
+    shark::LDA lda;
+    lda.train(classifier,data);
+    shark::ZeroOneLoss<> loss;
+    shark::ClassificationDataset test1 = shark::splitAtElement(data,static_cast<std::size_t>(0.8*data.numberOfElements()));
+    double error = loss(test1.labels(),classifier(test1.inputs()));
+    (void)error;
+    exit( EXIT_FAILURE );
+
 
 
     // Obtain the dataset.
