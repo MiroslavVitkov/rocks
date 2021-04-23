@@ -6,7 +6,7 @@ cmake_minimum_required( VERSION 3.13 )
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( CMAKE_CXX_EXTENSIONS OFF )
-add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors ${OpenMP_CXX_FLAGS} )
+add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors )
 
 
 # Core sources; others included together with the libraries they use.
@@ -24,21 +24,26 @@ set (SRC src/cli.cpp
 
 
 # Use the graphing library Qwt.
-set( USE_QWT OFF CACHE STRING "Plot experiment results.")
+set( USE_QWT OFF CACHE STRING "Plot experimental results." )
 if( USE_QWT )
     list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules" )
-    find_package( Qt5 COMPONENTS Core Gui Widgets )  # needed by Qwt
-    find_package( Qwt )
-    if( NOT Qwt_FOUND )
-        message( ERROR "Qwt requested but not found!")
-    endif()
+    find_package( Qt5 COMPONENTS Core Gui Widgets REQUIRED )  # needed by Qwt
+    find_package( Qwt REQUIRED )
     list( APPEND SRC src/plot.cpp )
+    add_compile_options( ${OpenMP_CXX_FLAGS} )
+    target_compile_definitions( rock CMAKE_USE_QWT PUBLIC ON )
+    message( STATUS "qwt loaded successfully.")
 endif()
 
 
 # Use the ML library dlib.
-find_package( OpenMP REQUIRED )  # needed by dlib
-find_package( dlib REQUIRED )
+set( USE_DLIB OFF CACHE STRING "One of the prominent ML libs." )
+if( USE_DLIB )
+    find_package( OpenMP REQUIRED )  # needed by dlib
+    find_package( dlib REQUIRED )
+    message( STATUS "dlib loaded successfully.")
+    # error: compilation will fail
+endif()
 
 
 # Use the CV and ML library OpenCV.
@@ -53,16 +58,8 @@ add_executable( rocks "${SRC}" )
 
 
 target_link_libraries( rocks PUBLIC stdc++fs
-                                     dlib::dlib
                                      ${OpenCV_LIBS}
-                                     OpenMP::OpenMP_CXX
-                                     Qt5::Core Qt5::Gui Qt5::Widgets
-                                     ${QWT_LIBRARY}
                                      ${SHARK_LIBRARIES} )
-target_include_directories( rocks PUBLIC ${Qt5Core_INCLUDE_DIRS}
-                                          ${Qt5Gui_INCLUDE_DIRS}
-                                          ${Qt5Widgets_INCLUDE_DIRS}
-                                          ${QWT_INCLUDE_DIR} )
 target_include_directories( rocks SYSTEM PRIVATE "../random-forest/include" )
 
 
@@ -74,6 +71,16 @@ if( USE_QWT )
                                         Qt5::Widgets
                                         "${QWT_LIBRARY}"
                          )
-    target_include_directories( rocks PUBLIC "${Qt5Core_INCLUDE_DIRS}" )
+    target_include_directories( rocks PUBLIC ${Qt5Core_INCLUDE_DIRS}
+                                             ${Qt5Gui_INCLUDE_DIRS}
+                                             ${Qt5Widgets_INCLUDE_DIRS}
+                                             ${QWT_INCLUDE_DIR}
+                              )
 endif()
 
+
+if( USE_DLIB )
+    target_link_libraries( rocks PUBLIC  OpenMP::OpenMP_CXX
+                                         dlib::dlib
+                         )
+endif()
