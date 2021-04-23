@@ -1,13 +1,15 @@
 project( rocks )
+cmake_minimum_required( VERSION 3.13 )
 
-cmake_minimum_required(VERSION 3.13)
 
+# Strict C++20 for all code in this project.
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED ON )
 set( CMAKE_CXX_EXTENSIONS OFF )
 add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors ${OpenMP_CXX_FLAGS} )
 
 
+# Core sources; others included together with the libraries they use.
 set (SRC src/cli.cpp
          src/dat.cpp
          src/dim.cpp
@@ -23,18 +25,15 @@ set (SRC src/cli.cpp
 
 # Use the graphing library Qwt.
 set( USE_QWT OFF CACHE STRING "Plot experiment results.")
-function( load_qwt )
-    if( USE_QWT )
-        list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules" )
-        find_package( Qt5 COMPONENTS Core Gui Widgets )  # needed by Qwt
-        find_package( Qwt )
-        if( NOT Qwt_FOUND )
-            message( ERROR "Qwt requested but not found!")
-        endif()
-        list( APPEND SRC src/plot.cpp )
+if( USE_QWT )
+    list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/Modules" )
+    find_package( Qt5 COMPONENTS Core Gui Widgets )  # needed by Qwt
+    find_package( Qwt )
+    if( NOT Qwt_FOUND )
+        message( ERROR "Qwt requested but not found!")
     endif()
-endfunction()
-load_qwt()
+    list( APPEND SRC src/plot.cpp )
+endif()
 
 
 # Use the ML library dlib.
