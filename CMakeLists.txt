@@ -31,7 +31,7 @@ if( USE_QWT )
     find_package( Qwt REQUIRED )
     list( APPEND SRC src/plot.cpp )
     add_compile_options( ${OpenMP_CXX_FLAGS} )
-    target_compile_definitions( rock CMAKE_USE_QWT PUBLIC ON )
+    target_compile_definitions( rocks CMAKE_USE_QWT PUBLIC ON )
     message( STATUS "qwt loaded successfully.")
 endif()
 
@@ -41,46 +41,72 @@ set( USE_DLIB OFF CACHE STRING "One of the prominent ML libs." )
 if( USE_DLIB )
     find_package( OpenMP REQUIRED )  # needed by dlib
     find_package( dlib REQUIRED )
+    target_compile_definitions( rocks CMAKE_USE_DLIB PUBLIC ON )
     message( STATUS "dlib loaded successfully.")
-    # error: compilation will fail
 endif()
 
 
 # Use the CV and ML library OpenCV.
-find_package( OpenCV REQUIRED )
+set( USE_OPENCV OFF CACHE STRING "A classical ML and CV library." )
+if( USE_OPENCV )
+    find_package( OpenCV REQUIRED )
+    target_compile_definitions( rocks CMAKE_USE_OPENCV PUBLIC ON )
+    message( STATUS "opencv loaded successfully.")
+endif()
+
 
 # Use the ML library Shark
-find_package( Shark REQUIRED )  # random forests and more
-include( ${SHARK_USE_FILE} )
+set( USE_SHARK OFF CACHE STRING "A comprehensive ML library." )
+if( USE_SHARK )
+    find_package( Shark REQUIRED )  # random forests and more
+    include( ${SHARK_USE_FILE} )
+    target_compile_definitions( rocks CMAKE_USE_SHARK PUBLIC ON )
+    message( STATUS "shark loaded successfully.")
+endif()
+
+
+# Use a random forest implementation.
+set( USE_FOREST OFF CACHE STRING "A header-only random forest." )
+if( USE_OPENCV )
+    target_compile_definitions( rocks CMAKE_USE_FOREST PUBLIC ON )
+    message( STATUS "random-forest loaded successfully.")
+endif()
+
 
 
 add_executable( rocks "${SRC}" )
-
-
-target_link_libraries( rocks PUBLIC stdc++fs
-                                     ${OpenCV_LIBS}
-                                     ${SHARK_LIBRARIES} )
-target_include_directories( rocks SYSTEM PRIVATE "../random-forest/include" )
-
-
+target_link_libraries( rocks PUBLIC stdc++fs )
 
 
 if( USE_QWT )
     target_link_libraries( rocks PUBLIC Qt5::Core
                                         Qt5::Gui
                                         Qt5::Widgets
-                                        "${QWT_LIBRARY}"
-                         )
+                                        "${QWT_LIBRARY}" )
     target_include_directories( rocks PUBLIC ${Qt5Core_INCLUDE_DIRS}
                                              ${Qt5Gui_INCLUDE_DIRS}
                                              ${Qt5Widgets_INCLUDE_DIRS}
-                                             ${QWT_INCLUDE_DIR}
-                              )
+                                             ${QWT_INCLUDE_DIR} )
 endif()
 
 
 if( USE_DLIB )
     target_link_libraries( rocks PUBLIC  OpenMP::OpenMP_CXX
-                                         dlib::dlib
-                         )
+                                         dlib::dlib )
+endif()
+
+
+if( USE_OPENCV )
+    target_link_libraries( rocks PUBLIC "${OpenCV_LIBS}" )
+endif()
+
+
+if( USE_SHARK )
+    target_link_libraries( rocks PUBLIC "${SHARK_LIBRARIES}" )
+endif()
+
+
+if( USE_FOREST )
+    target_link_libraries( rocks PUBLIC "${SHARK_LIBRARIES}" )
+    target_include_directories( rocks SYSTEM PRIVATE "../extern/random-forest/include" )
 endif()
