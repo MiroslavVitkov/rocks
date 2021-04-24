@@ -8,15 +8,19 @@
 #include <andres/ml/decision-trees.hxx>
 #endif
 
+#ifdef CMAKE_USE_DLIB
 #include <dlib/dnn.h>
 #include <dlib/matrix.h>
 #include <dlib/memory_manager.h>
 #include <dlib/statistics.h>
 #include <dlib/svm_threaded.h>
+#endif
 
+#ifdef CMAKE_USE_SHARK
 #include <shark/Data/Csv.h> //importing the file
 #include <shark/Algorithms/Trainers/RFTrainer.h> //the random forest trainer
 #include <shark/ObjectiveFunctions/Loss/ZeroOneLoss.h> //zero one loss for evaluation
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -85,6 +89,7 @@ std::vector< label::Num > construct_labels( const dat::Dataset & d )
 }
 
 
+#ifdef CMAKE_USE_DLIB
 Correlation::Correlation( const dat::Dataset & d )
     : _training_set{ d }
     , _labels{ construct_labels( d ) }
@@ -334,7 +339,11 @@ struct LDAandSVM::Impl
 
 
 private:
+#ifdef CMAKE_USE_OPENCV
     const dim::LDA _lda;
+#else
+    const dim::Simple _lda;
+#endif
     const Classifier _svm;
 };
 
@@ -423,7 +432,11 @@ struct PCAandSVM::Impl
 
 
 private:
+#ifdef CMAKE_USE_OPENCV
     const dim::PCA _pca;
+#else
+    const dim::Simple _pca;
+#endif
     const Classifier _svm;
 };
 
@@ -514,6 +527,9 @@ NN::~NN()
 }
 
 
+#ifdef CMAKE_USE_FOREST
+
+
 struct Forest::Impl
 {
     using Feature = double;
@@ -589,6 +605,7 @@ struct Forest::Impl
 
     andres::ml::DecisionForest< Feature, Label, Probability > _model;
 };
+#endif  // CMAKE_USE_DLIB
 
 
 Forest::Forest( const dat::Dataset & d )
@@ -606,6 +623,9 @@ label::Num Forest::predict( const dat::Spectrum & s ) const
 Forest::~Forest()
 {
 }
+
+
+#endif // CMAKE_USE_FOREST
 
 
 }  // namespace model

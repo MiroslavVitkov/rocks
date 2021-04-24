@@ -43,6 +43,7 @@ private:
 };
 
 
+#ifdef CMAKE_USE_DLIB
 struct Correlation : Model
 {
     Correlation( const dat::Dataset & );
@@ -88,6 +89,7 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
+#endif  // CMAKE_USE_DLIB
 
 
 struct NN : Model
@@ -102,7 +104,7 @@ private:
 };
 
 
-
+#ifdef CMAKE_USE_FOREST
 struct Forest : Model
 {
     Forest( const dat::Dataset & );
@@ -113,7 +115,7 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
-
+#endif
 
 
 inline std::unique_ptr< Model > create( const std::string & name
@@ -126,6 +128,7 @@ inline std::unique_ptr< Model > create( const std::string & name
     {
         return std::make_unique< RandomChance >( RandomChance( d ) );
     }
+#ifdef CMAKE_USE_DLIB
     if( is( "cor" ) )
     {
         return std::make_unique< Correlation >( Correlation( d ) );
@@ -143,14 +146,17 @@ inline std::unique_ptr< Model > create( const std::string & name
     {
         return std::unique_ptr< PCAandSVM >( new PCAandSVM( d ) );
     }
+#endif  // CMAKE_USE_DLIB
     if( is( "nn" ) )
     {
         return std::unique_ptr< NN >( new NN( d ) );
     }
+#ifdef CMAKE_USE_FOREST
     if( is( "forest" ) )
     {
         return std::unique_ptr< Forest >( new Forest( d ) );
     }
+#endif
 
     throw Exception( name + ": no such model found. "
                      "See 'model.h' for a list of all models." );

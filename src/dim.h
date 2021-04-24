@@ -54,6 +54,18 @@ private:
 #endif  // CMAKE_USE_OPENCV
 
 
+// An agegate of simple measures.
+// Intended as a placeholder when no libs are enabled.
+struct Simple
+{
+    using T = dat::Compressed::value_type;
+
+    Simple( const dat::Dataset & );
+    dat::Compressed operator()( const dat::Spectrum & ) const;
+};
+
+
+
 }  // namespace dim
 
 

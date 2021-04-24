@@ -24,6 +24,7 @@ namespace dat
 
 // A single spectroscope measurement for a single point.
 // In some representation.
+// TODO: operator[]
 template < typename ElemT, unsigned num_dims >
 struct Sample
 {

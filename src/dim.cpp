@@ -7,6 +7,7 @@
 #endif
 
 #include <algorithm>
+#include <numeric>
 #include <tuple>
 
 
@@ -119,6 +120,26 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
 
 
 #endif  // CMAKE_USE_OPENCV
+
+
+Simple::Simple( const dat::Dataset & )
+{
+}
+
+
+dat::Compressed Simple::operator()( const dat::Spectrum & s ) const
+{
+    const auto mean = std::accumulate( s._y.begin(), s._y.end(), 0 ) / s._num_points;
+    using CompressedValue = dat::Compressed::value_type;
+    const auto squared_diff = [ mean ] ( CompressedValue sum, CompressedValue v )
+        { return sum + ((v - mean) * (v - mean)); };
+    const auto variance = std::accumulate( s._y.begin(), s._y.end(), 0, squared_diff ) / s._num_points;
+
+    dat::Compressed ret{};
+    ret._y[0] = mean;
+    ret._y[1] = variance;
+    return ret;
+}
 
 
 }  // namespace dim
