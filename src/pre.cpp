@@ -2,8 +2,10 @@
 
 #include "label.h"
 
+#ifdef CMAKE_USE_DLIB
 #include <dlib/statistics.h>
 #include <dlib/svm.h>
+#endif
 
 #include <cassert>
 #include <cmath>
@@ -109,6 +111,7 @@ std::vector< size_t > rank_features( const dat::Dataset & )
 }
 
 
+#ifdef CMAKE_USE_DLIB
 dat::Dataset lda( const dat::Dataset & d )
 {
     dlib::matrix< double > samples;
@@ -135,5 +138,7 @@ dat::Dataset lda( const dat::Dataset & d )
 
     return {};
 }
+#endif // CMAKE_USE_DLIB
+
 
 }  // namespace pre

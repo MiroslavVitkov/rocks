@@ -1,6 +1,8 @@
 #include "score.h"
 
+#ifdef CMAKE_USE_DLIB
 #include <dlib/matrix.h>
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -12,6 +14,7 @@ namespace score
 {
 
 
+#ifdef CMAKE_USE_DLIB
 const dat::Spectrum & find_worst( Comp c, const dat::Dataset & d )
 {
     using P = std::pair< int, const dat::Spectrum & >;
@@ -96,6 +99,7 @@ double accuracy( const Confusion & c )
     const auto s{ dlib::sum( c ) };
     return 1.0 * t / s;
 }
+#endif  // CMAKE_USE_DLIB
 
 
 }  // namespace score

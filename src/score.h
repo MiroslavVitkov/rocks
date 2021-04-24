@@ -7,7 +7,9 @@
 
 #include "dat.h"
 
+#ifdef CMAKE_USE_DLIB
 #include <dlib/matrix.h>
+#endif
 
 #include <functional>
 #include <utility>
@@ -18,6 +20,7 @@ namespace score
 {
 
 
+#ifdef CMAKE_USE_DLIB
 using Confusion = dlib::matrix< unsigned >;
 
 
@@ -32,7 +35,7 @@ Confusion calc_confusion( const std::vector< label::Num > & ground_truth
 
 
 double accuracy( const Confusion & );
-
+#endif  // CMAKE_USE_DLIB
 
 }  // namespace score
 

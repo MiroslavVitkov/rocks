@@ -37,7 +37,9 @@ endif()
 
 
 # Use the ML library dlib.
-set( USE_DLIB OFF CACHE STRING "One of the prominent ML libs." )
+# Used for fundamental tasks such at command line parsing.
+set( USE_DLIB OFF CACHE STRING
+    "A prominent ML lib, used for this project's infrastructure, strogly recommended to keep ON." )
 if( USE_DLIB )
     find_package( OpenMP REQUIRED )  # needed by dlib
     find_package( dlib REQUIRED )
@@ -72,10 +74,13 @@ if( USE_FOREST )
     message( STATUS "random-forest loaded successfully.")
 endif()
 
+set( THREADS_PREFER_PTHREAD_FLAG ON )
+find_package( Threads REQUIRED )
 
 
 add_executable( rocks "${SRC}" )
-target_link_libraries( rocks PUBLIC stdc++fs )
+target_link_libraries( rocks PUBLIC stdc++fs
+                                    Threads::Threads)
 
 
 if( USE_QWT )

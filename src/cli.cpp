@@ -1,7 +1,9 @@
 #include "cli.h"
 #include "model.h"
 
+#ifdef CMAKE_USE_DLIB
 #include <dlib/cmd_line_parser.h>
+#endif
 
 #include <algorithm>
 #include <iostream>
@@ -13,8 +15,10 @@ namespace cli
 {
 
 
+
 std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
 {
+#ifdef CMAKE_USE_DLIB
     dlib::command_line_parser parser;
     parser.add_option( "h", "Print this message." );
     parser.add_option( "help", "Print this message." );
@@ -59,10 +63,14 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     {
         return std::make_unique<cmd::ReportOutliers>( "../rocks/data" );
     }
+#endif  // CMAKE_USE_DLIB
+    (void)argc;
+    (void)argv;
 
     std::cerr << "No action selected. Exiting.\n";
     return std::make_unique<cmd::NoOp>();
 }
+
 
 
 }  // namespace cli

@@ -89,7 +89,6 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
-#endif  // CMAKE_USE_DLIB
 
 
 struct NN : Model
@@ -102,6 +101,7 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
+#endif  // CMAKE_USE_DLIB
 
 
 #ifdef CMAKE_USE_FOREST
@@ -146,11 +146,11 @@ inline std::unique_ptr< Model > create( const std::string & name
     {
         return std::unique_ptr< PCAandSVM >( new PCAandSVM( d ) );
     }
-#endif  // CMAKE_USE_DLIB
     if( is( "nn" ) )
     {
         return std::unique_ptr< NN >( new NN( d ) );
     }
+#endif  // CMAKE_USE_DLIB
 #ifdef CMAKE_USE_FOREST
     if( is( "forest" ) )
     {

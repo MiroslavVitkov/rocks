@@ -111,6 +111,7 @@ void RunModel::execute()
     }
 
     // Report.
+#if CMAKE_USE_DLIB
     print::info( "Calculating confusion matrix." );
     const auto conf = score::calc_confusion( ground_truth, predicted );
 
@@ -118,6 +119,9 @@ void RunModel::execute()
                  "Labels: " << train.second << '\n'
               << conf
               << "\naccuracy: " << score::accuracy( conf ) << '\n';
+#else
+    print::info( "Accuracy evaluadion disabled because dlib is not used." );
+#endif  // CMAKE_USE_DLIB
 }
 
 

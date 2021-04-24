@@ -525,11 +525,10 @@ label::Num NN::predict( const dat::Spectrum & s ) const
 NN::~NN()
 {
 }
+#endif // CMAKE_USE_DLIB
 
 
-#ifdef CMAKE_USE_FOREST
-
-
+#ifdef CMAKE_USE_SHARK
 struct Forest::Impl
 {
     using Feature = double;
@@ -605,9 +604,10 @@ struct Forest::Impl
 
     andres::ml::DecisionForest< Feature, Label, Probability > _model;
 };
-#endif  // CMAKE_USE_DLIB
+#endif  // CMAKE_USE_SHARK
 
 
+#ifdef CMAKE_USE_FOREST
 Forest::Forest( const dat::Dataset & d )
     : _impl{ std::make_unique< Impl >( d ) }
 {
@@ -623,8 +623,6 @@ label::Num Forest::predict( const dat::Spectrum & s ) const
 Forest::~Forest()
 {
 }
-
-
 #endif // CMAKE_USE_FOREST
 
 
