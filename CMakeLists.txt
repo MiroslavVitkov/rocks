@@ -31,7 +31,6 @@ if( USE_QWT )
     find_package( Qwt REQUIRED )
     list( APPEND SRC src/plot.cpp )
     add_compile_options( ${OpenMP_CXX_FLAGS} )
-    target_compile_definitions( rocks CMAKE_USE_QWT PUBLIC ON )
     message( STATUS "qwt loaded successfully.")
 endif()
 
@@ -43,7 +42,6 @@ set( USE_DLIB OFF CACHE STRING
 if( USE_DLIB )
     find_package( OpenMP REQUIRED )  # needed by dlib
     find_package( dlib REQUIRED )
-    target_compile_definitions( rocks CMAKE_USE_DLIB PUBLIC ON )
     message( STATUS "dlib loaded successfully.")
 endif()
 
@@ -52,7 +50,6 @@ endif()
 set( USE_OPENCV OFF CACHE STRING "A classical ML and CV library." )
 if( USE_OPENCV )
     find_package( OpenCV REQUIRED )
-    target_compile_definitions( rocks CMAKE_USE_OPENCV PUBLIC ON )
     message( STATUS "opencv loaded successfully.")
 endif()
 
@@ -62,7 +59,6 @@ set( USE_SHARK OFF CACHE STRING "A comprehensive ML library." )
 if( USE_SHARK )
     find_package( Shark REQUIRED )  # random forests and more
     include( ${SHARK_USE_FILE} )
-    target_compile_definitions( rocks CMAKE_USE_SHARK PUBLIC ON )
     message( STATUS "shark loaded successfully.")
 endif()
 
@@ -70,7 +66,6 @@ endif()
 # Use a random forest implementation.
 set( USE_FOREST OFF CACHE STRING "A header-only random forest." )
 if( USE_FOREST )
-    target_compile_definitions( rocks CMAKE_USE_FOREST PUBLIC ON )
     message( STATUS "random-forest loaded successfully.")
 endif()
 
@@ -92,25 +87,30 @@ if( USE_QWT )
                                              ${Qt5Gui_INCLUDE_DIRS}
                                              ${Qt5Widgets_INCLUDE_DIRS}
                                              ${QWT_INCLUDE_DIR} )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_QWT=ON )
 endif()
 
 
 if( USE_DLIB )
     target_link_libraries( rocks PUBLIC  OpenMP::OpenMP_CXX
                                          dlib::dlib )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_DLIB=ON )
 endif()
 
 
 if( USE_OPENCV )
     target_link_libraries( rocks PUBLIC "${OpenCV_LIBS}" )
+    target_compile_definitions( rock PUBLIC CMAKE_USE_OPENCV=ON )
 endif()
 
 
 if( USE_SHARK )
     target_link_libraries( rocks PUBLIC "${SHARK_LIBRARIES}" )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_SHARK=ON )
 endif()
 
 
 if( USE_FOREST )
     target_include_directories( rocks SYSTEM PRIVATE "../extern/random-forest/include" )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_FOREST=ON )
 endif()
