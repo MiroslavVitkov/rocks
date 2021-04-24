@@ -38,7 +38,7 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     }
 
     if( parser.option( "m" ) || parser.option( "model" ) )
-    {
+    {// TODO: without parameter list avaible models and exit
         const auto model_name =[ & parser ] ()
         {
             if( parser.option( "m" ) )

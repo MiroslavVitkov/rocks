@@ -111,7 +111,7 @@ void RunModel::execute()
     }
 
     // Report.
-#if CMAKE_USE_DLIB
+#ifdef CMAKE_USE_DLIB
     print::info( "Calculating confusion matrix." );
     const auto conf = score::calc_confusion( ground_truth, predicted );
 
