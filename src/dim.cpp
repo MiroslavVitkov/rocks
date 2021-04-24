@@ -2,7 +2,9 @@
 
 #include "dat.h"
 
+#ifdef CMAKE_USE_OPENCV
 #include <opencv2/core.hpp>
+#endif
 
 #include <algorithm>
 #include <tuple>
@@ -10,6 +12,9 @@
 
 namespace dim
 {
+
+
+#ifdef CMAKE_USE_OPENCV
 
 
 cv::LDA init_lda( const dat::Dataset & d )
@@ -111,6 +116,9 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
 
     return ret;
 }
+
+
+#endif  // CMAKE_USE_OPENCV
 
 
 }  // namespace dim

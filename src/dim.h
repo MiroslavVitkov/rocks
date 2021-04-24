@@ -7,7 +7,9 @@
 
 #include "dat.h"
 
+#ifdef CMAKE_USE_OPENCV
 #include <opencv2/core.hpp>
+#endif
 
 #include <array>
 #include <vector>
@@ -15,6 +17,9 @@
 
 namespace dim
 {
+
+
+#ifdef CMAKE_USE_OPENCV
 
 
 // Linear Discriminant Analysis
@@ -44,6 +49,9 @@ struct PCA
 private:
     cv::PCA _pca;
 };
+
+
+#endif  // CMAKE_USE_OPENCV
 
 
 }  // namespace dim

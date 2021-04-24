@@ -67,7 +67,7 @@ endif()
 
 # Use a random forest implementation.
 set( USE_FOREST OFF CACHE STRING "A header-only random forest." )
-if( USE_OPENCV )
+if( USE_FOREST )
     target_compile_definitions( rocks CMAKE_USE_FOREST PUBLIC ON )
     message( STATUS "random-forest loaded successfully.")
 endif()
@@ -107,6 +107,5 @@ endif()
 
 
 if( USE_FOREST )
-    target_link_libraries( rocks PUBLIC "${SHARK_LIBRARIES}" )
     target_include_directories( rocks SYSTEM PRIVATE "../extern/random-forest/include" )
 endif()

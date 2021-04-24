@@ -4,7 +4,9 @@
 #include "label.h"
 #include "print.h"
 
+#ifdef CMAKE_USE_FOREST
 #include <andres/ml/decision-trees.hxx>
+#endif
 
 #include <dlib/dnn.h>
 #include <dlib/matrix.h>
