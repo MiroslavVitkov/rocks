@@ -43,7 +43,10 @@ dat::Spectrum read_csv( const fs::path & path )
 
     // Drop the column names.
     std::getline( file, line);
-    assert( line == "wavelength,intensity\r" );
+    if( line != "wavelength,intensity\r" )
+    {
+        throw Exception{ path.string() + " is wrong format." };
+    }
 
     dat::Spectrum ret;
     auto it = ret._y.begin();
