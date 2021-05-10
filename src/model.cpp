@@ -532,19 +532,46 @@ NN::~NN()
 struct Forest::Impl
 {
     using Feature = double;
-    using Label = label::Num;
+    using Label = unsigned;  // Shark seems to mandate this.
     using Probability = double;
+
+
+    shark::RealVector to_shark_vector( const dat::Spectrum & s )
+    {
+        return { s._y.cbegin(), s._y.cend() };
+    }
+
+
+    shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+    {
+        if( d.first.empty() )
+        {
+            return {};
+        }
+
+        std::vector< shark::RealVector > inputs;
+        std::vector< Label > labels;
+        dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
+        {
+            inputs.push_back( to_shark_vector( s ) );
+            labels.push_back( static_cast< Label >( l ) );
+        }
+                  , d );
+
+        shark::ClassificationDataset data = shark::createLabeledDataFromRange( inputs, labels );
+        return data;
+    }
 
 
     Impl( const dat::Dataset & d )
     {
-        shark::ClassificationDataset data;
-        //shark::importCSV(data, "data/mnist_subset.libsvm", shark::LAST_COLUMN, ' ');
-        const std::string fn{ "../rocks/data/C.csv" };
-//        std::cout <<fn<<std::endl;
-//        std::ifstream stream(fn.c_str());
-//        (void)stream;
-        shark::importCSV(data, fn, shark::LAST_COLUMN, ' ');
+        auto data{ to_shark_dataset( d ) };
+
+        if( data.empty() ) return;
+
+//        shark::ClassificationDataset data;
+//        const std::string fn{ "../rocks/data/C.csv" };
+//        shark::importCSV(data, fn, shark::LAST_COLUMN, ' ');
 
         //Split the dataset into a training and a test dataset
         shark::ClassificationDataset dataTest = shark::splitAtElement(data,311);
@@ -560,6 +587,7 @@ struct Forest::Impl
         prediction = model(dataTest.inputs());
         std::cout << "Random Forest on test set accuracy:     " << 1. - loss.eval(dataTest.labels(), prediction) << std::endl;
         std::exit( 0 );
+        //
         //
         //
         const auto num_samples = dat::count( d );
