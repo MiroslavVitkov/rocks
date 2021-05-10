@@ -1,6 +1,7 @@
 #include "io.h"
 
 #include "except.h"
+#include "print.h"
 
 #include <cassert>
 #include <filesystem>
@@ -94,7 +95,14 @@ dat::DataRaw read( const std::string & dataset_dir , unsigned labels_depth )
                                + " is located at smaller depth." };
             }
 
-            ret[ label ].emplace_back( read_csv( file ) );
+            try
+            {
+                ret[ label ].push_back( read_csv( file ) );
+            }
+            catch( const Exception & e )
+            {
+                print::info( e.what() );
+            }
         }
     }
 
