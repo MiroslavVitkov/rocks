@@ -27,6 +27,7 @@
 
 #include "dat.h"
 
+#include <filesystem>
 #include <string>
 
 
@@ -34,10 +35,20 @@ namespace io
 {
 
 
+namespace fs = std::filesystem;
+
+
+constexpr const char SEPARATOR{ fs::path::preferred_separator };
+
+
+
+// 'labels_depth == 0' -> no classification, extract measures e.g. mean
 // 'labels_depth == 1' -> '/azurite'
 // 'labels_depth == 2' -> '/azurite/spot00' and an error for '99.csv'
-dat::DataRaw read( const std::string & dataset_dir
-                 , unsigned labels_depth = 1 );
+dat::DataRaw read( const fs::path & dataset_dir
+                 , unsigned labels_depth = 1
+                 , const std::string & labels_prefix = ""
+                 );
 
 
 }  // namespace io
