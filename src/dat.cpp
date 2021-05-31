@@ -1,6 +1,7 @@
 #include "dat.h"
 
-#include <set>
+#include <cassert>
+#include <random>
 
 
 namespace dat
@@ -13,23 +14,28 @@ void append( std::vector< Spectrum > & v1, const std::vector< Spectrum > & v2 )
 }
 
 
-std::pair< DataRaw, DataRaw > split( const DataRaw & d )
+std::pair< DataRaw, DataRaw > split( const DataRaw & d, double ratio )
 {
+    assert( ratio > 0 && ratio < 1 );
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution distribution( 0., 1. );
+
     DataRaw train, test;
 
-    std::set< label::RawShort > processed;
     for( const auto & kv : d )
     {
-        const auto l = label::head( kv.first );
-
-        if( processed.count( l ) )
+        const auto & label{ kv.first };
+        for( const auto & datapoint : kv.second )
         {
-            append( train[ l ], kv.second );
-        }
-        else
-        {
-            append( test[ l ], kv.second );
-            processed.emplace( l );
+            if( distribution( generator ) < ratio )
+            {
+                train[ label ].push_back( datapoint );
+            }
+            else
+            {
+                test[ label ].push_back( datapoint );
+            }
         }
     }
 

@@ -64,10 +64,9 @@ using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, label::Codec >;
 
 
-// For each label, pick the first subdir as test, the rest as train.
-// Requires 2 levels of hierarchical labels.
-// Trims the labels to only the major part.
-std::pair< DataRaw, DataRaw > split( const DataRaw & );
+// Sample points at random without regard to label. TODO: stratified sampler.
+// `ratio` ranges from 0 - only test to 1 - only train.
+std::pair< DataRaw, DataRaw > split( const DataRaw &, double ratio = 0.66 );
 
 Dataset encode( DataRaw & );
 Dataset encode( DataRaw &, const label::Codec & );
