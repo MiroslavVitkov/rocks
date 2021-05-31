@@ -159,10 +159,11 @@ dat::DataRaw read( const fs::path & dataset_dir
                 ret[ p->first ] = p->second;
             }
         }
-    }//using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
+    }
     else
     {
-        ret[ labels_prefix ] = recursively_read_csvs( dataset_dir );
+        const auto path{ dataset_dir / labels_prefix.substr( 1, labels_prefix.size() ) };
+        ret[ labels_prefix ] = recursively_read_csvs( path );
     }
 
     return ret;
