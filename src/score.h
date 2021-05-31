@@ -37,6 +37,8 @@ Confusion calc_confusion( const std::vector< label::Num > & ground_truth
 double accuracy( const Confusion & );
 #endif  // CMAKE_USE_DLIB
 
+
 }  // namespace score
+
 
 #endif  // #ifndef SCORE_H_

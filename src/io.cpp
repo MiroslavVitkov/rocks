@@ -162,8 +162,15 @@ dat::DataRaw read( const fs::path & dataset_dir
     }
     else
     {
-        const auto path{ dataset_dir / labels_prefix.substr( 1, labels_prefix.size() ) };
-        ret[ labels_prefix ] = recursively_read_csvs( path );
+        if( labels_prefix.empty() )
+        {
+            ret[ labels_prefix ] = recursively_read_csvs( dataset_dir );
+        }
+        else
+        {
+            const auto path{ dataset_dir / labels_prefix.substr( 1, labels_prefix.size() ) };
+            ret[ labels_prefix ] = recursively_read_csvs( path );
+        }
     }
 
     return ret;
