@@ -22,12 +22,16 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     dlib::command_line_parser parser;
     parser.add_option( "h", "Print this message." );
     parser.add_option( "help", "Print this message." );
-    parser.add_option( "m", "See 'rocks/src/model.h' for the complete list."
+    parser.add_option( "m", "See 'model.h' for the complete list."
                      , 1 );
-    parser.add_option( "model", "See 'rocks/src/model.h' for the complete list."
+    parser.add_option( "model", "See 'model.h' for the complete list."
                      , 1 );
     parser.add_option( "o", "Print a report on outliers" );
     parser.add_option( "outliers", "Print a report on outliers" );
+    parser.add_option( "d", "How deep to descend in subdirectories of the dataset."
+                     , 1 );
+    parser.add_option( "labels-depth", "How deep to descend in subdirectories of the dataset."
+                     , 1 );
 
     parser.parse( argc, const_cast< char** >( argv ) );
 
@@ -52,11 +56,31 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
 
         } ();
 
+
+        const unsigned labels_depth =[ & parser ] ()
+        {
+            if( parser.option( "d" ) )
+            {
+                const auto wtf = parser.option( "d" ).argument();
+                return std::stoi( wtf );
+            }
+            else if( parser.option( "labels-depth" ) )
+            {
+                return std::stoi( parser.option( "labels-depth" ).argument() );
+            }
+            else
+            {
+                return 1;
+            }
+        } ();
+
+
         // Verify such a model exists by creating one with an empy training set.
         auto m = model::create( model_name, {} );
 
         return std::make_unique< cmd::RunModel >( "../rocks/data"
-                                                , model_name );
+                                                , model_name
+                                                , labels_depth );
     }
 
     if( parser.option( "o" ) || parser.option( "outliers" ) )

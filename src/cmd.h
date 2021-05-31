@@ -26,15 +26,18 @@ struct NoOp : Base
 };
 
 
+// See io.h for explaination of `labels_depth`.
 struct RunModel : Base
 {
     RunModel( const std::string & data_dir
-            , const std::string & model_name );
+            , const std::string & model_name
+            , unsigned labels_depth );
     void execute() override;
 
 private:
     const std::string _data_dir;
     const std::string _model_name;
+    const unsigned _labels_depth;
 };
 
 

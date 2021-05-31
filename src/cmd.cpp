@@ -20,9 +20,11 @@ namespace cmd
 
 
 RunModel::RunModel( const std::string & data_dir
-                  , const std::string & model_name )
+                  , const std::string & model_name
+                  , unsigned labels_depth )
     : _data_dir{ data_dir }
     , _model_name{ model_name }
+    , _labels_depth{ labels_depth }
 {
 }
 
@@ -78,10 +80,9 @@ void RunModel::execute()
 {
     // Obtain the dataset.
     // When encoding, assume the test label is represented in the training set.
-    constexpr unsigned labels_depth{ 2 };
     print::info( std::string("Reading dataset '") + _data_dir
-               + "' at labels depth " + std::to_string(labels_depth) );
-    auto raw = io::read( _data_dir, labels_depth );
+               + "' at labels depth " + std::to_string(_labels_depth) );
+    auto raw = io::read( _data_dir, _labels_depth );
     auto traintest = dat::split( raw );
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
