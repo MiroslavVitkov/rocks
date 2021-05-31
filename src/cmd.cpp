@@ -78,8 +78,10 @@ void RunModel::execute()
 {
     // Obtain the dataset.
     // When encoding, assume the test label is represented in the training set.
-    print::info( std::string("Reading the dataset:") + _data_dir );
-    auto raw = io::read( _data_dir, 2 );
+    constexpr unsigned labels_depth{ 2 };
+    print::info( std::string("Reading dataset '") + _data_dir
+               + "' at labels depth " + std::to_string(labels_depth) );
+    auto raw = io::read( _data_dir, labels_depth );
     auto traintest = dat::split( raw );
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );

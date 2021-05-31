@@ -11,7 +11,7 @@
 #include <ranges>
 #include <vector>
 
-
+#include <iostream>
 namespace io
 {
 
@@ -69,8 +69,7 @@ dat::Spectrum read_csv( const fs::path & path )
 }
 
 
-// Basically lists subdirectories.
-std::vector< std::string > extract_sorted_labels( const fs::path & base_dir )
+std::vector< std::string > list_dirs( const fs::path & base_dir )
 {
     std::vector< fs::path > labels;
     for( const auto & dir_label : fs::directory_iterator( base_dir ) )
@@ -148,82 +147,23 @@ dat::DataRaw read( const fs::path & dataset_dir
 
     if( labels_depth > 0 )
     {
-        const auto subpath{ [&] () { return dataset_dir.string() + SEPARATOR + labels_prefix; } () };
-        const auto & labels{ extract_sorted_labels( subpath ) };
-        for( const auto & l : labels )
+        const auto subpath{ [&] () { return dataset_dir.string() + labels_prefix; } () };
+        const auto & dirs{ list_dirs( subpath ) };
+        for( const auto & d : dirs )
         {
-            const auto label{ labels_prefix + SEPARATOR + l };
-            const auto part = read( dataset_dir, labels_depth - 1 , label );
-            assert( ret[ l ].empty() );
+            const auto partial_label{ labels_prefix + SEPARATOR + d };
+            const auto part = read( dataset_dir, labels_depth - 1 , partial_label );
             for( auto p = part.begin(); p != part.end(); ++p )
             {
-
+                assert( ret[ p->first ].empty() );
+                ret[ p->first ] = p->second;
             }
         }
-    }
+    }//using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
     else
     {
         ret[ labels_prefix ] = recursively_read_csvs( dataset_dir );
     }
-
-    return ret;
-
-
-    ///////////////
-
-    const auto & labels{ extract_sorted_labels( dataset_dir ) };
-    for( const auto & l : labels )
-    {
-        //const auto label = labels_prefix + dataset_dir + l;
-        auto label = fs::path( labels_prefix );
-        label /= l;
-        // TODO: multiple issues here
-        //  - why can't part be const?
-        //  - portability
-        const auto part = read( dataset_dir, labels_depth - 1 , label );
-        assert( ret[ l ].empty() );
-        for( auto p = part.begin(); p != part.end(); ++p )
-        {
-//<<<<<<< HEAD
-//            const auto full_label = fs::relative( file.path(), dataset_dir );
-//            std::string label;
-//            try
-//            {
-//                for( auto it = full_label.begin()
-//                   ; std::distance( full_label.begin(), it ) < labels_depth
-//                   ; ++it )
-//                {
-//                    label += '/';
-//                    label += *it;
-//                }
-//            }
-//            catch( ... )
-//            {
-//                throw Exception{ "Requested labels_depth = "
-//                               + std::to_string( labels_depth )
-//                               + ", but file "
-//                               + full_label.string()
-//                               + " is located at smaller depth." };
-//            }
-
-//            try
-//            {
-//                ret[ label ].push_back( read_csv( file ) );
-//            }
-//            catch( const Exception & e )
-//            {
-//                print::info( e.what() );
-//            }
-//=======
-            print::info( p->first );
-//>>>>>>> feeaf90 (a mess! nearly ready hyeararchic labels)
-        }
-        print::info( "KUR" );
-//        assert( sizeof(part) == sizeof(part[l]) );
-//        ret[l] = part[l];
-    }
-
-//    const auto label = fs::relative( dir, dataset_dir );
 
     return ret;
 }
