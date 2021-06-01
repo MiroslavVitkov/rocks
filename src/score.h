@@ -6,6 +6,7 @@
 
 
 #include "dat.h"
+#include "label.h"
 
 #ifdef CMAKE_USE_DLIB
 #include <dlib/matrix.h>
@@ -36,6 +37,15 @@ Confusion calc_confusion( const std::vector< label::Num > & ground_truth
 
 
 double accuracy( const Confusion & );
+
+
+// Use only the head of the labels chain.
+double hierarchic_accuracy( const std::vector< label::Num > & ground_truth
+                          , const std::vector< label::Num > & predicted
+                          , const label::Codec & codec
+                          );
+
+
 #endif  // CMAKE_USE_DLIB
 
 

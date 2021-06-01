@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 
 namespace label
@@ -26,9 +27,12 @@ using Num = int;
 
 struct Codec
 {
-    Num encode( const RawShort & l );
-    Num encode( const RawShort & l ) const;
-    const RawShort & decode( Num i ) const;
+    Num encode( const Raw & l );
+    Num encode( const Raw & l ) const;
+    const Raw & decode( Num i ) const;
+
+    // Respect only head labels (i.e. labels_depth == 1).
+    Codec headonly() const;
 
     friend std::ostream & operator<<( std::ostream &, const Codec & );
 private:
@@ -38,7 +42,11 @@ private:
 std::ostream & operator<<( std::ostream &, const Codec & );
 
 
-RawShort head( const Raw & );
+Raw head( const Raw & );
+
+std::vector< Num > headonly_recode( const std::vector< Num > &
+                                  , const Codec & full
+                                  , const Codec & headonly );
 
 
 }  // namespace label

@@ -113,6 +113,11 @@ void RunModel::execute()
         predicted.push_back( t.get() );
     }
 
+    // Reduce to head labels.
+    const auto headonly{ test.second.headonly() };
+    const auto gt{ label::headonly_recode( ground_truth, test.second, headonly) };
+    const auto pr{ label::headonly_recode( predicted, test.second, headonly) };
+
     // Report.
 #ifdef CMAKE_USE_DLIB
     print::info( "Calculating confusion matrix." );
