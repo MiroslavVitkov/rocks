@@ -76,13 +76,13 @@ private:
 };
 
 
+// TODO: we are keeping in memory 2 copies of the dataset plus a model!
 void RunModel::execute()
 {
-    // Obtain the dataset.
-    // When encoding, assume the test label is represented in the training set.
+    // Read the dataset.
     print::info( std::string("Reading dataset '") + _data_dir
                + "' at labels depth " + std::to_string(_labels_depth) );
-    auto raw = io::read( _data_dir, _labels_depth );
+    const auto raw = io::read( _data_dir, _labels_depth );
     auto traintest = dat::split( raw );
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
@@ -92,6 +92,7 @@ void RunModel::execute()
     const auto m = model::create( _model_name, train );
 
     // Evaluate the test set.
+    print::info( "Evaluating the test set." );
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
     std::vector< Task > tasks;
@@ -99,14 +100,13 @@ void RunModel::execute()
     ground_truth.reserve( count );
     predicted.reserve( count );
     tasks.reserve( count );
-
-    print::info( "Evaluating the test set." );
     dat::apply( [ & ] ( int l, const dat::Spectrum & s )
         {
             ground_truth.push_back( l );
             tasks.emplace_back( * m, s );
         }
-              , test );
+              , test
+              );
 
     for( auto & t : tasks )
     {

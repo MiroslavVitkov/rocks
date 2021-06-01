@@ -80,7 +80,8 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
 
         return std::make_unique< cmd::RunModel >( "../rocks/data"
                                                 , model_name
-                                                , labels_depth );
+                                                , labels_depth
+                                                );
     }
 
     if( parser.option( "o" ) || parser.option( "outliers" ) )

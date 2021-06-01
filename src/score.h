@@ -31,7 +31,8 @@ const dat::Spectrum & find_worst( Comp, const dat::Dataset & d );
 
 // Each row corresponds to a class of data and each column to a prediction.
 Confusion calc_confusion( const std::vector< label::Num > & ground_truth
-                        , const std::vector< label::Num > & predicted );
+                        , const std::vector< label::Num > & predicted
+                        );
 
 
 double accuracy( const Confusion & );
