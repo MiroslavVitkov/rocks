@@ -20,9 +20,6 @@ namespace label
 // Every part of the hierarchical label starts with '/'.
 using Raw = std::string;
 
-// Short labels compose of only the most major label. Ex: /azurite
-using RawShort = std::string;
-
 // Numeric labels are efficient for processing and storage.
 using Num = int;
 
@@ -35,8 +32,8 @@ struct Codec
 
     friend std::ostream & operator<<( std::ostream &, const Codec & );
 private:
-    std::unordered_map< RawShort, Num > _encoding;
-    std::unordered_map< Num, RawShort > _reverse;
+    std::unordered_map< Raw, Num > _encoding;
+    std::unordered_map< Num, Raw > _reverse;
 };
 std::ostream & operator<<( std::ostream &, const Codec & );
 

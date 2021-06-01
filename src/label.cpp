@@ -10,7 +10,7 @@ namespace label
 {
 
 
-Num Codec::encode( const RawShort & l )
+Num Codec::encode( const Raw & l )
 {
     if( _encoding.count( l ) == 0 )
     {
@@ -22,7 +22,7 @@ Num Codec::encode( const RawShort & l )
 }
 
 
-Num Codec::encode( const RawShort & l ) const
+Num Codec::encode( const Raw & l ) const
 {
     if( _encoding.count( l ) == 0 )
     {
@@ -34,7 +34,7 @@ Num Codec::encode( const RawShort & l ) const
 }
 
 
-const RawShort & Codec::decode( Num i ) const
+const Raw & Codec::decode( Num i ) const
 {
     if( _reverse.count( i ) == 0 )
     {
