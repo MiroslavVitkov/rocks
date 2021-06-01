@@ -121,7 +121,7 @@ void RunModel::execute()
     // Report.
 #ifdef CMAKE_USE_DLIB
     print::info( "Calculating confusion matrix." );
-    const auto conf = score::calc_confusion( ground_truth, predicted );
+    const auto conf = score::calc_confusion( gt, pr );
 
     std::cout << "Confusion matrix, rows - ground truth, columns - prediction.\n"
                  "Labels: " << train.second << '\n'
