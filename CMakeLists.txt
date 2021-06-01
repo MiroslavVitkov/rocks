@@ -20,7 +20,9 @@ set (SRC src/cli.cpp
          src/print.cpp
          src/main.cpp
          src/model.cpp
-         src/score.cpp )
+         src/score.cpp
+         src/task.cpp
+    )
 
 
 # Use the graphing library Qwt.

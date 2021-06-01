@@ -41,7 +41,7 @@ void run_async( std::promise< label::Num > & p
 struct Task
 {
     Task( const model::Model & m, const dat::Spectrum & s )
-        :  _p{ }
+        : _p{ }
         , _t{ run_async, std::ref( _p ), std::ref( m ), std::ref( s ) }
     {
     }
