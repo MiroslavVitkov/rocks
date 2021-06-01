@@ -19,6 +19,7 @@ std::pair< DataRaw, DataRaw > split( const DataRaw & d, double ratio )
     assert( ratio > 0 && ratio < 1 );
 
     std::default_random_engine generator;
+    generator.seed( 0 );
     std::uniform_real_distribution distribution( 0., 1. );
 
     DataRaw train, test;
