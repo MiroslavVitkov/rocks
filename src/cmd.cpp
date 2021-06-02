@@ -75,6 +75,19 @@ void RunModel::execute()
 }
 
 
+RunAll::RunAll( const std::string & data_dir
+              , unsigned labels_depth_max )
+    : _data_dir{ data_dir }
+    , _labels_depth_max{ labels_depth_max }
+{
+}
+
+
+void RunAll::execute()
+{
+}
+
+
 ReportOutliers::ReportOutliers( const std::string & data_dir )
     : _data_dir{ data_dir }
 {

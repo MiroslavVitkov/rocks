@@ -163,6 +163,9 @@ inline std::unique_ptr< Model > create( const std::string & name
 }
 
 
+const std::vector< std::string > ALL_MODELS{};
+
+
 }  // namespace model
 
 

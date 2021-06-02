@@ -41,6 +41,20 @@ private:
 };
 
 
+// Run all avaible models at all label depths down to 1.
+// Will take a very long time.
+struct RunAll : Base
+{
+    RunAll( const std::string & data_dir
+          , unsigned labels_depth_max );
+    void execute() override;
+
+private:
+    const std::string _data_dir;
+    const unsigned _labels_depth_max;
+};
+
+
 struct ReportOutliers : Base
 {
     ReportOutliers( const std::string & data_dir );
