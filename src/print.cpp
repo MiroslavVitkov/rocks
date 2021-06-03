@@ -13,7 +13,7 @@ namespace print
 using Clock = std::chrono::system_clock;
 
 
-void info( const char * s )
+void info( char const * s )
 {
     const auto now_seconds = Clock::to_time_t( Clock::now() );
     const auto now_calendar = std::localtime( & now_seconds );

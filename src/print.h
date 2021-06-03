@@ -12,7 +12,7 @@ namespace print
 {
 
 
-void info( const char * );
+void info( char const * );
 inline void info( const std::string & s ) { info( s.c_str() ); }
 
 
