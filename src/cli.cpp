@@ -1,13 +1,13 @@
 #include "cli.h"
-#include "model.h"
 #include "print.h"
 
 #ifdef CMAKE_USE_DLIB
+
+#include "model.h"
+
 #include <dlib/cmd_line_parser.h>
-#endif
 
 #include <algorithm>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -16,97 +16,93 @@ namespace cli
 {
 
 
+using Cmd = std::unique_ptr< cmd::Base >;
+using Parser = dlib::command_line_parser;
 
-std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
+
+Cmd create_model( const Parser & p )
 {
-#ifdef CMAKE_USE_DLIB
-    dlib::command_line_parser parser;
-    parser.add_option( "h", "Print this message." );
-    parser.add_option( "help", "Print this message." );
-    parser.add_option( "m", "Execute model of <name> or list avaible models."
-                     , 1 );
-    parser.add_option( "model", "Execute model of <name> or list avaible models."
-                     , 1 );
-    parser.add_option( "o", "Print a report on outliers" );
-    parser.add_option( "outliers", "Print a report on outliers" );
-    parser.add_option( "d", "How deep to descend in subdirectories of the dataset."
-                     , 1 );
-    parser.add_option( "labels-depth", "How deep to descend in subdirectories of the dataset."
-                     , 1 );
+    assert( p.option( "m" ).count() );
 
-    parser.parse( argc, const_cast< char** >( argv ) );
-
-    if( parser.option( "h" ) || parser.option( "help" ) )
+    // If only -m is passed list models and exit.
+    if( ! p.option( "m" ).count())
     {
-        parser.print_options();
-        return std::make_unique<cmd::NoOp>();
-    }
-
-    if( parser.option( "m" ) || parser.option( "model" ) )
-    {
-        // If only -m is passed list models and exit.
-        if( ! parser.option( "m" ).count() && ! parser.option( "model" ).count() )
+        for( const auto & s : model::ALL_MODELS )
         {
-            for( const auto & s : model::ALL_MODELS )
-            {
-                print::info( s );
-            }
-            return std::make_unique< cmd::NoOp >();
+            print::info( s );
         }
-
-        const auto model_name =[ & parser ] ()
-        {
-            if( parser.option( "m" ) )
-            {
-                return parser.option( "m" ).argument();
-            }
-            else
-            {
-                return parser.option( "model" ).argument();
-            }
-
-        } ();
-
-
-        const unsigned labels_depth =[ & parser ] ()
-        {
-            if( parser.option( "d" ) )
-            {
-                const auto wtf = parser.option( "d" ).argument();
-                return std::stoi( wtf );
-            }
-            else if( parser.option( "labels-depth" ) )
-            {
-                return std::stoi( parser.option( "labels-depth" ).argument() );
-            }
-            else
-            {
-                return 1;
-            }
-        } ();
-
-
-        // Verify such a model exists by creating one with an empy training set.
-        auto m = model::create( model_name, {} );
-
-        return std::make_unique< cmd::RunModel >( "../rocks/data"
-                                                , model_name
-                                                , labels_depth
-                                                );
+        return std::make_unique< cmd::NoOp >();
     }
 
-    if( parser.option( "o" ) || parser.option( "outliers" ) )
+    const auto model_name{ p.option( "m" ).argument() };
+
+    const unsigned labels_depth = [ & p ] ()
+    {
+        if( p.option( "l" ) )
+        {
+            const auto labels_depth = p.option( "l" ).argument();
+            return std::stoi( labels_depth );
+        }
+        else
+        {
+            return 1;
+        }
+    } ();
+
+    // Verify such a model exists by creating one with an empy training set.
+    const auto m = model::create( model_name, {} );
+
+    return std::make_unique< cmd::RunModel >( "../rocks/data"
+                                            , model_name
+                                            , labels_depth
+                                            );
+}
+
+
+Cmd parse( int argc, Argv argv )
+{
+    Parser p;
+    p.add_option( "h", "Print this message." );
+    p.add_option( "help", "Print this message." );
+
+    p.add_option( "o", "Produce a report on outliers." );
+    p.add_option( "m", "Execute <model> or list avaible models.", 1 );
+    p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
+
+    p.parse( argc, const_cast< char** >( argv ) );
+
+    if( p.option( "h" ) || p.option( "help" ) )
+    {
+        p.print_options();
+        return std::make_unique< cmd::NoOp >();
+    }
+
+    if( p.option( "o" ) )
     {
         return std::make_unique<cmd::ReportOutliers>( "../rocks/data" );
     }
-#endif  // CMAKE_USE_DLIB
-    (void)argc;
-    (void)argv;
 
-    std::cerr << "No action selected. Exiting.\n";
+    if( p.option( "m" ) )
+    {
+        return create_model( p );
+    }
+
+    print::info( "No action selected. Exiting.\n" );
     return std::make_unique<cmd::NoOp>();
 }
 
+
+#else  // CMAKE_USE_DLIB
+
+
+std::unique_ptr<cmd::Base> parse( int, Argv )
+{
+    print::info( "dlib is required for command line parsing. Exiting." );
+    return std::make_unique<cmd::NoOp>();
+}
+
+
+#endif  // CMAKE_USE_DLIB
 
 
 }  // namespace cli
