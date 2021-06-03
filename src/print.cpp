@@ -17,7 +17,7 @@ void info( char const * s )
 {
     const auto now_seconds = Clock::to_time_t( Clock::now() );
     const auto now_calendar = std::localtime( & now_seconds );
-    std::cout << std::put_time( now_calendar, "%c" ) << ": " << s << std::endl;
+    std::cout << std::put_time( now_calendar, "%c" ) << ": " << s << '\n';
 }
 
 
