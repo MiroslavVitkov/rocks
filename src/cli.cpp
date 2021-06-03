@@ -76,13 +76,14 @@ Cmd create_model( const Parser & p )
 Cmd parse( int argc, Argv argv )
 {
     Parser p;
-    p.add_option( "h", "Print this message." );
-    p.add_option( "help", "Print this message." );
+    p.add_option( "h", "Print this." );
+    p.add_option( "help", "Print this." );
 
     p.add_option( "o", "Produce a report on outliers." );
     p.add_option( "m", "Execute <model> or list avaible models.", 1 );
     p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
     p.add_option( "d", "Path to dataset root dir.", 1 );
+    p.add_option( "a", "Run all models. Obviously very slow.", 1 );
 
     p.parse( argc, const_cast< char** >( argv ) );
 
