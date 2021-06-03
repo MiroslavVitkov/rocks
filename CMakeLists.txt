@@ -39,7 +39,7 @@ endif()
 
 # Use the ML library dlib.
 # Used for fundamental tasks such at command line parsing.
-set( USE_DLIB OFF CACHE STRING
+set( USE_DLIB ON CACHE STRING
     "A prominent ML lib, used for this project's infrastructure, strogly recommended to keep ON." )
 if( USE_DLIB )
     find_package( OpenMP REQUIRED )  # needed by dlib
@@ -102,7 +102,7 @@ endif()
 
 if( USE_OPENCV )
     target_link_libraries( rocks PUBLIC "${OpenCV_LIBS}" )
-    target_compile_definitions( rock PUBLIC CMAKE_USE_OPENCV=ON )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_OPENCV=ON )
 endif()
 
 
