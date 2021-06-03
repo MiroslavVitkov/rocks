@@ -1,5 +1,6 @@
 #include "cli.h"
 #include "model.h"
+#include "print.h"
 
 #ifdef CMAKE_USE_DLIB
 #include <dlib/cmd_line_parser.h>
@@ -22,9 +23,9 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     dlib::command_line_parser parser;
     parser.add_option( "h", "Print this message." );
     parser.add_option( "help", "Print this message." );
-    parser.add_option( "m", "See 'model.h' for the complete list."
+    parser.add_option( "m", "Execute model of <name> or list avaible models."
                      , 1 );
-    parser.add_option( "model", "See 'model.h' for the complete list."
+    parser.add_option( "model", "Execute model of <name> or list avaible models."
                      , 1 );
     parser.add_option( "o", "Print a report on outliers" );
     parser.add_option( "outliers", "Print a report on outliers" );
@@ -42,7 +43,17 @@ std::unique_ptr<cmd::Base> parse( int argc, Argv argv )
     }
 
     if( parser.option( "m" ) || parser.option( "model" ) )
-    {// TODO: without parameter list avaible models and exit
+    {
+        // If only -m is passed list models and exit.
+        if( ! parser.option( "m" ).count() && ! parser.option( "model" ).count() )
+        {
+            for( const auto & s : model::ALL_MODELS )
+            {
+                print::info( s );
+            }
+            return std::make_unique< cmd::NoOp >();
+        }
+
         const auto model_name =[ & parser ] ()
         {
             if( parser.option( "m" ) )
