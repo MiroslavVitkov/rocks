@@ -8,6 +8,7 @@
 #include <dlib/cmd_line_parser.h>
 
 #include <algorithm>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,19 @@ namespace cli
 
 using Cmd = std::unique_ptr< cmd::Base >;
 using Parser = dlib::command_line_parser;
+
+
+std::filesystem::path find_dataset( const Parser & p )
+{
+    if( p.option( "d" ) )
+    {
+        return p.option( "d" ).argument();
+    }
+    else
+    {
+        return "../rocks/data";
+    }
+}
 
 
 Cmd create_model( const Parser & p )
@@ -52,7 +66,7 @@ Cmd create_model( const Parser & p )
     // Verify such a model exists by creating one with an empy training set.
     const auto m = model::create( model_name, {} );
 
-    return std::make_unique< cmd::RunModel >( "../rocks/data"
+    return std::make_unique< cmd::RunModel >( find_dataset( p )
                                             , model_name
                                             , labels_depth
                                             );
@@ -68,6 +82,7 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "o", "Produce a report on outliers." );
     p.add_option( "m", "Execute <model> or list avaible models.", 1 );
     p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
+    p.add_option( "d", "Path to dataset root dir.", 1 );
 
     p.parse( argc, const_cast< char** >( argv ) );
 
@@ -79,7 +94,7 @@ Cmd parse( int argc, Argv argv )
 
     if( p.option( "o" ) )
     {
-        return std::make_unique<cmd::ReportOutliers>( "../rocks/data" );
+        return std::make_unique< cmd::ReportOutliers >( find_dataset( p ) );
     }
 
     if( p.option( "m" ) )
@@ -88,7 +103,7 @@ Cmd parse( int argc, Argv argv )
     }
 
     print::info( "No action selected. Exiting.\n" );
-    return std::make_unique<cmd::NoOp>();
+    return std::make_unique< cmd::NoOp >();
 }
 
 
@@ -98,7 +113,7 @@ Cmd parse( int argc, Argv argv )
 std::unique_ptr<cmd::Base> parse( int, Argv )
 {
     print::info( "dlib is required for command line parsing. Exiting." );
-    return std::make_unique<cmd::NoOp>();
+    return std::make_unique< cmd::NoOp >();
 }
 
 
