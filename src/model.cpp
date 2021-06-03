@@ -654,4 +654,7 @@ Forest::~Forest()
 #endif // CMAKE_USE_FOREST
 
 
+const std::vector< std::string > ALL_MODELS{ "chance", "cor", "svm", "lda", "pca", "nn", "forest" };
+
+
 }  // namespace model
