@@ -104,7 +104,7 @@ private:
 #endif  // CMAKE_USE_DLIB
 
 
-#ifdef CMAKE_USE_FOREST
+// Use Shark or andres's implementation.
 struct Forest : Model
 {
     Forest( const dat::Dataset & );
@@ -115,7 +115,6 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
-#endif
 
 
 inline std::unique_ptr< Model > create( const std::string & name

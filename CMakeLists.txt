@@ -65,10 +65,10 @@ if( USE_SHARK )
 endif()
 
 
-# Use a random forest implementation.
-set( USE_FOREST OFF CACHE STRING "A header-only random forest." )
-if( USE_FOREST )
-    message( STATUS "random-forest loaded successfully.")
+# Use a random forest implementation separate from Shark.
+set( USE_ANDRES_FOREST OFF CACHE STRING "A header-only random forest instead of Shark." )
+if( USE_ANDRES_FOREST )
+    message( STATUS "andres random-forest loaded successfully.")
 endif()
 
 set( THREADS_PREFER_PTHREAD_FLAG ON )
@@ -112,7 +112,7 @@ if( USE_SHARK )
 endif()
 
 
-if( USE_FOREST )
-    target_include_directories( rocks SYSTEM PRIVATE "../extern/random-forest/include" )
-    target_compile_definitions( rocks PUBLIC CMAKE_USE_FOREST=ON )
+if( USE_ANDRES_FOREST )
+    target_include_directories( rocks SYSTEM PRIVATE "~/proj/extern/extern/random-forest/include" )
+    target_compile_definitions( rocks PUBLIC CMAKE_USE_ANDRES_FOREST=ON )
 endif()
