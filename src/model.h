@@ -104,7 +104,6 @@ private:
 #endif  // CMAKE_USE_DLIB
 
 
-// Use Shark or andres's implementation.
 struct Forest : Model
 {
     Forest( const dat::Dataset & );

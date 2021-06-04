@@ -4,10 +4,6 @@
 #include "label.h"
 #include "print.h"
 
-#ifdef CMAKE_USE_ANDRES_FOREST
-#include <andres/ml/decision-trees.hxx>
-#endif
-
 #ifdef CMAKE_USE_DLIB
 #include <dlib/dnn.h>
 #include <dlib/matrix.h>
@@ -597,10 +593,8 @@ struct Forest::Impl
         }
 
         const auto num_features = dat::Spectrum::_num_points;
-        andres::Matrix< Feature > f( num_samples, num_features );
         auto f_it = f.begin();
 
-        andres::Vector< Label > l( num_samples );
         auto l_it = l.begin();
 
         dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
@@ -618,10 +612,8 @@ struct Forest::Impl
 
     label::Num predict( const dat::Spectrum & s ) const
     {
-        andres::Matrix< Feature > f( 1, dat::Spectrum::_num_points );
         std::copy( s._y.cbegin(), s._y.cend(), f.begin() );
 
-        andres::Matrix< Probability > p( 1, 6 );
         _model.predict( f, p );
 
         const auto it = std::max_element( p.begin(), p.end() );
@@ -630,7 +622,6 @@ struct Forest::Impl
         return static_cast< label::Num >( predicted );
     }
 
-    andres::ml::DecisionForest< Feature, Label, Probability > _model;
 };
 
 
@@ -650,11 +641,6 @@ Forest::~Forest()
 {
 }
 #endif  // CMAKE_USE_SHARK
-
-
-#ifdef CMAKE_USE_ANDRES_FOREST
-// TODO: dig out the code for this from git.
-#endif // CMAKE_USE_ANDRES_FOREST
 
 
 const std::vector< std::string > ALL_MODELS{ "chance", "cor", "svm", "lda", "pca", "nn", "forest" };
