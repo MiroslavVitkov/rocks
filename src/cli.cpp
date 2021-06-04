@@ -34,6 +34,20 @@ std::filesystem::path find_dataset( const Parser & p )
 }
 
 
+unsigned find_labels_depth( const Parser & p )
+{
+    if( p.option( "l" ) )
+    {
+        const auto labels_depth = p.option( "l" ).argument();
+        return std::stoi( labels_depth );
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+
 Cmd create_model( const Parser & p )
 {
     assert( p.option( "m" ).count() );
@@ -50,25 +64,12 @@ Cmd create_model( const Parser & p )
 
     const auto model_name{ p.option( "m" ).argument() };
 
-    const unsigned labels_depth = [ & p ] ()
-    {
-        if( p.option( "l" ) )
-        {
-            const auto labels_depth = p.option( "l" ).argument();
-            return std::stoi( labels_depth );
-        }
-        else
-        {
-            return 1;
-        }
-    } ();
-
     // Verify such a model exists by creating one with an empy training set.
-    const auto m = model::create( model_name, {} );
+    model::create( model_name, {} );
 
     return std::make_unique< cmd::RunModel >( find_dataset( p )
                                             , model_name
-                                            , labels_depth
+                                            , find_labels_depth( p )
                                             );
 }
 
@@ -83,7 +84,7 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "m", "Execute <model> or list avaible models.", 1 );
     p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
     p.add_option( "d", "Path to dataset root dir.", 1 );
-    p.add_option( "a", "Run all models. Obviously very slow.", 1 );
+    p.add_option( "a", "Run all models. Obviously very slow." );
 
     p.parse( argc, const_cast< char** >( argv ) );
 
@@ -101,6 +102,13 @@ Cmd parse( int argc, Argv argv )
     if( p.option( "m" ) )
     {
         return create_model( p );
+    }
+
+    if( p.option( "a" ) )
+    {
+        return std::make_unique< cmd::RunAllModels >( find_dataset( p )
+                                                    , find_labels_depth( p )
+                                                    );
     }
 
     print::info( "No action selected. Exiting.\n" );

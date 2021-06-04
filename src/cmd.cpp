@@ -75,16 +75,25 @@ void RunModel::execute()
 }
 
 
-RunAll::RunAll( const std::string & data_dir
-              , unsigned labels_depth_max )
+RunAllModels::RunAllModels( const std::string & data_dir
+                          , unsigned labels_depth
+                          )
     : _data_dir{ data_dir }
-    , _labels_depth_max{ labels_depth_max }
+    , _labels_depth{ labels_depth }
 {
 }
 
 
-void RunAll::execute()
+void RunAllModels::execute()
 {
+    for( const auto & m : model::ALL_MODELS )
+    {
+        RunModel( _data_dir
+                , m
+                , _labels_depth
+                );
+        // TODO
+    }
 }
 
 

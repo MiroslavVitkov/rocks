@@ -31,7 +31,8 @@ struct RunModel : Base
 {
     RunModel( const std::string & data_dir
             , const std::string & model_name
-            , unsigned labels_depth );
+            , unsigned labels_depth
+            );
     void execute() override;
 
 private:
@@ -41,17 +42,16 @@ private:
 };
 
 
-// Run all avaible models at all label depths down to 1.
-// Will take a very long time.
-struct RunAll : Base
+struct RunAllModels : Base
 {
-    RunAll( const std::string & data_dir
-          , unsigned labels_depth_max );
+    RunAllModels( const std::string & data_dir
+                , unsigned labels_depth
+                );
     void execute() override;
 
 private:
     const std::string _data_dir;
-    const unsigned _labels_depth_max;
+    const unsigned _labels_depth;
 };
 
 
