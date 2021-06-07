@@ -564,23 +564,11 @@ struct Forest::Impl
     Impl( const dat::Dataset & d )
     {
         auto data_train{ to_shark_dataset( d ) };
-
         if( data_train.empty() ) return;
-
-        //Split the dataset into a training and a test dataset
         const auto data_test = shark::splitAtElement( data_train, _traintest * dat::count( d ) );
 
         shark::RFTrainer< Label > trainer;
         trainer.train( _model, data_train );
-
-        shark::ZeroOneLoss<> loss;
-        auto prediction = _model( data_train.inputs() );
-        std::cout << "Random Forest on training set accuracy: " <<
-                  1. - loss.eval( data_train.labels(), prediction ) << '\n';
-
-        prediction = _model( data_test.inputs() );
-        std::cout << "Random Forest on test set accuracy:     " << 1.
-                  - loss.eval( data_test.labels(), prediction ) << '\n';
     }
 
 
