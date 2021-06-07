@@ -567,6 +567,7 @@ struct Forest::Impl
         if( dataset.empty() ) return;
 
         shark::RFTrainer< Label > trainer;
+        trainer.setNTrees(1e3);
         trainer.train( _model, dataset );
     }
 
