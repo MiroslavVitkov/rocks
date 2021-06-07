@@ -27,14 +27,12 @@ RunModel::RunModel( const std::string & data_dir
 }
 
 
-// TODO: we are keeping in memory 2 copies of the dataset plus a model!
 void RunModel::execute()
 {
     // Read the dataset.
     print::info( std::string("Reading dataset '") + _data_dir
                + "' at labels depth " + std::to_string(_labels_depth) );
-    const auto raw = io::read( _data_dir, _labels_depth );
-    auto traintest = dat::split( raw );
+    auto traintest = dat::split( io::read( _data_dir, _labels_depth ) );
     const auto train = dat::encode( traintest.first );
     const auto test = dat::encode( traintest.second, train.second );
 
