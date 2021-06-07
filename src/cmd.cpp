@@ -32,13 +32,13 @@ void RunModel::execute()
     // Read the dataset.
     print::info( std::string("Reading dataset '") + _data_dir
                + "' at labels depth " + std::to_string(_labels_depth) );
-    auto traintest = dat::split( io::read( _data_dir, _labels_depth ) );
-    const auto train = dat::encode( traintest.first );
-    const auto test = dat::encode( traintest.second, train.second );
+    auto traintest{  dat::split( io::read( _data_dir, _labels_depth ) ) };
+    const auto train{ dat::encode( traintest.first ) };
+    const auto test{ dat::encode( traintest.second, train.second ) };
 
     // Train the model.
     print::info( "Training a " + _model_name + " model." );
-    const auto m = model::create( _model_name, train );
+    const auto m{ model::create( _model_name, train ) };
 
     // Evaluate the test set.
     print::info( "Evaluating the test set." );
