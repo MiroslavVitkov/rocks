@@ -59,6 +59,7 @@ endif()
 # Use the ML library Shark
 set( USE_SHARK OFF CACHE STRING "A comprehensive ML library." )
 if( USE_SHARK )
+    find_package( Boost REQUIRED COMPONENTS filesystem serialization system )
     find_package( Shark REQUIRED )  # random forests and more
     include( ${SHARK_USE_FILE} )
     message( STATUS "shark loaded successfully.")
@@ -94,12 +95,14 @@ endif()
 
 
 if( USE_OPENCV )
+    message( STATUS "Linking against OpenCV.")
     target_link_libraries( rocks PUBLIC "${OpenCV_LIBS}" )
     target_compile_definitions( rocks PUBLIC CMAKE_USE_OPENCV=ON )
 endif()
 
 
 if( USE_SHARK )
+    target_link_libraries( rocks PUBLIC "${Boost_LIBRARIES}" )
     target_link_libraries( rocks PUBLIC "${SHARK_LIBRARIES}" )
     target_compile_definitions( rocks PUBLIC CMAKE_USE_SHARK=ON )
 endif()
