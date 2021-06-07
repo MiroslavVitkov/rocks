@@ -530,6 +530,7 @@ struct Forest::Impl
     using Feature = double;
     using Label = unsigned;  // Shark seems to mandate this.
     using Probability = double;
+    static constexpr double _traintest{ 0.66 };
 
 
     shark::RealVector to_shark_vector( const dat::Spectrum & s )
@@ -559,54 +560,28 @@ struct Forest::Impl
     }
 
 
+    // ID of the commit with Andres' implementation: a8410b05.
     Impl( const dat::Dataset & d )
     {
-        auto data{ to_shark_dataset( d ) };
+        auto data_train{ to_shark_dataset( d ) };
 
-        if( data.empty() ) return;
-
-//        shark::ClassificationDataset data;
-//        const std::string fn{ "../rocks/data/C.csv" };
-//        shark::importCSV(data, fn, shark::LAST_COLUMN, ' ');
+        if( data_train.empty() ) return;
 
         //Split the dataset into a training and a test dataset
-        shark::ClassificationDataset dataTest = shark::splitAtElement(data,311);
+        const auto data_test = shark::splitAtElement( data_train, _traintest * d.first.count() );
 
         shark::RFTrainer<unsigned int> trainer;
-        shark::RFClassifier<unsigned int> model;
-        trainer.train(model, data);
+
+        trainer.train( model, data_train );
 
         shark::ZeroOneLoss<> loss;
-        auto prediction = model(data.inputs());
-        std::cout << "Random Forest on training set accuracy: " << 1. - loss.eval(data.labels(), prediction) << std::endl;
+        auto prediction = model(data_train.inputs());
+        std::cout << "Random Forest on training set accuracy: " << 1.
+                  - loss.eval( data_test.labels(), prediction ) << '\n';
 
-        prediction = model(dataTest.inputs());
-        std::cout << "Random Forest on test set accuracy:     " << 1. - loss.eval(dataTest.labels(), prediction) << std::endl;
-        std::exit( 0 );
-        //
-        //
-        //
-        const auto num_samples = dat::count( d );
-        if( ! num_samples )
-        {
-            return;
-        }
-
-        const auto num_features = dat::Spectrum::_num_points;
-        auto f_it = f.begin();
-
-        auto l_it = l.begin();
-
-        dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-            {
-                std::copy( s._y.cbegin(), s._y.cend(), f_it );
-                f_it += num_features;
-
-                * l_it = l;
-                ++l_it;
-            }     , d );
-
-        _model.learn( f, l );
+        prediction = model( data_test.inputs() );
+        std::cout << "Random Forest on test set accuracy:     " << 1.
+                  - loss.eval( data_test.labels(), prediction ) << '\n';
     }
 
 
@@ -621,6 +596,9 @@ struct Forest::Impl
 
         return static_cast< label::Num >( predicted );
     }
+
+
+    shark::RFClassifier<unsigned int> model;
 
 };
 
