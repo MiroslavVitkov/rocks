@@ -601,7 +601,20 @@ Forest::~Forest()
 #endif  // CMAKE_USE_SHARK
 
 
-const std::vector< std::string > ALL_MODELS{ "chance", "cor", "svm", "lda", "pca", "nn", "forest" };
+const std::vector< std::string > ALL_MODELS{ "chance"
+#ifdef CMAKE_USE_DLIB
+                                           , "cor"
+                                           , "svm"
+#ifdef CMAKE_USE_OPENCV
+                                           , "lda"
+                                           , "pca"
+#endif
+                                           , "nn"
+#endif
+#ifdef CMAKE_USE_SHARK
+                                           , "forest"
+#endif
+                                           };
 
 
 }  // namespace model

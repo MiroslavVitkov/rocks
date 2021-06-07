@@ -51,17 +51,6 @@ unsigned find_labels_depth( const Parser & p )
 Cmd create_model( const Parser & p )
 {
     assert( p.option( "m" ).count() );
-
-    // If only -m is passed list models and exit.
-    if( ! p.option( "m" ).count())
-    {
-        for( const auto & s : model::ALL_MODELS )
-        {
-            print::info( s );
-        }
-        return std::make_unique< cmd::NoOp >();
-    }
-
     const auto model_name{ p.option( "m" ).argument() };
 
     // Verify such a model exists by creating one with an empy training set.
@@ -74,6 +63,17 @@ Cmd create_model( const Parser & p )
 }
 
 
+void show_models()
+{
+    std::string all;
+    for( const auto & m : model::ALL_MODELS )
+    {
+        all += m + ", ";
+    }
+    print::info( all );
+}
+
+
 Cmd parse( int argc, Argv argv )
 {
     Parser p;
@@ -81,9 +81,10 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "help", "Print this." );
 
     p.add_option( "o", "Produce a report on outliers." );
-    p.add_option( "m", "Execute <model> or list avaible models.", 1 );
+    p.add_option( "m", "Execute <model>.", 1 );
     p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
     p.add_option( "d", "Path to dataset root dir.", 1 );
+    p.add_option( "s", "Show all available models." );
     p.add_option( "a", "Run all models. Obviously very slow." );
 
     p.parse( argc, const_cast< char** >( argv ) );
@@ -102,6 +103,12 @@ Cmd parse( int argc, Argv argv )
     if( p.option( "m" ) )
     {
         return create_model( p );
+    }
+
+    if( p.option( "s" ) )
+    {
+        show_models();
+        return std::make_unique< cmd::NoOp >();
     }
 
     if( p.option( "a" ) )
