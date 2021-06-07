@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <future>
+#include <thread>
 
 
 namespace task
@@ -22,7 +23,7 @@ struct Task
     Task( const model::Model &, const std::vector< dat::Spectrum > & );
     std::vector< label::Num > get();
 
-    Task( Task && t );
+    Task( Task && );
     Task( const Task & ) = delete;
     ~Task() = default;
     Task & operator=( Task && other) = delete;
@@ -30,7 +31,7 @@ struct Task
 
 
 private:
-    std::promise< std::vector<label::Num> > _p;
+    std::promise< std::vector< label::Num > > _p;
     std::thread _t;
 };
 

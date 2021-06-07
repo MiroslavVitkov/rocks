@@ -21,7 +21,7 @@ set (SRC src/cli.cpp
          src/main.cpp
          src/model.cpp
          src/score.cpp
-         #src/task.cpp
+         src/task.cpp
     )
 
 

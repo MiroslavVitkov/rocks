@@ -7,6 +7,7 @@
 #include "pre.h"
 #include "print.h"
 #include "score.h"
+#include "task.h"
 
 #include <iostream>
 #include <numeric>
@@ -44,14 +45,14 @@ void RunModel::execute()
     print::info( "Evaluating the test set." );
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
-    dat::apply( [ & ] ( int l, const dat::Spectrum & s )
+    for( const auto & kv : test.first )
+    {
+        ground_truth.push_back( kv.first );
+        for( const auto & s : kv.second )
         {
-            ground_truth.push_back( l );
-            predicted.push_back( m->predict(s) );
+            predicted.push_back( m->predict( s ) );
         }
-              , test
-              );
-
+    }
 
     // Reduce to head labels.
     const auto headonly{ test.second.headonly() };
