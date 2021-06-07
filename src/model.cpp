@@ -563,12 +563,11 @@ struct Forest::Impl
     // ID of the commit with Andres' implementation: a8410b05.
     Impl( const dat::Dataset & d )
     {
-        auto data_train{ to_shark_dataset( d ) };
-        if( data_train.empty() ) return;
-        const auto data_test = shark::splitAtElement( data_train, _traintest * dat::count( d ) );
+        const auto dataset{ to_shark_dataset( d ) };
+        if( dataset.empty() ) return;
 
         shark::RFTrainer< Label > trainer;
-        trainer.train( _model, data_train );
+        trainer.train( _model, dataset );
     }
 
 

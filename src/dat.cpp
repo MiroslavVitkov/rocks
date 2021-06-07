@@ -71,6 +71,19 @@ Dataset encode( DataRaw & raw, const label::Codec & t )
     return dt;
 }
 
+DataRaw decode( Dataset & d, const label::Codec & c )
+{
+    DataRaw raw{};
+
+    for( auto & kv : d.first )
+    {
+        raw.insert_or_assign( c.decode( kv.first )
+                            , std::move( kv.second )  );
+    }
+
+    return raw;
+}
+
 
 // The iteration order of unordered associative containers can only change
 // when rehashing as a result of a mutating operation

@@ -70,6 +70,7 @@ std::pair< DataRaw, DataRaw > split( const DataRaw &, double ratio = 0.66 );
 
 Dataset encode( DataRaw & );
 Dataset encode( DataRaw &, const label::Codec & );
+DataRaw decode( Dataset &, const label::Codec & );
 
 // Invoke provided functor on every element in a dataset.
 // Walking order is consistent until the dataset is altered.
