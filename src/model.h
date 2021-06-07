@@ -149,7 +149,7 @@ inline std::unique_ptr< Model > create( const std::string & name
         return std::unique_ptr< NN >( new NN( d ) );
     }
 #endif  // CMAKE_USE_DLIB
-#ifdef CMAKE_USE_FOREST
+#ifdef CMAKE_USE_SHARK
     if( is( "forest" ) )
     {
         return std::unique_ptr< Forest >( new Forest( d ) );

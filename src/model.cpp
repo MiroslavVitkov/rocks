@@ -533,13 +533,13 @@ struct Forest::Impl
     static constexpr double _traintest{ 0.66 };
 
 
-    shark::RealVector to_shark_vector( const dat::Spectrum & s )
+    static shark::RealVector to_shark_vector( const dat::Spectrum & s )
     {
         return { s._y.cbegin(), s._y.cend() };
     }
 
 
-    shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+    static shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
     {
         if( d.first.empty() )
         {
@@ -568,38 +568,31 @@ struct Forest::Impl
         if( data_train.empty() ) return;
 
         //Split the dataset into a training and a test dataset
-        const auto data_test = shark::splitAtElement( data_train, _traintest * d.first.count() );
+        const auto data_test = shark::splitAtElement( data_train, _traintest * dat::count( d ) );
 
-        shark::RFTrainer<unsigned int> trainer;
-
-        trainer.train( model, data_train );
+        shark::RFTrainer< Label > trainer;
+        trainer.train( _model, data_train );
 
         shark::ZeroOneLoss<> loss;
-        auto prediction = model(data_train.inputs());
-        std::cout << "Random Forest on training set accuracy: " << 1.
-                  - loss.eval( data_test.labels(), prediction ) << '\n';
+        auto prediction = _model( data_train.inputs() );
+        std::cout << "Random Forest on training set accuracy: " <<
+                  1. - loss.eval( data_train.labels(), prediction ) << '\n';
 
-        prediction = model( data_test.inputs() );
+        prediction = _model( data_test.inputs() );
         std::cout << "Random Forest on test set accuracy:     " << 1.
                   - loss.eval( data_test.labels(), prediction ) << '\n';
     }
 
 
     label::Num predict( const dat::Spectrum & s ) const
-    {
-        std::copy( s._y.cbegin(), s._y.cend(), f.begin() );
-
-        _model.predict( f, p );
-
-        const auto it = std::max_element( p.begin(), p.end() );
-        const auto predicted = it - p.begin();
-
-        return static_cast< label::Num >( predicted );
+    {   const auto d{ to_shark_vector( s ) };
+        Label p;
+        _model.eval( d, p );
+        return static_cast< label::Num >( p );
     }
 
 
-    shark::RFClassifier<unsigned int> model;
-
+    shark::RFClassifier< Label > _model;
 };
 
 
