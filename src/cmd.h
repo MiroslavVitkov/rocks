@@ -32,6 +32,7 @@ struct RunModel : Base
     RunModel( const std::string & data_dir
             , const std::string & model_name
             , unsigned labels_depth
+            //, std::vector< pre::Base >
             );
     void execute() override;
 

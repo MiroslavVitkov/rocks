@@ -359,58 +359,6 @@ LDAandSVM::~LDAandSVM()
 }
 
 
-static shark::RealVector to_shark_vector( const dat::Spectrum & s )
-{
-    return { s._y.cbegin(), s._y.cend() };
-}
-
-
-//static shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
-//{
-//    if( d.first.empty() )
-//    {
-//        return {};
-//    }
-
-//    std::vector< shark::RealVector > inputs;
-//    std::vector< unsigned > labels;
-//    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
-//    {
-//        inputs.push_back( to_shark_vector( s ) );
-//        labels.push_back( static_cast< unsigned >( l ) );
-//    }
-//              , d );
-
-//    shark::ClassificationDataset data = shark::createLabeledDataFromRange( inputs, labels );
-//    return data;
-//}
-
-
-PCA::PCA( const dat::Dataset & train )
-{
-    std::vector< shark::RealVector > inputs;
-    dat::apply( [ & ] ( auto, const dat::Spectrum & s )
-    {
-        inputs.push_back( to_shark_vector( s ) );
-    }
-    , train
-    );
-    shark::UnlabeledData<shark::RealVector> s;
-    const auto dataset{ shark::createUnlabeledDataFromRange( inputs ) };
-    shark::PCA pca{ dataset };
-    pca.encoder( _enc, _N );
-}
-
-
-PCA::Vector PCA::encode( const dat::Spectrum & s ) const
-{
-    Vector ret;
-    const auto vec{ to_shark_vector( s ) };
-    _enc.eval( vec, ret );
-    return ret;
-}
-
-
 struct NN::Impl
 {
     // Layers.

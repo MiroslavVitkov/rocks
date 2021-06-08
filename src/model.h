@@ -10,10 +10,6 @@
 #include "dat.h"
 #include "except.h"
 
-#ifdef CMAKE_USE_SHARK
-#include <shark/Algorithms/Trainers/PCA.h>
-#endif
-
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -105,21 +101,6 @@ struct Forest : Model
 private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
-};
-
-
-// Data transformations.
-struct PCA
-{
-    using Vector = shark::RealVector;
-
-    static constexpr unsigned _N{ 100 };
-
-    PCA( const dat::Dataset & train );
-    Vector encode( const dat::Spectrum & ) const;
-
-private:
-    shark::LinearModel<> _enc;
 };
 
 

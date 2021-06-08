@@ -141,4 +141,44 @@ dat::Dataset lda( const dat::Dataset & d )
 #endif // CMAKE_USE_DLIB
 
 
+shark::RealVector to_shark_vector( const dat::Spectrum & s )
+{
+    return { s._y.cbegin(), s._y.cend() };
+}
+
+
+shark::LinearModel<> train_encoder( const dat::Dataset & train
+                                  , unsigned N
+                                  )
+{
+    std::vector< shark::RealVector > inputs;
+    dat::apply( [ & ] ( auto, const dat::Spectrum & s )
+    {
+        inputs.push_back( to_shark_vector( s ) );
+    }
+    , train
+    );
+
+    const auto dataset{ shark::createUnlabeledDataFromRange( inputs ) };
+    shark::PCA pca{ dataset };
+    shark::LinearModel<> enc;
+    pca.encoder( enc, N );
+    return enc;
+}
+
+PCA::PCA( const dat::Dataset & train, unsigned dim )
+    : _enc{ train_encoder( train, dim ) }
+{
+}
+
+
+shark::RealVector PCA::encode( const dat::Spectrum & s ) const
+{
+    shark::RealVector ret;
+    const auto vec{ to_shark_vector( s ) };
+    _enc.eval( vec, ret );
+    return ret;
+}
+
+
 }  // namespace pre
