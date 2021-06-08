@@ -13,9 +13,8 @@
 #endif
 
 #ifdef CMAKE_USE_SHARK
-#include <shark/Data/Csv.h> //importing the file
-#include <shark/Algorithms/Trainers/RFTrainer.h> //the random forest trainer
-#include <shark/ObjectiveFunctions/Loss/ZeroOneLoss.h> //zero one loss for evaluation
+#include <shark/Algorithms/Trainers/PCA.h>
+#include <shark/Algorithms/Trainers/RFTrainer.h>
 #endif
 
 #include <algorithm>
@@ -360,97 +359,55 @@ LDAandSVM::~LDAandSVM()
 }
 
 
-struct PCAandSVM::Impl
+static shark::RealVector to_shark_vector( const dat::Spectrum & s )
 {
-    using Sample = dlib::matrix< dat::Compressed::value_type
-                               , dat::Compressed::_num_points
-                               , 1 >;
-    using Kernel = dlib::linear_kernel< Sample >;
-    using Classifier = dlib::multiclass_linear_decision_function< Kernel
-                                                                , label::Num >;
-    using Trainer = dlib::svm_multiclass_linear_trainer< Kernel
-                                                       , label::Num >;
-
-
-    Impl( const dat::Dataset & d )
-        : _pca{ d }
-        , _svm{ [ & ] () -> Classifier
-            {
-                using Flattened = std::pair< std::vector< Sample >
-                                           , std::vector< label::Num > >;
-
-                Flattened fl;
-
-                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-                    {
-                        const auto compressed{ _pca( s ) };
-
-                        Sample sample;
-                        unsigned row {};
-                        //std::copy( pca._y.cbegin(), pca._y.cend(), sample( row++ ) );
-                        for( const auto a : compressed._y )
-                        {
-                            sample( row++ ) = a;
-                        }
-
-                        fl.first.emplace_back( sample );
-                        fl.second.push_back( l );
-                    }     , d );
-
-                if( fl.first.empty() )
-                {
-                    return {};
-                }
-
-                Trainer trainer;
-                trainer.set_num_threads( 10 );
-
-                const Classifier svm = trainer.train( fl.first, fl.second );
-                return svm;
-            } () }
-    {
-    }
-
-
-    label::Num predict( const dat::Spectrum & test ) const
-    {
-        const auto compressed = _pca( test );
-        Sample m;
-        //std::copy( compressed._y.cbegin(), compressed._y.cend(), m.begin() );
-        unsigned row {};
-        for( const auto a : compressed._y )
-        {
-            m( row++ ) = a;
-        }
-        const auto ret = _svm.predict( m );
-        return ret.first;  // what is ret.second?
-    }
-
-
-private:
-#ifdef CMAKE_USE_OPENCV
-    const dim::PCA _pca;
-#else
-    const dim::Simple _pca;
-#endif
-    const Classifier _svm;
-};
-
-
-PCAandSVM::PCAandSVM( const dat::Dataset & d )
-    : _impl{ std::make_unique< Impl >( d ) }
-{
+    return { s._y.cbegin(), s._y.cend() };
 }
 
 
-label::Num PCAandSVM::predict( const dat::Spectrum & test ) const
+//static shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+//{
+//    if( d.first.empty() )
+//    {
+//        return {};
+//    }
+
+//    std::vector< shark::RealVector > inputs;
+//    std::vector< unsigned > labels;
+//    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
+//    {
+//        inputs.push_back( to_shark_vector( s ) );
+//        labels.push_back( static_cast< unsigned >( l ) );
+//    }
+//              , d );
+
+//    shark::ClassificationDataset data = shark::createLabeledDataFromRange( inputs, labels );
+//    return data;
+//}
+
+
+PCA::PCA( const dat::Dataset & train )
 {
-    return _impl->predict( test );
+    std::vector< shark::RealVector > inputs;
+    dat::apply( [ & ] ( auto, const dat::Spectrum & s )
+    {
+        inputs.push_back( to_shark_vector( s ) );
+    }
+    , train
+    );
+    shark::UnlabeledData<shark::RealVector> s;
+    const auto dataset{ shark::createUnlabeledDataFromRange( inputs ) };
+    shark::PCA pca{ dataset };
+    pca.encoder( _enc, _N );
 }
 
 
-PCAandSVM::~PCAandSVM()
+PCA::Vector PCA::encode( const dat::Spectrum & s ) const
 {
+    Vector ret;
+    const auto vec{ to_shark_vector( s ) };
+    _enc.eval( vec, ret );
+    return ret;
 }
 
 

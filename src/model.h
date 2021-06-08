@@ -10,6 +10,10 @@
 #include "dat.h"
 #include "except.h"
 
+#ifdef CMAKE_USE_SHARK
+#include <shark/Algorithms/Trainers/PCA.h>
+#endif
+
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -79,18 +83,6 @@ private:
 };
 
 
-struct PCAandSVM : Model
-{
-    PCAandSVM( const dat::Dataset & );
-    label::Num predict( const dat::Spectrum & ) const override;
-    ~PCAandSVM() override;
-
-private:
-    struct Impl;
-    std::unique_ptr< Impl > _impl;
-};
-
-
 struct NN : Model
 {
     NN( const dat::Dataset & );
@@ -113,6 +105,21 @@ struct Forest : Model
 private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
+};
+
+
+// Data transformations.
+struct PCA
+{
+    using Vector = shark::RealVector;
+
+    static constexpr unsigned _N{ 100 };
+
+    PCA( const dat::Dataset & train );
+    Vector encode( const dat::Spectrum & ) const;
+
+private:
+    shark::LinearModel<> _enc;
 };
 
 
@@ -139,10 +146,6 @@ inline std::unique_ptr< Model > create( const std::string & name
     if( is( "lda" ) )
     {
         return std::unique_ptr< LDAandSVM >( new LDAandSVM( d ) );
-    }
-    if( is( "pca" ) )
-    {
-        return std::unique_ptr< PCAandSVM >( new PCAandSVM( d ) );
     }
     if( is( "nn" ) )
     {
