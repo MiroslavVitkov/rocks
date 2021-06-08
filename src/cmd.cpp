@@ -47,9 +47,9 @@ void RunModel::execute()
     std::vector< label::Num > predicted;
     for( const auto & kv : test.first )
     {
-        ground_truth.push_back( kv.first );
         for( const auto & s : kv.second )
         {
+            ground_truth.push_back( kv.first );
             predicted.push_back( m->predict( s ) );
         }
     }
