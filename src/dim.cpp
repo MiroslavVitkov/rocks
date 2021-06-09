@@ -16,7 +16,7 @@ namespace dim
 
 
 #ifdef CMAKE_USE_OPENCV
-
+#if 0
 
 cv::LDA init_lda( const dat::Dataset & d )
 {
@@ -41,7 +41,8 @@ cv::LDA init_lda( const dat::Dataset & d )
 
     cv::LDA lda( dataset
                , labels
-               , static_cast< int >( dat::Compressed::_num_points ) );
+               , static_cast< int >( dat::Compressed::_num_points )
+               );
     return lda;
 }
 
@@ -67,7 +68,7 @@ dat::Compressed LDA::operator()( const dat::Spectrum & s ) const
     ret._y = proj;
     return ret;
 }
-
+#endif
 
 cv::PCA init_pca( const dat::Dataset & d )
 {
@@ -111,7 +112,7 @@ dat::Compressed PCA::operator()( const dat::Spectrum & s ) const
     for( unsigned i {}; i < dat::Compressed::_num_points; ++i )
     {
         // We are converting from double to dat::Compressed::value_type.
-        const auto val = projected.at< double >( static_cast< int >(i) );
+        const auto val = projected.at< double >( static_cast< int >( i ) );
         ret._y[i] = static_cast< float >( val );
     }
 

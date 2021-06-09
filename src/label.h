@@ -22,7 +22,7 @@ namespace label
 using Raw = std::string;
 
 // Numeric labels are efficient for processing and storage.
-using Num = int;
+using Num = unsigned;
 
 
 struct Codec

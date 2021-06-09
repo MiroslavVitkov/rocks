@@ -25,7 +25,7 @@ namespace score
 using Confusion = dlib::matrix< unsigned >;
 
 
-// Return the spectrum which lowest score.
+// Return the spectrum with lowest score.
 using Comp = std::function< int( const dat::Spectrum & ) >;
 const dat::Spectrum & find_worst( Comp, const dat::Dataset & d );
 

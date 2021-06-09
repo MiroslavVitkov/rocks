@@ -70,10 +70,10 @@ std::vector< label::Num > construct_labels( const dat::Dataset & d )
 {
     const auto size = count( d );
 
-    std::vector< int > labels;
+    std::vector< label::Num > labels;
     labels.reserve( size );
 
-    dat::apply( [ & ] ( int l, const dat::Spectrum & )
+    dat::apply( [ & ] ( label::Num l, const dat::Spectrum & )
         {
             labels.push_back( l );
         }
@@ -263,7 +263,7 @@ SVM::~SVM()
 {
 }
 
-
+#if 0
 struct LDAandSVM::Impl
 {
     using Sample = dlib::matrix< dat::Compressed::value_type
@@ -357,7 +357,7 @@ label::Num LDAandSVM::predict( const dat::Spectrum & test ) const
 LDAandSVM::~LDAandSVM()
 {
 }
-
+#endif
 
 struct NN::Impl
 {

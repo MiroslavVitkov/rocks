@@ -39,10 +39,10 @@ const dat::Spectrum & find_worst( Comp c, const dat::Dataset & d )
 }
 
 
-std::set<int> get_classes( const std::vector<int> & v1
-                            , const std::vector<int> & v2 )
+std::set< label::Num > get_classes( const std::vector< label::Num > & v1
+                                  , const std::vector< label::Num > & v2 )
 {
-    std::set<int> all{ v1.cbegin(), v1.cend() };
+    std::set< label::Num > all{ v1.cbegin(), v1.cend() };
     all.insert( v2.cbegin(), v2.cend() );
     return all;
 }
@@ -50,7 +50,7 @@ std::set<int> get_classes( const std::vector<int> & v1
 
 struct Transcoder
 {
-    Transcoder( const std::set<int> & classes )
+    Transcoder( const std::set< label::Num > & classes )
     {
         int counter {};
         for( const auto c : classes )
@@ -59,7 +59,7 @@ struct Transcoder
         }
     }
 
-    int encode( int label )
+    int encode( label::Num label )
     {
         return _label_to_encoded[ label ];
     }
