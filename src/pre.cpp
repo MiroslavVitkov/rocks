@@ -181,4 +181,26 @@ shark::RealVector PCA::encode( const dat::Spectrum & s ) const
 }
 
 
+shark::ClassificationDataset PCA::encode( const dat::Dataset & d ) const
+{
+    using Label = unsigned;  // Shark seems to mandate this.
+    if( d.first.empty() )
+    {
+        return {};
+    }
+
+    std::vector< shark::RealVector > inputs;
+    std::vector< Label > labels;
+    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
+    {
+        inputs.push_back( encode( s ) );
+        labels.push_back( static_cast< Label >( l ) );
+    }
+              , d );
+
+    auto data = shark::createLabeledDataFromRange( inputs, labels );
+    return data;
+}
+
+
 }  // namespace pre

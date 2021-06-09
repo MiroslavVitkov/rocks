@@ -34,8 +34,7 @@ struct PCA
 {
     PCA( const dat::Dataset & train, unsigned dim=100 );
     shark::RealVector encode( const dat::Spectrum & ) const;
-    shark::LabeledData< shark::RealVector, label::Num >
-        encode( const dat::Dataset & ) const;
+    shark::ClassificationDataset encode( const dat::Dataset & ) const;
 
     const shark::LinearModel<> _enc;
 };
