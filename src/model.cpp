@@ -476,6 +476,15 @@ struct Forest::Impl
         trainer.train( _model, dataset );
     }
 
+    Impl( const shark::ClassificationDataset & dataset )
+    {
+        if( dataset.empty() ) return;
+
+        shark::RFTrainer< Label > trainer;
+        trainer.setNTrees(1e3);
+        trainer.train( _model, dataset );
+    }
+
 
     label::Num predict( const dat::Spectrum & s ) const
     {   const auto d{ to_shark_vector( s ) };
@@ -492,6 +501,13 @@ struct Forest::Impl
 Forest::Forest( const dat::Dataset & d )
     : _impl{ std::make_unique< Impl >( d ) }
 {
+}
+
+
+Forest::Forest( const shark::ClassificationDataset & d )
+    : _impl{ std::make_unique< Impl >( d ) }
+{
+
 }
 
 

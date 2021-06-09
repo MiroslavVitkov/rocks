@@ -10,6 +10,11 @@
 #include "dat.h"
 #include "except.h"
 
+#ifdef CMAKE_USE_SHARK
+#include <shark/Data/Dataset.h>
+#endif
+
+
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -95,6 +100,7 @@ private:
 struct Forest : Model
 {
     Forest( const dat::Dataset & );
+    Forest( const shark::ClassificationDataset & );
     label::Num predict( const dat::Spectrum & ) const override;
     ~Forest() override;
 
