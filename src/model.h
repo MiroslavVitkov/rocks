@@ -101,7 +101,10 @@ struct Forest : Model
 {
     Forest( const dat::Dataset & );
     Forest( const shark::ClassificationDataset & );
+
     label::Num predict( const dat::Spectrum & ) const override;
+    label::Num predict( const shark::RealVector & ) const;
+
     ~Forest() override;
 
 private:

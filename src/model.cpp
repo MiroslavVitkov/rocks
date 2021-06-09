@@ -487,10 +487,16 @@ struct Forest::Impl
 
 
     label::Num predict( const dat::Spectrum & s ) const
-    {   const auto d{ to_shark_vector( s ) };
-        Label p;
-        _model.eval( d, p );
-        return static_cast< label::Num >( p );
+    {
+        return predict( to_shark_vector( s ) );
+    }
+
+
+    label::Num predict( const shark::RealVector & v ) const
+    {
+        label::Num p;
+        _model.eval( v, p );
+        return p;
     }
 
 
@@ -512,6 +518,12 @@ Forest::Forest( const shark::ClassificationDataset & d )
 
 
 label::Num Forest::predict( const dat::Spectrum & s ) const
+{
+    return _impl->predict( s );
+}
+
+
+label::Num Forest::predict( const shark::RealVector & s ) const
 {
     return _impl->predict( s );
 }
