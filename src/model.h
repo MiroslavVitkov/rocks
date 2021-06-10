@@ -12,8 +12,8 @@
 
 #ifdef CMAKE_USE_SHARK
 #include <shark/Data/Dataset.h>
+#include <shark/Algorithms/Trainers/RFTrainer.h>
 #endif
-
 
 #include <filesystem>
 #include <memory>
@@ -99,17 +99,15 @@ private:
 
 struct Forest : Model
 {
+    constexpr static auto _num_trees{ static_cast< unsigned >( 1e3 ) };
+
     Forest( const dat::Dataset & );
     Forest( const shark::ClassificationDataset & );
 
     label::Num predict( const dat::Spectrum & ) const override;
     label::Num predict( const shark::RealVector & ) const;
 
-    ~Forest() override;
-
-private:
-    struct Impl;
-    std::unique_ptr< Impl > _impl;
+    const shark::RFClassifier< label::Num > _model;
 };
 
 

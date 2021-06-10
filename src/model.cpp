@@ -12,11 +12,6 @@
 #include <dlib/svm_threaded.h>
 #endif
 
-#ifdef CMAKE_USE_SHARK
-#include <shark/Algorithms/Trainers/PCA.h>
-#include <shark/Algorithms/Trainers/RFTrainer.h>
-#endif
-
 #include <algorithm>
 #include <cassert>
 #include <random>
@@ -430,88 +425,60 @@ NN::~NN()
 
 
 #ifdef CMAKE_USE_SHARK
-struct Forest::Impl
+shark::RealVector to_shark_vector( const dat::Spectrum & s )
 {
-    using Feature = double;
-    using Label = unsigned;  // Shark seems to mandate this.
-    using Probability = double;
-    static constexpr double _traintest{ 0.66 };
+    return { s._y.cbegin(), s._y.cend() };
+}
 
 
-    static shark::RealVector to_shark_vector( const dat::Spectrum & s )
+shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+{
+    if( d.first.empty() )
     {
-        return { s._y.cbegin(), s._y.cend() };
+        return {};
     }
 
-
-    static shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+    std::vector< shark::RealVector > inputs;
+    std::vector< label::Num > labels;
+    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
     {
-        if( d.first.empty() )
-        {
-            return {};
-        }
+        inputs.push_back( to_shark_vector( s ) );
+        labels.push_back( static_cast< label::Num >( l ) );
+    }
+              , d );
 
-        std::vector< shark::RealVector > inputs;
-        std::vector< Label > labels;
-        dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
-        {
-            inputs.push_back( to_shark_vector( s ) );
-            labels.push_back( static_cast< Label >( l ) );
-        }
-                  , d );
+    return shark::createLabeledDataFromRange( inputs, labels );
+}
 
-        shark::ClassificationDataset data = shark::createLabeledDataFromRange( inputs, labels );
-        return data;
+
+// ID of the commit with Andres' implementation: a8410b05.
+auto train_forest_model( const shark::ClassificationDataset & dataset
+                       , unsigned num_trees
+                       )
+{
+    shark::RFClassifier< label::Num > model;
+    shark::RFTrainer< label::Num > trainer;
+
+    if( dataset.empty() )
+    {
+        return model;
     }
 
+    trainer.setNTrees( num_trees );
+    trainer.train( model, dataset );
 
-    // ID of the commit with Andres' implementation: a8410b05.
-    Impl( const dat::Dataset & d )
-    {
-        const auto dataset{ to_shark_dataset( d ) };
-        if( dataset.empty() ) return;
-
-        shark::RFTrainer< Label > trainer;
-        trainer.setNTrees(1e3);
-        trainer.train( _model, dataset );
-    }
-
-    Impl( const shark::ClassificationDataset & dataset )
-    {
-        if( dataset.empty() ) return;
-
-        shark::RFTrainer< Label > trainer;
-        trainer.setNTrees(1e3);
-        trainer.train( _model, dataset );
-    }
-
-
-    label::Num predict( const dat::Spectrum & s ) const
-    {
-        return predict( to_shark_vector( s ) );
-    }
-
-
-    label::Num predict( const shark::RealVector & v ) const
-    {
-        label::Num p;
-        _model.eval( v, p );
-        return p;
-    }
-
-
-    shark::RFClassifier< Label > _model;
-};
+    return model;
+}
 
 
 Forest::Forest( const dat::Dataset & d )
-    : _impl{ std::make_unique< Impl >( d ) }
+    : _model{ train_forest_model( to_shark_dataset( d ), _num_trees ) }
 {
 }
 
 
 Forest::Forest( const shark::ClassificationDataset & d )
-    : _impl{ std::make_unique< Impl >( d ) }
+    : _model{ train_forest_model( d, _num_trees ) }
 {
 
 }
@@ -519,18 +486,15 @@ Forest::Forest( const shark::ClassificationDataset & d )
 
 label::Num Forest::predict( const dat::Spectrum & s ) const
 {
-    return _impl->predict( s );
+    return predict( to_shark_vector( s ) );
 }
 
 
-label::Num Forest::predict( const shark::RealVector & s ) const
+label::Num Forest::predict( const shark::RealVector & v ) const
 {
-    return _impl->predict( s );
-}
-
-
-Forest::~Forest()
-{
+    label::Num p;
+    _model.eval( v, p );
+    return p;
 }
 #endif  // CMAKE_USE_SHARK
 
