@@ -27,12 +27,7 @@ namespace model
 
 struct Model
 {
-    // Assumption: all test spectra are drawn from the same population.
-    // Assumption: all test samples in the vector belong to the same class.
     virtual label::Num predict( const dat::Spectrum & ) const = 0;
-
-    //virtual void serialise( const std::filesystem::path & ) const = 0;
-    //static std::unique_ptr<Model> deserialise( const std::filesystem::path & ) const;
 
     virtual ~Model() = default;
 };
@@ -97,6 +92,7 @@ private:
 #endif  // CMAKE_USE_DLIB
 
 
+#ifdef CMAKE_USE_SHARK
 struct Forest : Model
 {
     constexpr static auto _num_trees{ static_cast< unsigned >( 1e3 ) };
@@ -109,6 +105,7 @@ struct Forest : Model
 
     const shark::RFClassifier< label::Num > _model;
 };
+#endif  // CMAKE_USE_SHARK
 
 
 inline std::unique_ptr< Model > create( const std::string & name
@@ -128,13 +125,8 @@ inline std::unique_ptr< Model > create( const std::string & name
     }
     if( is( "svm" ) )
     {
-        // std::make_unique() refuses to work before seing SVM::~Impl().
         return std::unique_ptr< SVM >( new SVM( d ) );
     }
-//    if( is( "lda" ) )
-//    {
-//        return std::unique_ptr< LDAandSVM >( new LDAandSVM( d ) );
-//    }
     if( is( "nn" ) )
     {
         return std::unique_ptr< NN >( new NN( d ) );

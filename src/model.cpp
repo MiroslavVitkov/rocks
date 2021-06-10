@@ -157,64 +157,18 @@ struct SVM::Impl
                     return {};
                 }
 
-
-#if 0
-                const auto validate_prop = 0.3;
-                Flattened train, validate;
-#endif
                 Flattened all;
-                std::vector< unsigned > i( d.first.size(), 0 );
+                std::vector< label::Num > i( d.first.size(), 0 );
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                 {
-#if 0
-                    const auto ll = static_cast< unsigned >( l );
-                    if( i[ ll ]++ < d.first.at( l ).size() * validate_prop )
-                    {
-                        addto( validate, l, s );
-                    }
-                    else
-                    {
-                        addto( train, l, s );
-                    }
-#endif
                     addto( all, l, s );
                 }         , d );
-
-#if 0
-                print::info( "Performing grid search for coefficient c." );
-                const double C[] = { 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0
-                                   , 1e1, 1e2, 1e3, 1e4, 1e5 };
-                std::vector< double > accuracy;
-                for( const auto c : C )
-                {
-                    Trainer trainer;
-                    trainer.set_c( c );
-                    trainer.set_num_threads( 10 );
-                    const Classifier svm = trainer.train( train.first, train.second );
-
-                    // Test.
-                    unsigned correct{}, total{};
-                    for( unsigned i{}; i < validate.first.size(); ++i )
-                    {
-                        const auto pred = svm.predict( validate.first[ i ] );
-                        const auto truth = validate.second[ i ];
-                        if( truth == pred.first )
-                        {
-                            ++correct;
-                        }
-                        ++total;
-                    }
-                    const auto a = 1.0 * correct / total;
-                    accuracy.push_back( a );
-                    std::cout << "c = " << c << ", accuracy = " << a << std::endl;
-                }
-#endif
 
                 Trainer trainer;
                 trainer.set_num_threads( 10 );
                 trainer.set_c( 1e0 );
 
-                const Classifier svm = trainer.train( all.first, all.second );
+                const Classifier svm{ trainer.train( all.first, all.second ) };
                 return svm;
             } () }
     {
@@ -258,101 +212,6 @@ SVM::~SVM()
 {
 }
 
-#if 0
-struct LDAandSVM::Impl
-{
-    using Sample = dlib::matrix< dat::Compressed::value_type
-                               , dat::Compressed::_num_points
-                               , 1 >;
-    using Kernel = dlib::linear_kernel< Sample >;
-    using Classifier = dlib::multiclass_linear_decision_function< Kernel
-                                                                , label::Num >;
-    using Trainer = dlib::svm_multiclass_linear_trainer< Kernel
-                                                       , label::Num >;
-
-
-    Impl( const dat::Dataset & d )
-        : _lda{ d }
-        , _svm{ [ & ] () -> Classifier
-            {
-                using Flattened = std::pair< std::vector< Sample >
-                                           , std::vector< label::Num > >;
-
-                Flattened fl;
-
-                dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-                    {
-                        const auto lda{ _lda( s ) };
-
-                        Sample sample;
-                        unsigned row {};
-                        for( const auto a : lda._y )
-                        {
-                            sample( row++ ) = a;
-                        }
-
-                        fl.first.emplace_back( sample );
-                        fl.second.push_back( l );
-                    }     , d );
-
-                if( fl.first.empty() )
-                {
-                    return {};
-                }
-
-                Trainer trainer;
-                trainer.set_num_threads( 10 );
-
-                const Classifier svm = trainer.train( fl.first, fl.second );
-                return svm;
-            } () }
-    {
-    }
-
-
-    label::Num predict( const dat::Spectrum & test ) const
-    {
-        const auto compressed = _lda( test );
-
-        Sample m;
-
-        unsigned row {};
-        for( const auto & a : compressed._y )
-        {
-            m( row++ ) = a;
-        }
-
-        const auto ret = _svm.predict( m );
-
-        return ret.first;  // what is ret.second?
-    }
-
-
-private:
-#ifdef CMAKE_USE_OPENCV
-    const dim::LDA _lda;
-#else
-    const dim::Simple _lda;
-#endif
-    const Classifier _svm;
-};
-
-LDAandSVM::LDAandSVM( const dat::Dataset & d )
-    : _impl{ std::make_unique< Impl >( d ) }
-{
-}
-
-
-label::Num LDAandSVM::predict( const dat::Spectrum & test ) const
-{
-    return _impl->predict( test );
-}
-
-
-LDAandSVM::~LDAandSVM()
-{
-}
-#endif
 
 struct NN::Impl
 {
