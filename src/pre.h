@@ -18,6 +18,14 @@ namespace pre
 {
 
 
+struct Transformation
+{
+    virtual void apply( dat::Dataset & ) const = 0;
+
+    virtual ~Transformation() = default;
+};
+
+
 void logarithm( dat::DataRaw & );
 void normalize( dat::DataRaw & );
 
