@@ -14,28 +14,31 @@ void append( std::vector< Spectrum > & v1, const std::vector< Spectrum > & v2 )
 }
 
 
-std::pair< DataRaw, DataRaw > split( const DataRaw & d, double ratio )
+std::pair< Dataset, Dataset > split( const Dataset & d
+                                   , double traintest
+                                   )
 {
-    assert( ratio > 0 && ratio < 1 );
+    assert( traintest > 0 && traintest < 1 );
 
     std::default_random_engine generator;
     generator.seed( 0 );
     std::uniform_real_distribution distribution( 0., 1. );
 
-    DataRaw train, test;
+    Dataset train{ {}, d.second };
+    Dataset test{ {}, d.second };
 
-    for( const auto & kv : d )
+    for( const auto & kv : d.first )
     {
         const auto & label{ kv.first };
         for( const auto & datapoint : kv.second )
         {
-            if( distribution( generator ) < ratio )
+            if( distribution( generator ) < traintest )
             {
-                train[ label ].push_back( datapoint );
+                train.first[ label ].push_back( datapoint );
             }
             else
             {
-                test[ label ].push_back( datapoint );
+                test.first[ label ].push_back( datapoint );
             }
         }
     }

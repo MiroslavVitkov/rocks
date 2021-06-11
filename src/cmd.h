@@ -5,8 +5,12 @@
 // In this file: a list of all high-level actions.
 
 
+#include "dat.h"
+#include "pre.h"
+
 #include <memory>
 #include <string>
+#include <vector>
 
 
 namespace cmd
@@ -26,20 +30,20 @@ struct NoOp : Base
 };
 
 
-// See io.h for explaination of `labels_depth`.
 struct RunModel : Base
 {
     RunModel( const std::string & data_dir
             , const std::string & model_name
-            , unsigned labels_depth
-            //, std::vector< pre::Base >
+            , unsigned labels_depth  // see io.h
+            , const std::vector< std::string > & preprocessing
             );
     void execute() override;
-
+    std::pair< dat::Dataset, dat::Dataset > preprocess_dataset();
 private:
     const std::string _data_dir;
     const std::string _model_name;
     const unsigned _labels_depth;
+    const std::vector< std::string > _preprocessing;
 };
 
 
