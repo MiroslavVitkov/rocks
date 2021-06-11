@@ -125,12 +125,6 @@ std::vector< dat::Spectrum > recursively_read_csvs( const std::string & path )
         }
     }
 
-    // How do we make this exception-tolerant?
-//    std::transform( files.cbegin()
-//                  , files.cend()
-//                  , std::back_inserter( ret )
-//                  , read_csv
-//                  );
     return ret;
 }
 

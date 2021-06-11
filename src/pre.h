@@ -6,6 +6,7 @@
 
 
 #include "dat.h"
+#include "except.h"
 
 #ifdef CMAKE_USE_SHARK
 #include <shark/Algorithms/Trainers/PCA.h>

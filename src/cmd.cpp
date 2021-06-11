@@ -20,22 +20,44 @@ namespace cmd
 
 RunModel::RunModel( const std::string & data_dir
                   , const std::string & model_name
-                  , unsigned labels_depth )
+                  , unsigned labels_depth
+                  , const std::vector< std::string > & preprocessing
+                  )
     : _data_dir{ data_dir }
     , _model_name{ model_name }
     , _labels_depth{ labels_depth }
+    , _preprocessing{ preprocessing }
 {
+}
+
+
+// Preprocess the dataset e.g. dimensionality reduction.
+std::pair< dat::Dataset, dat::Dataset >
+RunModel::preprocess_dataset()
+{
+    print::info( std::string("Reading dataset '") + _data_dir
+               + "' at labels depth " + std::to_string(_labels_depth) );
+    auto raw{ io::read( _data_dir, _labels_depth ) };
+    auto encoded{ dat::encode( std::move( raw ) ) };
+
+    // Pipeline steps executed in order on cmdline.
+    // Each operates on the output of the previous one.
+    for( const auto & name : _preprocessing )
+    {
+        const auto node{ pre::create( name, encoded ) };
+        (*node)( encoded );
+    }
+
+    // Perform holdout split.
+    return dat::split( encoded );
 }
 
 
 void RunModel::execute()
 {
-    // Read the dataset.
-    print::info( std::string("Reading dataset '") + _data_dir
-               + "' at labels depth " + std::to_string(_labels_depth) );
-    auto traintest{  dat::split( io::read( _data_dir, _labels_depth ) ) };
-    const auto train{ dat::encode( traintest.first ) };
-    const auto test{ dat::encode( traintest.second, train.second ) };
+    const auto traintest{ preprocess_dataset() };
+    const auto & train{ traintest.first };
+    const auto & test{ traintest.second };
 
     // Train the model.
     print::info( "Training a " + _model_name + " model." );
@@ -90,6 +112,7 @@ void RunAllModels::execute()
         RunModel( _data_dir
                 , m
                 , _labels_depth
+                , {}
                 );
         // TODO
     }

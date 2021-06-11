@@ -48,6 +48,19 @@ unsigned find_labels_depth( const Parser & p )
 }
 
 
+auto find_preprocessing( const Parser & p )
+{
+    std::vector< std::string > ret;
+    if( p.option( "p" ) )  // TODO: allow multiple -p!
+    {
+        const auto algo = p.option( "p" ).argument();
+        ret.push_back( algo );
+    }
+
+    return ret;
+}
+
+
 Cmd create_model( const Parser & p )
 {
     assert( p.option( "m" ).count() );
@@ -59,15 +72,27 @@ Cmd create_model( const Parser & p )
     return std::make_unique< cmd::RunModel >( find_dataset( p )
                                             , model_name
                                             , find_labels_depth( p )
+                                            , find_preprocessing( p )
                                             );
 }
 
 
 void show_models()
 {
-    std::string all;
+    std::string all{"Models: "};
     for( const auto & m : model::ALL_MODELS )
     {
+        all += m + ", ";
+    }
+    print::info( all );
+}
+
+
+void show_preprocessing()
+{
+    std::string all{"Preprocessing:"};
+    for( const auto & m : model::ALL_MODELS )
+    {//TODO
         all += m + ", ";
     }
     print::info( all );
@@ -84,8 +109,9 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "m", "Execute <model>.", 1 );
     p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
     p.add_option( "d", "Path to dataset root dir.", 1 );
-    p.add_option( "s", "Show all available models." );
+    p.add_option( "s", "Show all available models and preprocessing algorithms." );
     p.add_option( "a", "Run all models. Obviously very slow." );
+    p.add_option( "p", "Use <algorithm> to preprocess the dataset.", 1 );
 
     p.parse( argc, const_cast< char** >( argv ) );
 
@@ -108,6 +134,7 @@ Cmd parse( int argc, Argv argv )
     if( p.option( "s" ) )
     {
         show_models();
+        show_preprocessing();
         return std::make_unique< cmd::NoOp >();
     }
 
