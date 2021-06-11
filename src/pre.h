@@ -19,11 +19,12 @@ namespace pre
 {
 
 
-struct Transformation
+struct Base
 {
-    virtual void apply( dat::Dataset & ) const = 0;
+    virtual shark::ClassificationDataset operator()( const dat::Dataset & ) const = 0;
+    //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
 
-    virtual ~Transformation() = default;
+    virtual ~Base() = default;
 };
 
 
@@ -39,11 +40,15 @@ dat::Dataset lda( const dat::Dataset & d );
 #endif
 
 #ifdef CMAKE_USE_SHARK
-struct PCA
+struct PCA : Base
 {
     PCA( const dat::Dataset & train, unsigned dim=100 );
+
     shark::RealVector encode( const dat::Spectrum & ) const;
     shark::ClassificationDataset encode( const dat::Dataset & ) const;
+
+    //void apply( dat::Dataset & ) const override;
+    shark::ClassificationDataset operator()( const dat::Dataset & ) const override;
 
     const shark::LinearModel<> _enc;
 };

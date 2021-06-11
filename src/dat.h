@@ -68,7 +68,8 @@ using Dataset = std::pair< DataEncoded, label::Codec >;
 // `traintest` ranges from 0 - only test to 1 - only train.
 std::pair< Dataset, Dataset > split( const Dataset &, double traintest=0.66 );
 
-Dataset encode( DataRaw & );
+
+Dataset encode( DataRaw && );
 Dataset encode( DataRaw &, const label::Codec & );
 
 DataRaw decode( Dataset &, const label::Codec & );

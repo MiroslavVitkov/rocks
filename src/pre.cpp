@@ -202,5 +202,10 @@ shark::ClassificationDataset PCA::encode( const dat::Dataset & d ) const
     return data;
 }
 
+shark::ClassificationDataset PCA::operator()( const dat::Dataset & d ) const
+{
+    return encode( d );
+}
+
 
 }  // namespace pre

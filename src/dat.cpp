@@ -47,7 +47,7 @@ std::pair< Dataset, Dataset > split( const Dataset & d
 }
 
 
-Dataset encode( DataRaw & raw )
+Dataset encode( DataRaw && raw )
 {
     Dataset dt;
 
