@@ -147,6 +147,19 @@ shark::RealVector to_shark_vector( const dat::Spectrum & s )
 }
 
 
+shark::LinearModel<>
+train_encoder( std::vector< shark::RealVector > & inputs
+             , unsigned N
+             )
+{
+    const auto dataset{ shark::createUnlabeledDataFromRange( inputs ) };
+    shark::PCA pca{ dataset };
+    shark::LinearModel<> enc;
+    pca.encoder( enc, N );
+    return enc;
+}
+
+
 shark::LinearModel<> train_encoder( const dat::Dataset & train
                                   , unsigned N
                                   )
@@ -159,14 +172,31 @@ shark::LinearModel<> train_encoder( const dat::Dataset & train
     , train
     );
 
-    const auto dataset{ shark::createUnlabeledDataFromRange( inputs ) };
-    shark::PCA pca{ dataset };
-    shark::LinearModel<> enc;
-    pca.encoder( enc, N );
-    return enc;
+    return( train_encoder( inputs, N ) );
 }
 
+shark::LinearModel<>
+train_encoder( const shark::ClassificationDataset & train
+             , unsigned N
+             )
+{
+    std::vector< shark::RealVector > vec;
+    for( auto e{ train.elements().begin()}; e < train.elements().end(); ++e )
+    {
+        vec.push_back( e->input );
+    }
+
+    return train_encoder( vec, N );
+}
+
+
 PCA::PCA( const dat::Dataset & train, unsigned dim )
+    : _enc{ train_encoder( train, dim ) }
+{
+}
+
+
+PCA::PCA( const shark::ClassificationDataset & train, unsigned dim )
     : _enc{ train_encoder( train, dim ) }
 {
 }

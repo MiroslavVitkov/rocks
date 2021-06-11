@@ -43,6 +43,7 @@ dat::Dataset lda( const dat::Dataset & d );
 struct PCA : Base
 {
     PCA( const dat::Dataset & train, unsigned dim=100 );
+    PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
 
     shark::RealVector encode( const dat::Spectrum & ) const;
     shark::ClassificationDataset encode( const dat::Dataset & ) const;
