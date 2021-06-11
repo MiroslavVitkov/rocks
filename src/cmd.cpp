@@ -59,11 +59,9 @@ void RunModel::execute()
     const auto & train{ traintest.first };
     const auto & test{ traintest.second };
 
-    // Train the model.
     print::info( "Training a " + _model_name + " model." );
     const auto m{ model::create( _model_name, train ) };
 
-    // Evaluate the test set.
     print::info( "Evaluating the test set." );
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
@@ -81,7 +79,6 @@ void RunModel::execute()
     const auto gt{ label::headonly_recode( ground_truth, test.second, headonly) };
     const auto pr{ label::headonly_recode( predicted, test.second, headonly) };
 
-    // Report.
 #ifdef CMAKE_USE_DLIB
     print::info( "Calculating confusion matrix." );
     const auto conf = score::calc_confusion( gt, pr );
