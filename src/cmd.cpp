@@ -38,18 +38,21 @@ RunModel::preprocess_dataset()
     print::info( std::string("Reading dataset '") + _data_dir
                + "' at labels depth " + std::to_string(_labels_depth) );
     auto raw{ io::read( _data_dir, _labels_depth ) };
-    auto encoded{ dat::encode( std::move( raw ) ) };
+    const auto encoded{ dat::encode( std::move( raw ) ) };
 
     // Pipeline steps executed in order on cmdline.
     // Each operates on the output of the previous one.
+    auto tmp{ dat::to_shark_dataset( encoded ) };
     for( const auto & name : _preprocessing )
     {
         const auto node{ pre::create( name, encoded ) };
-        (*node)( encoded );
+        tmp = (*node)( tmp );
     }
 
     // Perform holdout split.
-    return dat::split( encoded );
+    auto processed{ dat::from_shark_dataset( tmp, encoded.second ) };
+    const auto traintest{ dat::split( std::move( processed ) ) };
+    return traintest;
 }
 
 

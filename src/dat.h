@@ -11,6 +11,8 @@
 
 #include "label.h"
 
+#include <shark/Data/Dataset.h>
+
 #include <array>
 #include <functional>
 #include <string>
@@ -87,6 +89,12 @@ void mutate ( std::function< void ( const label::Raw &, Spectrum & ) >
 // Count total number of spectra.
 size_t count( const dat::Dataset & );
 size_t count( const dat::DataRaw & );
+
+shark::RealVector to_shark_vector( const dat::Spectrum & );
+shark::ClassificationDataset to_shark_dataset( const dat::Dataset & );
+dat::Dataset from_shark_dataset( const shark::ClassificationDataset &
+                               , const label::Codec &
+                               );
 
 
 }  // namespace dataset

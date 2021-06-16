@@ -21,8 +21,9 @@ namespace pre
 
 struct Base
 {
-    virtual shark::ClassificationDataset operator()( const dat::Dataset & ) const = 0;
-    //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
+    using Dataset = shark::ClassificationDataset;
+
+    virtual Dataset operator()( const Dataset & ) = 0;
 
     virtual ~Base() = default;
 };

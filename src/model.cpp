@@ -284,32 +284,6 @@ NN::~NN()
 
 
 #ifdef CMAKE_USE_SHARK
-shark::RealVector to_shark_vector( const dat::Spectrum & s )
-{
-    return { s._y.cbegin(), s._y.cend() };
-}
-
-
-shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
-{
-    if( d.first.empty() )
-    {
-        return {};
-    }
-
-    std::vector< shark::RealVector > inputs;
-    std::vector< label::Num > labels;
-    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
-    {
-        inputs.push_back( to_shark_vector( s ) );
-        labels.push_back( static_cast< label::Num >( l ) );
-    }
-              , d );
-
-    return shark::createLabeledDataFromRange( inputs, labels );
-}
-
-
 // ID of the commit with Andres' implementation: a8410b05.
 auto train_forest_model( const shark::ClassificationDataset & dataset
                        , unsigned num_trees

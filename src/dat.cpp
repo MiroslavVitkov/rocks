@@ -147,4 +147,44 @@ size_t count( const dat::DataRaw & d )
 }
 
 
+shark::RealVector to_shark_vector( const dat::Spectrum & s )
+{
+    return { s._y.cbegin(), s._y.cend() };
+}
+
+
+shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+{
+    if( d.first.empty() )
+    {
+        return {};
+    }
+
+    std::vector< shark::RealVector > inputs;
+    std::vector< label::Num > labels;
+    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
+    {
+        inputs.push_back( to_shark_vector( s ) );
+        labels.push_back( static_cast< label::Num >( l ) );
+    }
+              , d );
+
+    return shark::createLabeledDataFromRange( inputs, labels );
+}
+
+
+dat::Dataset from_shark_dataset( const shark::ClassificationDataset & d
+                               , const label::Codec & c
+                               )
+{
+    dat::Dataset ret{ {}, c };
+    for( auto e{ d.elements().begin()}; e < d.elements().end(); ++e )
+    {
+        ret.first[ e->label ]; //.push_back( e->input );
+        //vec.push_back( e->input );
+    }
+    return ret;
+}
+
+
 }  // namespace dat
