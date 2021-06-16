@@ -230,4 +230,16 @@ shark::ClassificationDataset PCA::operator()( const dat::Dataset & d ) const
 }
 
 
+const std::vector< std::string > ALL_PRE{ log
+                                        , norm
+
+#if defined(CMAKE_USE_OPENCV) || defined(CMAKE_USE_SHARK)
+                                         , pca
+#endif
+#ifdef CMAKE_USE_OPENCV
+                                        , lda
+#endif
+                                        };
+
+
 }  // namespace pre

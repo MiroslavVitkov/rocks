@@ -47,15 +47,44 @@ struct PCA : Base
     PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
 
     shark::RealVector encode( const dat::Spectrum & ) const;
-    shark::ClassificationDataset encode( const dat::Dataset & ) const;
+    Dataset encode( const dat::Dataset & );
+    Dataset encode( const Dataset & );
 
     //void apply( dat::Dataset & ) const override;
-    shark::ClassificationDataset operator()( const dat::Dataset & ) const override;
+    //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
+    Dataset operator()( const Dataset & ) override;
 
     const shark::LinearModel<> _enc;
 };
-shark::RealVector to_shark_vector( const dat::Spectrum & s );
 #endif  // CMAKE_USE_SHARK
+
+
+inline std::unique_ptr< Base > create( const std::string & name
+                                     , const dat::Dataset & d )
+{
+    return create( dat::to_shark_dataset( d ) );
+}
+
+
+inline std::unique_ptr< Base > create( const std::string & name
+                                     , const shark::ClassificationDataset & d )
+{
+    const auto is = [ & name ] ( const char * p )
+        { return ( name.compare( p ) == 0 ); };
+
+    if( is( "pca" ) )
+    {
+        return std::make_unique< PCA >( d );
+    }
+
+    throw Exception( name + ": no such preprocessing algorithm found. "
+                     "See 'pre.h' for a list of all algos."
+                   );
+}
+
+
+
+extern const std::vector< std::string > ALL_PRE;
 
 
 }  // namespace pre
