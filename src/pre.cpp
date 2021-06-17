@@ -260,7 +260,7 @@ const std::vector< std::string > ALL_PRE{ "log"
 #if defined(CMAKE_USE_OPENCV) || defined(CMAKE_USE_SHARK)
                                          , "pca"
 #endif
-#ifdef CMAKE_USE_OPENCV
+#if defined (CMAKE_USE_OPENCV) || defined (CMAKE_USE_DLIB)
                                         , "lda"
 #endif
                                         };
