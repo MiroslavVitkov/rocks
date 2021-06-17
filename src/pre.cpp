@@ -217,27 +217,51 @@ PCA::Dataset PCA::encode( const dat::Dataset & d ) const
     dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
     {
         inputs.push_back( encode( s ) );
-        labels.push_back( static_cast< label::Num >( l ) );
+        labels.push_back( l );
     }
               , d );
 
     return shark::createLabeledDataFromRange( inputs, labels );
 }
 
-shark::ClassificationDataset PCA::operator()( const dat::Dataset & d ) const
+
+PCA::Dataset PCA::encode( const PCA::Dataset & ) const
+{
+    PCA::Dataset ret;
+
+//    shark::RealVector tmp;
+//    shark::UIntVector tmp2;
+//    std::vector< label::Num > tmp3;
+//    label::Num tmp4;
+//    auto tmp5{ *ret.inputs().elements().begin() };
+//    _enc.eval( d.inputs(), tmp );
+
+
+    // tried:
+    // dat::apply - this is not dat::Dataset
+    // shark::LinearModel<>::eval - no idea what's wrong
+    // wtf is the 2nd argument doing?!
+
+
+    return ret;
+}
+
+
+
+PCA::Dataset PCA::operator()( const Dataset & d ) const
 {
     return encode( d );
 }
 
 
-const std::vector< std::string > ALL_PRE{ log
-                                        , norm
+const std::vector< std::string > ALL_PRE{ "log"
+                                        , "norm"
 
 #if defined(CMAKE_USE_OPENCV) || defined(CMAKE_USE_SHARK)
-                                         , pca
+                                         , "pca"
 #endif
 #ifdef CMAKE_USE_OPENCV
-                                        , lda
+                                        , "lda"
 #endif
                                         };
 

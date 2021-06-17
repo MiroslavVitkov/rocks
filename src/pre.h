@@ -23,7 +23,7 @@ struct Base
 {
     using Dataset = shark::ClassificationDataset;
 
-    virtual Dataset operator()( const Dataset & ) = 0;
+    virtual Dataset operator()( const Dataset & ) const = 0;
 
     virtual ~Base() = default;
 };
@@ -47,23 +47,16 @@ struct PCA : Base
     PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
 
     shark::RealVector encode( const dat::Spectrum & ) const;
-    Dataset encode( const dat::Dataset & );
-    Dataset encode( const Dataset & );
+    Dataset encode( const dat::Dataset & ) const;
+    Dataset encode( const Dataset & ) const;
 
     //void apply( dat::Dataset & ) const override;
     //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
-    Dataset operator()( const Dataset & ) override;
+    Dataset operator()( const Dataset & ) const override;
 
     const shark::LinearModel<> _enc;
 };
 #endif  // CMAKE_USE_SHARK
-
-
-inline std::unique_ptr< Base > create( const std::string & name
-                                     , const dat::Dataset & d )
-{
-    return create( dat::to_shark_dataset( d ) );
-}
 
 
 inline std::unique_ptr< Base > create( const std::string & name
@@ -82,6 +75,12 @@ inline std::unique_ptr< Base > create( const std::string & name
                    );
 }
 
+
+inline std::unique_ptr< Base > create( const std::string & name
+                                     , const dat::Dataset & d )
+{
+    return create( name, dat::to_shark_dataset( d ) );
+}
 
 
 extern const std::vector< std::string > ALL_PRE;
