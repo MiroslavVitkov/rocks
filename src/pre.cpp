@@ -247,13 +247,6 @@ PCA::Dataset PCA::encode( const PCA::Dataset & ) const
 }
 
 
-
-PCA::Dataset PCA::operator()( const Dataset & d ) const
-{
-    return encode( d );
-}
-
-
 const std::vector< std::string > ALL_PRE{ "log"
                                         , "norm"
 
