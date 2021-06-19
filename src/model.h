@@ -108,6 +108,9 @@ struct Forest : Model
 #endif  // CMAKE_USE_SHARK
 
 
+// TODO: this is a mess!
+// - remove useless copy ctors from std::make_unique()
+// - investigate why it isn't used everywhere
 inline std::unique_ptr< Model > create( const std::string & name
                                       , const dat::Dataset & d )
 {

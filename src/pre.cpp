@@ -15,6 +15,7 @@ namespace pre
 {
 
 
+// Warning - inconssitent with the overloaded version.
 void logarithm( dat::DataRaw & d )
 {
     double min {};
@@ -205,7 +206,7 @@ shark::RealVector PCA::encode( const dat::Spectrum & s ) const
 }
 
 
-PCA::Dataset PCA::encode( const dat::Dataset & d ) const
+PCA::Dataset69 PCA::encode( const dat::Dataset & d ) const
 {
     if( d.first.empty() )
     {
@@ -225,9 +226,8 @@ PCA::Dataset PCA::encode( const dat::Dataset & d ) const
 }
 
 
-PCA::Dataset PCA::encode( const PCA::Dataset & ) const
+PCA::Dataset69 PCA::encode( const PCA::Dataset69 & ) const
 {
-    PCA::Dataset ret;
 
 //    shark::RealVector tmp;
 //    shark::UIntVector tmp2;
@@ -243,7 +243,13 @@ PCA::Dataset PCA::encode( const PCA::Dataset & ) const
     // wtf is the 2nd argument doing?!
 
 
-    return ret;
+    return {};
+}
+
+
+dat::Dataset PCA::operator()( const dat::Dataset & ) const
+{
+    return {};
 }
 
 

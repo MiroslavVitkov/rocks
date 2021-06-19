@@ -42,7 +42,7 @@ RunModel::preprocess_dataset()
 
     // Pipeline steps executed in order on cmdline.
     // Each operates on the output of the previous one.
-    auto tmp{ dat::to_shark_dataset( encoded ) };
+    auto tmp{ encoded };
     for( const auto & name : _preprocessing )
     {
         const auto node{ pre::create( name, encoded ) };
@@ -50,7 +50,7 @@ RunModel::preprocess_dataset()
     }
 
     // Perform holdout split.
-    auto processed{ dat::from_shark_dataset( tmp, encoded.second ) };
+    auto processed{ encoded };
     const auto traintest{ dat::split( std::move( processed ) ) };
     return traintest;
 }

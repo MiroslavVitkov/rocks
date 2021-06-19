@@ -43,16 +43,18 @@ dat::Dataset lda( const dat::Dataset & d );
 #ifdef CMAKE_USE_SHARK
 struct PCA : Base
 {
+    using Dataset69 = shark::ClassificationDataset;
+
     PCA( const dat::Dataset & train, unsigned dim=100 );
     PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
 
     shark::RealVector encode( const dat::Spectrum & ) const;
-    Dataset encode( const dat::Dataset & ) const;
-    Dataset encode( const Dataset & ) const;
+    Dataset69 encode( const dat::Dataset & ) const;
+    Dataset69 encode( const Dataset69 & ) const;
 
     //void apply( dat::Dataset & ) const override;
     //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
-    Dataset operator()( const Dataset & ) const override;
+    dat::Dataset operator()( const dat::Dataset & ) const override;
 
     const shark::LinearModel<> _enc;
 };
@@ -60,11 +62,16 @@ struct PCA : Base
 
 
 inline std::unique_ptr< Base > create( const std::string & name
-                                     , const shark::ClassificationDataset & d )
+                                     , const shark::ClassificationDataset & d
+                                     )
 {
     const auto is = [ & name ] ( const char * p )
         { return ( name.compare( p ) == 0 ); };
 
+    if( is( "log" ) )
+    {
+        return std::make_unique< Log >( d );
+    }
     if( is( "pca" ) )
     {
         return std::make_unique< PCA >( d );
