@@ -84,16 +84,18 @@ void show_models()
     {
         all += m + ", ";
     }
+
     print::info( all );
 }
 
 
 void show_preprocessing()
 {
-    std::string all{"Preprocessing:"};
-    for( const auto & m : model::ALL_MODELS )
-    {//TODO
-        all += m + ", ";
+
+    std::string all{ "Data preprocessing algos: " };
+    for( const auto & p : pre::ALL_PRE )
+    {
+        all += p + ", ";
     }
     print::info( all );
 }
