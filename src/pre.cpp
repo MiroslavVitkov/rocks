@@ -40,6 +40,53 @@ void logarithm( dat::DataRaw & d )
 }
 
 
+dat::Dataset logarithm( const dat::Dataset & d )
+{
+    double min {};
+    dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
+        {
+            for( const auto & point : s._y )
+            {
+                if( point < min )
+                {
+                    min = point;
+                }
+            }
+        }     , d );
+
+    dat::Dataset ret{ {}, d.second };
+    dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
+        {
+            dat::Spectrum transformed{};
+            unsigned i {};
+            for( const auto & intensity : s._y )
+            {
+                const auto positive = intensity - min + 1;
+                const auto point = std::log( positive );
+                transformed._y[ i++ ] = point;
+            }
+            ret.first[ l ].push_back( transformed );
+        }      , ret );
+
+    return ret;
+}
+
+
+Log::Log( const dat::Dataset & )
+{
+}
+
+Log::Log( const shark::ClassificationDataset & )
+{
+}
+
+
+dat::Dataset Log::operator()( const dat::Dataset & d ) const
+{
+    return logarithm( d );
+}
+
+
 void normalize( dat::DataRaw & d )
 {
     dat::Spectrum mean {};

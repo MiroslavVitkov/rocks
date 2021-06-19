@@ -21,15 +21,21 @@ namespace pre
 
 struct Base
 {
-    using Dataset = shark::ClassificationDataset;
-
-    virtual Dataset operator()( const Dataset & ) const = 0;
+    virtual dat::Dataset operator()( const dat::Dataset & ) const = 0;
 
     virtual ~Base() = default;
 };
 
 
-void logarithm( dat::DataRaw & );
+struct Log : Base
+{
+    Log( const dat::Dataset & );
+    Log( const shark::ClassificationDataset & );
+    dat::Dataset operator()( const dat::Dataset & ) const override;
+    ~Log() = default;
+};
+
+
 void normalize( dat::DataRaw & );
 
 // 'ret[ 0 ]' is the index of most important frequency.
