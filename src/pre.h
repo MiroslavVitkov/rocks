@@ -37,7 +37,6 @@ struct Base
 struct Log : Base
 {
     Log( const dat::Dataset & );
-    Log( const shark::ClassificationDataset & );
     dat::Dataset operator()( const dat::Dataset & ) const override;
 };
 
@@ -47,7 +46,6 @@ struct Log : Base
 struct Norm : Base
 {
     Norm( const dat::Dataset & );
-    Norm( const shark::ClassificationDataset & );
     dat::Dataset operator()( const dat::Dataset & ) const override;
 };
 
