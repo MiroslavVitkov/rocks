@@ -130,6 +130,19 @@ void mutate( std::function< void ( const label::Raw &, Spectrum & ) > f
 }
 
 
+void mutate( std::function< void ( label::Num, Spectrum & ) > f
+           , Dataset & d )
+{
+    for( auto & label_vector : d.first )
+    {
+        for( auto & s : label_vector.second )
+        {
+            f( label_vector.first, s );
+        }
+    }
+}
+
+
 size_t count( const dat::Dataset & d )
 {
     size_t total {};

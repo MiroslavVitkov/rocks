@@ -78,13 +78,15 @@ DataRaw decode( Dataset &, const label::Codec & );
 
 // Invoke provided functor on every element in a dataset.
 // Walking order is consistent until the dataset is altered.
-void apply( std::function< void ( label::Num, const Spectrum & ) >
-          , const Dataset & );
 void apply( std::function< void ( const label::Raw &, const Spectrum & ) >
           , const DataRaw & );
+void apply( std::function< void ( label::Num, const Spectrum & ) >
+          , const Dataset & );
 
 void mutate ( std::function< void ( const label::Raw &, Spectrum & ) >
             , DataRaw & );
+void mutate ( std::function< void ( label::Num, Spectrum & ) >
+            , Dataset & );
 
 // Count total number of spectra.
 size_t count( const dat::Dataset & );
