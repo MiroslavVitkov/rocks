@@ -27,16 +27,23 @@ struct Base
 };
 
 
+// Apply log10 to each intensity.
 struct Log : Base
 {
     Log( const dat::Dataset & );
     Log( const shark::ClassificationDataset & );
     dat::Dataset operator()( const dat::Dataset & ) const override;
-    ~Log() = default;
 };
 
 
-void normalize( dat::DataRaw & );
+// Make all intensities have mean == 0 and variance == 1.
+// Probably incorrectly implemented.
+struct Norm : Base
+{
+    Norm( const dat::Dataset & );
+    Norm( const shark::ClassificationDataset & );
+    dat::Dataset operator()( const dat::Dataset & ) const override;
+};
 
 // 'ret[ 0 ]' is the index of most important frequency.
 // Next is 'ret[ 1 ]' etc.
@@ -77,6 +84,10 @@ inline std::unique_ptr< Base > create( const std::string & name
     if( is( "log" ) )
     {
         return std::make_unique< Log >( d );
+    }
+    if( is( "norm" ) )
+    {
+        return std::make_unique< Norm >( d );
     }
     if( is( "pca" ) )
     {

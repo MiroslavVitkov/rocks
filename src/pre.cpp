@@ -87,19 +87,19 @@ dat::Dataset Log::operator()( const dat::Dataset & d ) const
 }
 
 
-void normalize( dat::DataRaw & d )
+void normalize( dat::Dataset & d )
 {
     dat::Spectrum mean {};
-    dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
+    dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
+    {
+        auto src = s._y.cbegin();
+        const auto end = s._y.cend();
+        auto dest = mean._y.begin();
+        while( src < end )
         {
-            auto src = s._y.cbegin();
-            const auto end = s._y.cend();
-            auto dest = mean._y.begin();
-            while( src < end )
-            {
-                * dest++ += * src++;
-            }
-        }      , d );
+            * dest++ += * src++;
+        }
+    }      , d );
     const auto c = dat::count( d );
     for( auto & point : mean._y )
     {
@@ -107,50 +107,69 @@ void normalize( dat::DataRaw & d )
     }
 
     dat::Spectrum variance;
-    dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
+    dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
+    {
+        auto sp = s._y.cbegin();
+        const auto end = s._y.cend();
+        auto dest = variance._y.begin();
+        while( sp < end )
         {
-            auto sp = s._y.cbegin();
-            const auto end = s._y.cend();
-            auto dest = variance._y.begin();
-            while( sp < end )
-            {
-                const auto a = mean._y[ sp - s._y.cbegin()] ;
-                const auto diff = * sp - a;
-                * dest += diff * diff;
-                assert( diff * diff >= 0 );
-                ++ sp;
-                ++ dest;
-            }
-        }      , d );
+            const auto a = mean._y[ sp - s._y.cbegin()] ;
+            const auto diff = * sp - a;
+            * dest += diff * diff;
+            assert( diff * diff >= 0 );
+            ++ sp;
+            ++ dest;
+        }
+    }      , d );
     for( auto & point : variance._y )
     {
         point = sqrt( point / ( c - 1 ) );
         assert( point >= 0 );
     }
 
-    dat::mutate( [ & ] ( const std::string &, dat::Spectrum & s )
+    dat::mutate( [ & ] ( label::Num, dat::Spectrum & s )
+    {
+        auto src = s._y.begin();
+        const auto end = s._y.cend();
+        auto m_it = mean._y.cbegin();
+        auto v_it = variance._y.cbegin();
+        while( src < end )
         {
-            auto src = s._y.begin();
-            const auto end = s._y.cend();
-            auto m_it = mean._y.cbegin();
-            auto v_it = variance._y.cbegin();
-            while( src < end )
+            if( * v_it < 1e-12  )
             {
-                if( * v_it < 1e-12  )
-                {
-                    * src = * m_it;
-                }
-                else
-                {
-                    * src = ( * src - * m_it ) / * v_it;
-                }
-
-                ++src;
-                ++m_it;
-                ++v_it;
+                * src = * m_it;
             }
-        }      , d );
+            else
+            {
+                * src = ( * src - * m_it ) / * v_it;
+            }
+
+            ++src;
+            ++m_it;
+            ++v_it;
+        }
+    }      , d );
 }
+
+
+
+Norm::Norm( const dat::Dataset & )
+{
+}
+
+Norm::Norm( const shark::ClassificationDataset & )
+{
+}
+
+
+dat::Dataset Norm::operator()( const dat::Dataset & d ) const
+{
+    dat::Dataset ret{ d };
+    normalize( ret );
+    return ret;
+}
+
 
 
 std::vector< size_t > rank_features( const dat::Dataset & )
