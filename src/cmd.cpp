@@ -56,15 +56,10 @@ RunModel::preprocess_dataset()
 }
 
 
-void RunModel::execute()
+void evaluate( const dat::Dataset & test
+             , const model::Model & m
+             )
 {
-    const auto traintest{ preprocess_dataset() };
-    const auto & train{ traintest.first };
-    const auto & test{ traintest.second };
-
-    print::info( "Training a " + _model_name + " model." );
-    const auto m{ model::create( _model_name, train ) };
-
     print::info( "Evaluating the test set." );
     std::vector< label::Num > ground_truth;
     std::vector< label::Num > predicted;
@@ -73,7 +68,7 @@ void RunModel::execute()
         for( const auto & s : kv.second )
         {
             ground_truth.push_back( kv.first );
-            predicted.push_back( m->predict( s ) );
+            predicted.push_back( m.predict( s ) );
         }
     }
 
@@ -87,12 +82,23 @@ void RunModel::execute()
     const auto conf = score::calc_confusion( gt, pr );
 
     std::cout << "Confusion matrix, rows - ground truth, columns - prediction.\n"
-                 "Labels: " << train.second << '\n'
+                 "Labels: " << test.second << '\n'
               << conf
               << "\naccuracy: " << score::accuracy( conf ) << '\n';
 #else
     print::info( "Accuracy evaluadion disabled because dlib is not used." );
 #endif  // CMAKE_USE_DLIB
+}
+
+
+void RunModel::execute()
+{
+    const auto traintest{ preprocess_dataset() };
+
+    print::info( "Training a " + _model_name + " model." );
+    const auto m{ model::create( _model_name, traintest.first ) };
+
+    evaluate( traintest.second, * m );
 }
 
 
