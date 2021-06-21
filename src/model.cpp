@@ -1,6 +1,5 @@
 #include "model.h"
 
-#include "dim.h"
 #include "label.h"
 #include "print.h"
 

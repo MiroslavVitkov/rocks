@@ -1,6 +1,5 @@
 #include "cmd.h"
 
-#include "dim.h"
 #include "io.h"
 #include "label.h"
 #include "model.h"
