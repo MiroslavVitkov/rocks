@@ -53,24 +53,18 @@ struct Norm : Base
 // Next is 'ret[ 1 ]' etc.
 std::vector< size_t > rank_features( const dat::Dataset & );
 
-#ifdef CMAKE_USE_DLIB
-dat::Dataset lda( const dat::Dataset & d );
-#endif
 
 #ifdef CMAKE_USE_SHARK
 struct PCA : Base
 {
-    using Dataset69 = shark::ClassificationDataset;
-
     PCA( const dat::Dataset & train, unsigned dim=100 );
     PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
 
     shark::RealVector encode( const dat::Spectrum & ) const;
-    Dataset69 encode( const dat::Dataset & ) const;
-    Dataset69 encode( const Dataset69 & ) const;
+    dat::Dataset encode( const dat::Dataset & ) const;
+//    shark::ClassificationDataset encode( const dat::Dataset & ) const;
+//    shark::ClassificationDataset encode( const shark::ClassificationDataset & ) const;
 
-    //void apply( dat::Dataset & ) const override;
-    //shark::ClassificationDataset operator()( const dat::Dataset & ) const;
     dat::Dataset operator()( const dat::Dataset & ) const override;
 
     const shark::LinearModel<> _enc;
@@ -123,11 +117,13 @@ struct Simple
 
 
 inline std::unique_ptr< Base > create( const std::string & name
-                                     , const shark::ClassificationDataset & d
+                                     , const dat::Dataset & d
                                      )
 {
-    const auto is = [ & name ] ( const char * p )
-        { return ( name.compare( p ) == 0 ); };
+    const auto is = [ & name ] ( const std::string & n )
+    {
+        return name.compare( n );
+    };
 
     if( is( "log" ) )
     {

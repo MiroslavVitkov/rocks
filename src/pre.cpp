@@ -264,7 +264,7 @@ shark::RealVector PCA::encode( const dat::Spectrum & s ) const
 }
 
 
-PCA::Dataset69 PCA::encode( const dat::Dataset & d ) const
+dat::Dataset PCA::encode( const dat::Dataset & d ) const
 {
     if( d.first.empty() )
     {
@@ -280,28 +280,8 @@ PCA::Dataset69 PCA::encode( const dat::Dataset & d ) const
     }
               , d );
 
-    return shark::createLabeledDataFromRange( inputs, labels );
-}
-
-
-PCA::Dataset69 PCA::encode( const PCA::Dataset69 & ) const
-{
-
-//    shark::RealVector tmp;
-//    shark::UIntVector tmp2;
-//    std::vector< label::Num > tmp3;
-//    label::Num tmp4;
-//    auto tmp5{ *ret.inputs().elements().begin() };
-//    _enc.eval( d.inputs(), tmp );
-
-
-    // tried:
-    // dat::apply - this is not dat::Dataset
-    // shark::LinearModel<>::eval - no idea what's wrong
-    // wtf is the 2nd argument doing?!
-
-
-    return {};
+    const auto sharkd{ shark::createLabeledDataFromRange( inputs, labels ) };
+    return dat::from_shark_dataset( sharkd, d.second );
 }
 
 
