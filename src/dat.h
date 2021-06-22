@@ -95,6 +95,10 @@ size_t count( const dat::DataRaw & );
 
 shark::RealVector to_shark_vector( const dat::Spectrum & );
 shark::ClassificationDataset to_shark_dataset( const dat::Dataset & );
+shark::ClassificationDataset to_shark_dataset( const dat::DataRaw &
+                                             , const label::Codec &
+                                             );
+dat::DataRaw from_shark_dataset( const shark::ClassificationDataset & );
 dat::Dataset from_shark_dataset( const shark::ClassificationDataset &
                                , const label::Codec &
                                );

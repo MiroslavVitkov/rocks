@@ -149,9 +149,23 @@ inline std::unique_ptr< Base > create( const std::string & name
 
 
 inline std::unique_ptr< Base > create( const std::string & name
-                                     , const dat::Dataset & d )
+                                     , const dat::DataRaw && d
+                                     , const label::Codec & c
+                                     )
 {
-    return create( name, dat::to_shark_dataset( d ) );
+    auto encoded{ dat::encode( d, c ) };
+    return create( name, encoded );
+}
+
+
+inline std::unique_ptr< Base > create( const std::string & name
+                                     , const shark::ClassificationDataset & d
+                                     , const label::Codec & c
+                                     )
+{
+    const auto converted{ dat::from_shark_dataset( d ) };
+    auto encoded{ dat::encode( converted, c ) };
+    return create( name, encoded );
 }
 
 

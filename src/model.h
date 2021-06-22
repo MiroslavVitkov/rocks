@@ -5,7 +5,9 @@
 // In this file:
 //               1. models predicting the class of stone,
 //               2. factory from std::string (at the end).
-
+//
+// note: the `const dat::Dataset &` is not expected to
+// survive/still exist after ctor completion.
 
 #include "dat.h"
 #include "except.h"

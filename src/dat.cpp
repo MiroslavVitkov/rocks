@@ -201,6 +201,43 @@ shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
 }
 
 
+shark::ClassificationDataset to_shark_dataset( const dat::DataRaw & d
+                                             , const label::Codec & c
+                                             )
+{
+    if( d.empty() )
+    {
+        return {};
+    }
+
+    std::vector< shark::RealVector > inputs;
+    std::vector< label::Num > labels;
+    dat::apply( [&] ( label::Raw l, const dat::Spectrum & s )
+    {
+        inputs.push_back( to_shark_vector( s ) );
+        const auto label{ c.encode( l ) };
+        labels.push_back( label );
+    }
+              , d );
+
+    return shark::createLabeledDataFromRange( inputs, labels );
+}
+
+
+dat::DataRaw from_shark_dataset( const shark::ClassificationDataset & d )
+{
+    (void)d;
+    dat::DataRaw ret;
+//    for( auto e{ d.elements().begin()}; e < d.elements().end(); ++e )
+//    {
+//        ret[ e->label ]; //.push_back( e->input );
+//        //vec.push_back( e->input );
+//    }
+    return ret;
+}
+
+
+
 dat::Dataset from_shark_dataset( const shark::ClassificationDataset & d
                                , const label::Codec & c
                                )
