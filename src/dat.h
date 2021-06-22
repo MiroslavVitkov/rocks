@@ -72,7 +72,8 @@ std::pair< Dataset, Dataset > split( const Dataset &, double traintest=0.66 );
 
 
 Dataset encode( DataRaw && );
-Dataset encode( DataRaw &, const label::Codec & );
+Dataset encode( DataRaw &&, const label::Codec & );
+Dataset encode( const DataRaw & raw, const label::Codec & t );
 
 DataRaw decode( Dataset &, const label::Codec & );
 

@@ -61,7 +61,7 @@ Dataset encode( DataRaw && raw )
 }
 
 
-Dataset encode( DataRaw & raw, const label::Codec & t )
+Dataset encode( DataRaw && raw, const label::Codec & t )
 {
     Dataset dt{ {}, t };
 
@@ -73,6 +73,21 @@ Dataset encode( DataRaw & raw, const label::Codec & t )
 
     return dt;
 }
+
+
+Dataset encode( const DataRaw & raw, const label::Codec & t )
+{
+    Dataset dt{ {}, t };
+
+    for( auto & kv : raw )
+    {
+        dt.first.emplace( t.encode( kv.first )
+                        , kv.second );
+    }
+
+    return dt;
+}
+
 
 DataRaw decode( Dataset & d, const label::Codec & c )
 {
