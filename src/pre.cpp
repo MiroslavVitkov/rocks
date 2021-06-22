@@ -76,10 +76,6 @@ Log::Log( const dat::Dataset & )
 {
 }
 
-Log::Log( const shark::ClassificationDataset & )
-{
-}
-
 
 dat::Dataset Log::operator()( const dat::Dataset & d ) const
 {
@@ -155,10 +151,6 @@ void normalize( dat::Dataset & d )
 
 
 Norm::Norm( const dat::Dataset & )
-{
-}
-
-Norm::Norm( const shark::ClassificationDataset & )
 {
 }
 

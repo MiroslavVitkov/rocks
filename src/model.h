@@ -52,7 +52,7 @@ struct Correlation : Model
     label::Num predict( const dat::Spectrum & ) const override;
 
 private:
-    const dat::Dataset & _training_set;
+    const dat::Dataset _training_set;
     const std::vector< label::Num > _labels;
 };
 
