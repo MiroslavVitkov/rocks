@@ -50,13 +50,13 @@ private:
 struct RunAllModels : Base
 {
     RunAllModels( const std::string & data_dir
-                , unsigned labels_depth
+                , unsigned labels_depth_max
                 );
     void execute() override;
 
 private:
     const std::string _data_dir;
-    const unsigned _labels_depth;
+    const unsigned _labels_depth_max;
 };
 
 
