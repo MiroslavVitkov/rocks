@@ -336,7 +336,6 @@ const std::vector< std::string > ALL_MODELS{ "chance"
                                            , "cor"
                                            , "svm"
 #ifdef CMAKE_USE_OPENCV
-                                           , "lda"
                                            , "pca"
 #endif
                                            , "nn"
