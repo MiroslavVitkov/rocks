@@ -34,8 +34,8 @@ RunModel::RunModel( const std::string & data_dir
 std::pair< dat::Dataset, dat::Dataset >
 RunModel::preprocess_dataset()
 {
-    print::info( std::string("Reading dataset '") + _data_dir
-               + "' at labels depth " + std::to_string(_labels_depth) );
+    print::info( std::string( "Reading dataset '" ) + _data_dir
+               + "' at labels depth " + std::to_string( _labels_depth ) );
     auto raw{ io::read( _data_dir, _labels_depth ) };
     const auto encoded{ dat::encode( std::move( raw ) ) };
 
@@ -44,6 +44,7 @@ RunModel::preprocess_dataset()
     auto tmp{ encoded };
     for( const auto & name : _preprocessing )
     {
+        print::info( "Preprocessing dataset via '" + name + "' algo." );
         const auto node{ pre::create( name, encoded ) };
         tmp = (*node)( tmp );
     }
@@ -116,13 +117,14 @@ void RunAllModels::execute()
     {
         for( const auto & p : pre::ALL_PRE )
         {
-            for( auto l{ static_cast< int >( _labels_depth_max ) }; l >= 0; --l )
+            for( auto l{ _labels_depth_max }; l; --l )
             {
-                RunModel( _data_dir
-                        , m
-                        , l
-                        , std::vector< std::string >{ p }
-                        );
+                RunModel model( _data_dir
+                              , m
+                              , l
+                              , std::vector< std::string >{ p }
+                              );
+                model.execute();
             }
         }
     }
