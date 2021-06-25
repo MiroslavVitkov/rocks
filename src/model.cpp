@@ -210,75 +210,6 @@ label::Num SVM::predict( const dat::Spectrum & test ) const
 SVM::~SVM()
 {
 }
-
-
-struct NN::Impl
-{
-    // Layers.
-    using Input = dlib::input< Sample >;
-    using Compute0 = dlib::softmax< dlib::fc< 100, Input > >;
-    using Compute1 = dlib::softmax< dlib::fc< 50, Compute0 > >;
-    using Output = dlib::loss_multiclass_log< dlib::fc< 6, Compute1 > >;
-
-    using Net = Output;
-    using Trainer = dlib::dnn_trainer< Net >;
-
-
-    Impl( const dat::Dataset & d )
-    {
-        if( d.first.empty() )
-        {
-            return;
-        }
-
-        Trainer t{ _net };
-        t.set_learning_rate( 1e-3 );
-        t.set_min_learning_rate( 1e-6 );
-        t.set_mini_batch_size( 30 );
-        t.be_verbose();
-
-        using Flattened = std::pair< std::vector< Sample >
-                                   , std::vector< unsigned long > >;
-        Flattened fl;
-        dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
-            {
-                fl.first.emplace_back( to_dlib_sample( s ) );
-                fl.second.push_back( static_cast< unsigned long >( l ) );
-            }     , d );
-
-        t.train( fl.first, fl.second );
-        t.get_net();
-    }
-
-
-    label::Num predict( const dat::Spectrum & s ) const
-    {
-        std::vector< Sample > v{ to_dlib_sample( s ) }; (void)v;
-        const auto predicted = _net( v );
-        const auto p = predicted.front();
-        return static_cast< label::Num >( p );
-    }
-
-
-    mutable Net _net {};
-};
-
-
-NN::NN( const dat::Dataset & d )
-    : _impl{ std::make_unique< Impl >( d ) }
-{
-}
-
-
-label::Num NN::predict( const dat::Spectrum & s ) const
-{
-    return _impl->predict( s );
-}
-
-
-NN::~NN()
-{
-}
 #endif // CMAKE_USE_DLIB
 
 
@@ -335,7 +266,6 @@ const std::vector< std::string > ALL_MODELS{ "chance"
 #ifdef CMAKE_USE_DLIB
                                            , "cor"
                                            , "svm"
-                                           , "nn"
 #endif
 #ifdef CMAKE_USE_SHARK
                                            , "forest"

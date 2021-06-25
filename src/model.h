@@ -79,18 +79,6 @@ private:
     struct Impl;
     std::unique_ptr< Impl > _impl;
 };
-
-
-struct NN : Model
-{
-    NN( const dat::Dataset & );
-    label::Num predict( const dat::Spectrum & ) const override;
-    ~NN() override;
-
-private:
-    struct Impl;
-    std::unique_ptr< Impl > _impl;
-};
 #endif  // CMAKE_USE_DLIB
 
 
@@ -131,10 +119,6 @@ inline std::unique_ptr< Model > create( const std::string & name
     if( is( "svm" ) )
     {
         return std::unique_ptr< SVM >( new SVM( d ) );
-    }
-    if( is( "nn" ) )
-    {
-        return std::unique_ptr< NN >( new NN( d ) );
     }
 #endif  // CMAKE_USE_DLIB
 #ifdef CMAKE_USE_SHARK
