@@ -120,9 +120,9 @@ inline std::unique_ptr< Base > create( const std::string & name
                                      , const dat::Dataset & d
                                      )
 {
-    const auto is = [ & name ] ( const std::string & n )
+    const auto is = [ & name ] ( const char * p )
     {
-        return name.compare( n );
+        return ( name.compare( p ) == 0 );
     };
 
     if( is( "log" ) )
