@@ -50,8 +50,7 @@ RunModel::preprocess_dataset()
     }
 
     // Perform holdout split.
-    auto processed{ encoded };
-    const auto traintest{ dat::split( std::move( processed ) ) };
+    const auto traintest{ dat::split( std::move( tmp ) ) };
     return traintest;
 }
 
