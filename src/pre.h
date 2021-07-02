@@ -59,12 +59,6 @@ struct PCA : Base
 {
     PCA( const dat::Dataset & train, unsigned dim=100 );
     PCA( const shark::ClassificationDataset & train, unsigned dim=100 );
-
-    shark::RealVector encode( const dat::Spectrum & ) const;
-    dat::Dataset encode( const dat::Dataset & ) const;
-//    shark::ClassificationDataset encode( const dat::Dataset & ) const;
-//    shark::ClassificationDataset encode( const shark::ClassificationDataset & ) const;
-
     dat::Dataset operator()( const dat::Dataset & ) const override;
 
     const shark::LinearModel<> _enc;

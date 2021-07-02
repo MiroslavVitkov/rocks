@@ -255,16 +255,7 @@ PCA::PCA( const shark::ClassificationDataset & train, unsigned dim )
 }
 
 
-shark::RealVector PCA::encode( const dat::Spectrum & s ) const
-{
-    shark::RealVector ret;
-    const auto vec{ dat::to_shark_vector( s ) };
-    _enc.eval( vec, ret );
-    return ret;
-}
-
-
-dat::Dataset PCA::encode( const dat::Dataset & d ) const
+dat::Dataset PCA::operator()( const dat::Dataset & d ) const
 {
     if( d.first.empty() )
     {
@@ -275,19 +266,16 @@ dat::Dataset PCA::encode( const dat::Dataset & d ) const
     std::vector< label::Num > labels;
     dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
     {
-        inputs.push_back( encode( s ) );
+        shark::RealVector enc;
+        const auto vec{ dat::to_shark_vector( s ) };
+        _enc.eval( vec, enc );
+        inputs.push_back( std::move( enc ) );
         labels.push_back( l );
     }
               , d );
 
     const auto sharkd{ shark::createLabeledDataFromRange( inputs, labels ) };
     return dat::from_shark_dataset( sharkd, d.second );
-}
-
-
-dat::Dataset PCA::operator()( const dat::Dataset & ) const
-{
-    return {};
 }
 
 
