@@ -15,31 +15,6 @@ namespace pre
 {
 
 
-// Warning - inconssitent with the overloaded version.
-void logarithm( dat::DataRaw & d )
-{
-    double min {};
-    dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
-        {
-            for( const auto & point : s._y )
-            {
-                if( point < min )
-                {
-                    min = point;
-                }
-            }
-        }      , d );
-    dat::mutate( [ & ] ( const std::string &, dat::Spectrum & s )
-        {
-            for( auto & point : s._y )
-            {
-                const auto positive = point - min + 1;
-                point = std::log( positive );
-            }
-        }      , d );
-}
-
-
 dat::Dataset logarithm( const dat::Dataset & d )
 {
     double min {};

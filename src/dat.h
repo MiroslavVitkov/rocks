@@ -84,10 +84,10 @@ void apply( std::function< void ( const label::Raw &, const Spectrum & ) >
 void apply( std::function< void ( label::Num, const Spectrum & ) >
           , const Dataset & );
 
-void mutate ( std::function< void ( const label::Raw &, Spectrum & ) >
-            , DataRaw & );
-void mutate ( std::function< void ( label::Num, Spectrum & ) >
-            , Dataset & );
+void mutate( std::function< void ( const label::Raw &, Spectrum & ) >
+           , DataRaw & );
+void mutate( std::function< void ( label::Num, Spectrum & ) >
+           , Dataset & );
 
 // Count total number of spectra.
 size_t count( const Dataset & );
@@ -101,7 +101,6 @@ shark::ClassificationDataset to_shark_dataset( const DataRaw &
 
 // Inefficient due to quadratic complexity of traversing a shark dataset.
 Spectrum from_shark_vector( const shark::RealVector & );
-DataRaw from_shark_dataset( const shark::ClassificationDataset & );
 Dataset from_shark_dataset( const shark::ClassificationDataset &
                           , const label::Codec &
                           );
