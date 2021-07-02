@@ -66,6 +66,7 @@ using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, label::Codec >;
 
 
+// Perform holdout split.
 // Sample points at random without regard to label. TODO: stratified sampler.
 // `traintest` ranges from 0 - only test to 1 - only train.
 std::pair< Dataset, Dataset > split( const Dataset &, double traintest=0.66 );

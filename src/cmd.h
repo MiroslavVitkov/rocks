@@ -38,8 +38,7 @@ struct RunModel : Base
             , const std::vector< std::string > & preprocessing
             );
     void execute() override;
-    std::pair< dat::Dataset, dat::Dataset > preprocess_dataset();
-private:
+
     const std::string _data_dir;
     const std::string _model_name;
     const unsigned _labels_depth;
@@ -54,7 +53,6 @@ struct RunAllModels : Base
                 );
     void execute() override;
 
-private:
     const std::string _data_dir;
     const unsigned _labels_depth_max;
 };
@@ -65,7 +63,6 @@ struct ReportOutliers : Base
     ReportOutliers( const std::string & data_dir );
     void execute() override;
 
-private:
     const std::string _data_dir;
 };
 

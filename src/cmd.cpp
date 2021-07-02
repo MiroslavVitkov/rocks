@@ -30,28 +30,28 @@ RunModel::RunModel( const std::string & data_dir
 }
 
 
-// Preprocess the dataset e.g. dimensionality reduction.
-std::pair< dat::Dataset, dat::Dataset >
-RunModel::preprocess_dataset()
+dat::Dataset read_dataset( const std::filesystem::path & p, unsigned labels_depth )
 {
-    print::info( std::string( "Reading dataset '" ) + _data_dir
-               + "' at labels depth " + std::to_string( _labels_depth ) );
-    auto raw{ io::read( _data_dir, _labels_depth ) };
+    print::info( std::string( "Reading dataset '" ) + p.string()
+               + "' at labels depth " + std::to_string( labels_depth ) );
+    auto raw{ io::read( p, labels_depth ) };
     const auto encoded{ dat::encode( std::move( raw ) ) };
+    return encoded;
+}
 
+
+void preprocess_dataset( dat::Dataset & d
+                       , const std::vector< std::string > & operations
+                       )
+{
     // Pipeline steps executed in order on cmdline.
     // Each operates on the output of the previous one.
-    auto tmp{ encoded };
-    for( const auto & name : _preprocessing )
+    for( const auto & op : operations )
     {
-        print::info( "Preprocessing dataset via '" + name + "' algo." );
-        const auto node{ pre::create( name, encoded ) };
-        tmp = (*node)( tmp );
+        print::info( "Preprocessing dataset via '" + op + "' algo." );
+        const auto algo{ pre::create( op, d ) };
+        d = ( *algo )( d );
     }
-
-    // Perform holdout split.
-    const auto traintest{ dat::split( std::move( tmp ) ) };
-    return traintest;
 }
 
 
@@ -92,7 +92,9 @@ void evaluate( const dat::Dataset & test
 
 void RunModel::execute()
 {
-    const auto traintest{ preprocess_dataset() };
+    auto dataset{ read_dataset( _data_dir, _labels_depth ) };
+    preprocess_dataset( dataset, _preprocessing );
+    const auto traintest{ dat::split( std::move( dataset ) ) };
 
     print::info( "Training a " + _model_name + " model." );
     const auto m{ model::create( _model_name, traintest.first ) };
