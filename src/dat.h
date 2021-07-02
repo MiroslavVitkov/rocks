@@ -90,18 +90,21 @@ void mutate ( std::function< void ( label::Num, Spectrum & ) >
             , Dataset & );
 
 // Count total number of spectra.
-size_t count( const dat::Dataset & );
-size_t count( const dat::DataRaw & );
+size_t count( const Dataset & );
+size_t count( const DataRaw & );
 
-shark::RealVector to_shark_vector( const dat::Spectrum & );
-shark::ClassificationDataset to_shark_dataset( const dat::Dataset & );
-shark::ClassificationDataset to_shark_dataset( const dat::DataRaw &
+shark::RealVector to_shark_vector( const Spectrum & );
+shark::ClassificationDataset to_shark_dataset( const Dataset & );
+shark::ClassificationDataset to_shark_dataset( const DataRaw &
                                              , const label::Codec &
                                              );
-dat::DataRaw from_shark_dataset( const shark::ClassificationDataset & );
-dat::Dataset from_shark_dataset( const shark::ClassificationDataset &
-                               , const label::Codec &
-                               );
+
+// Inefficient due to quadratic complexity of traversing a shark dataset.
+Spectrum from_shark_vector( const shark::RealVector & );
+DataRaw from_shark_dataset( const shark::ClassificationDataset & );
+Dataset from_shark_dataset( const shark::ClassificationDataset &
+                          , const label::Codec &
+                          );
 
 
 }  // namespace dataset

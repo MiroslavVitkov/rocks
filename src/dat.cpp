@@ -158,30 +158,30 @@ void mutate( std::function< void ( label::Num, Spectrum & ) > f
 }
 
 
-size_t count( const dat::Dataset & d )
+size_t count( const Dataset & d )
 {
     size_t total {};
-    dat::apply( [ &total ] ( int, const dat::Spectrum & ) { ++total; }, d );
+    dat::apply( [ &total ] ( int, const Spectrum & ) { ++total; }, d );
     return total;
 }
 
 
-size_t count( const dat::DataRaw & d )
+size_t count( const DataRaw & d )
 {
     size_t total {};
-    dat::apply( [ & total ] ( const std::string &, const dat::Spectrum & )
+    dat::apply( [ & total ] ( const std::string &, const Spectrum & )
         { ++total; }, d );
     return total;
 }
 
 
-shark::RealVector to_shark_vector( const dat::Spectrum & s )
+shark::RealVector to_shark_vector( const Spectrum & s )
 {
     return { s._y.cbegin(), s._y.cend() };
 }
 
 
-shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
+shark::ClassificationDataset to_shark_dataset( const Dataset & d )
 {
     if( d.first.empty() )
     {
@@ -190,18 +190,19 @@ shark::ClassificationDataset to_shark_dataset( const dat::Dataset & d )
 
     std::vector< shark::RealVector > inputs;
     std::vector< label::Num > labels;
-    dat::apply( [&] ( label::Num l, const dat::Spectrum & s )
+    dat::apply( [&] ( label::Num l, const Spectrum & s )
     {
         inputs.push_back( to_shark_vector( s ) );
         labels.push_back( static_cast< label::Num >( l ) );
     }
-              , d );
+              , d
+              );
 
     return shark::createLabeledDataFromRange( inputs, labels );
 }
 
 
-shark::ClassificationDataset to_shark_dataset( const dat::DataRaw & d
+shark::ClassificationDataset to_shark_dataset( const DataRaw & d
                                              , const label::Codec & c
                                              )
 {
@@ -212,7 +213,7 @@ shark::ClassificationDataset to_shark_dataset( const dat::DataRaw & d
 
     std::vector< shark::RealVector > inputs;
     std::vector< label::Num > labels;
-    dat::apply( [&] ( label::Raw l, const dat::Spectrum & s )
+    dat::apply( [&] ( label::Raw l, const Spectrum & s )
     {
         inputs.push_back( to_shark_vector( s ) );
         const auto label{ c.encode( l ) };
