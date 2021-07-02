@@ -122,18 +122,10 @@ On the other hand, feature selection techniques should point to prominent spectr
 Those could be valuable to domain experts.
 
 
-\subsection{Akaike information criterion}
-Information gain was not used as prominent feature selector.
-
-
 \subsection{Principal component analysis}
-Plotting a few samples from 2 classes illustrates the data is not linearly separable in 2 dimensions.
-The used SVM must be using a soft margin.
-Also we can't nicely plot the data and see clusters.
-\\
-\includegraphics[width=0.9\textwidth]{img/pca}
-\\
-When attempting to classify only by the top 5 basis vectors, the SVM accuracy fell from 0.97 to 0.51.
+Numerous algorithms have been developed to compute this simple yet powerful transformation.
+For example the Gram-Schmid ortogonalization can be parallelised over a GPU \cite{andrecut}.
+Here we use the classical NIPALS-PCA algorithm for simlicity.
 
 
 \subsection{Linear discriminant analysis}
