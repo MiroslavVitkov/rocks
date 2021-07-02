@@ -225,29 +225,27 @@ shark::ClassificationDataset to_shark_dataset( const DataRaw & d
 }
 
 
-dat::DataRaw from_shark_dataset( const shark::ClassificationDataset & d )
+Spectrum from_shark_vector( const shark::RealVector & v )
 {
-    (void)d;
-    dat::DataRaw ret;
-//    for( auto e{ d.elements().begin()}; e < d.elements().end(); ++e )
-//    {
-//        ret[ e->label ]; //.push_back( e->input );
-//        //vec.push_back( e->input );
-//    }
+    assert( v.size() == Spectrum::_num_points );
+
+    Spectrum ret;
+    std::copy( v.cbegin(), v.cend(), ret._y.begin() );
     return ret;
 }
 
 
-
-dat::Dataset from_shark_dataset( const shark::ClassificationDataset & d
-                               , const label::Codec & c
-                               )
+Dataset from_shark_dataset( const shark::ClassificationDataset & d
+                          , const label::Codec & c
+                          )
 {
-    dat::Dataset ret{ {}, c };
-    for( auto e{ d.elements().begin()}; e < d.elements().end(); ++e )
+    Dataset ret{ {}, c };
+    for( const auto & e : d.elements() )
     {
-        ret.first[ e->label ]; //.push_back( e->input );
-        //vec.push_back( e->input );
+        auto & vec{ ret.first[ e.label ] };
+        const auto & datapoint{ e.input };
+        const auto converted{ from_shark_vector( datapoint ) };
+        vec.push_back( converted );
     }
     return ret;
 }
