@@ -119,19 +119,6 @@ void apply( std::function< void ( label::Num, const Spectrum & ) > f
 }
 
 
-void apply(std::function< void ( const label::Raw &, const Spectrum & ) > f
-          , const DataRaw & d )
-{
-    for( const auto & label_vector : d )
-    {
-        for( const auto & s : label_vector.second )
-        {
-            f( label_vector.first, s );
-        }
-    }
-}
-
-
 void mutate( std::function< void ( const label::Raw &, Spectrum & ) > f
            , DataRaw & d )
 {

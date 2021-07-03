@@ -80,8 +80,6 @@ DataRaw decode( Dataset &, const label::Codec & );
 
 // Invoke provided functor on every element in a dataset.
 // Walking order is consistent until the dataset is altered.
-void apply( std::function< void ( const label::Raw &, const Spectrum & ) >
-          , const DataRaw & );
 void apply( std::function< void ( label::Num, const Spectrum & ) >
           , const Dataset & );
 
