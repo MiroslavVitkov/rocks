@@ -89,7 +89,7 @@ Dataset encode( const DataRaw & raw, const label::Codec & t )
 }
 
 
-DataRaw decode( Dataset & d, const label::Codec & c )
+DataRaw decode( Dataset && d, const label::Codec & c )
 {
     DataRaw raw{};
 
