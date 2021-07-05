@@ -153,15 +153,6 @@ size_t count( const Dataset & d )
 }
 
 
-size_t count( const DataRaw & d )
-{
-    size_t total {};
-    dat::apply( [ & total ] ( const std::string &, const Spectrum & )
-        { ++total; }, d );
-    return total;
-}
-
-
 shark::RealVector to_shark_vector( const Spectrum & s )
 {
     return { s._y.cbegin(), s._y.cend() };
@@ -184,29 +175,6 @@ shark::ClassificationDataset to_shark_dataset( const Dataset & d )
     }
               , d
               );
-
-    return shark::createLabeledDataFromRange( inputs, labels );
-}
-
-
-shark::ClassificationDataset to_shark_dataset( const DataRaw & d
-                                             , const label::Codec & c
-                                             )
-{
-    if( d.empty() )
-    {
-        return {};
-    }
-
-    std::vector< shark::RealVector > inputs;
-    std::vector< label::Num > labels;
-    dat::apply( [&] ( label::Raw l, const Spectrum & s )
-    {
-        inputs.push_back( to_shark_vector( s ) );
-        const auto label{ c.encode( l ) };
-        labels.push_back( label );
-    }
-              , d );
 
     return shark::createLabeledDataFromRange( inputs, labels );
 }

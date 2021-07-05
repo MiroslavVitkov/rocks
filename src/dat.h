@@ -83,14 +83,11 @@ DataRaw decode( Dataset &&, const label::Codec & );
 void apply( std::function< void ( label::Num, const Spectrum & ) >
           , const Dataset & );
 
-void mutate( std::function< void ( const label::Raw &, Spectrum & ) >
-           , DataRaw & );
 void mutate( std::function< void ( label::Num, Spectrum & ) >
            , Dataset & );
 
 // Count total number of spectra.
 size_t count( const Dataset & );
-size_t count( const DataRaw & );
 
 shark::RealVector to_shark_vector( const Spectrum & );
 shark::ClassificationDataset to_shark_dataset( const Dataset & );
