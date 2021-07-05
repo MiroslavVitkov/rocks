@@ -140,7 +140,8 @@ ReportOutliers::ReportOutliers( const std::string & data_dir )
 
 void ReportOutliers::execute()
 {
-    const auto spectra = io::read( _data_dir );
+    auto spectra{ io::read( _data_dir ) };
+    const auto dataset{ dat::encode( std::move( spectra ) ) };
 
     // Measure.
     unsigned num_files {};
@@ -150,29 +151,28 @@ void ReportOutliers::execute()
     double most_negative {};
     const dat::Spectrum * worst {};
 
-    // TODO: deprecated, use dat::apply(Dataset)
-//    dat::apply( [ & ] ( const std::string &, const dat::Spectrum & s )
-//        {
-//            ++num_files;
-//            sum_intensity = std::accumulate( s._y.cbegin()
-//                                             , s._y.cend()
-//                                             , sum_intensity );
+    dat::apply( [ & ] ( label::Num, const dat::Spectrum & s )
+    {
+        ++num_files;
+        sum_intensity = std::accumulate( s._y.cbegin()
+                                         , s._y.cend()
+                                         , sum_intensity );
 
-//            for( const auto v : s._y )
-//            {
-//                if( v < 0 )
-//                {
-//                    ++num_negatives;
-//                    sum_negatives += v;
-//                    if( v < most_negative )
-//                    {
-//                        most_negative = v;
-//                        worst = & s;
-//                    }
-//                }
-//            }
-//        }
-//             , spectra );
+        for( const auto v : s._y )
+        {
+            if( v < 0 )
+            {
+                ++num_negatives;
+                sum_negatives += v;
+                if( v < most_negative )
+                {
+                    most_negative = v;
+                    worst = & s;
+                }
+            }
+        }
+    }
+    , dataset );
 
     // Report.
     std::cout << "Dataset consists of " << num_files << " files.\n"
