@@ -206,4 +206,23 @@ Dataset from_shark_dataset( const shark::ClassificationDataset & d
 }
 
 
+#ifdef CMAKE_USE_DLIB
+DlibSample to_dlib_sample( const Spectrum & s )
+{
+    const auto p = reinterpret_cast< const double ( * )
+                                   [ Spectrum::_num_points ] >
+                                   ( s._y.data() );
+    assert( p );
+
+    DlibSample sam( * p );
+    for( unsigned i {}; i < dat::Spectrum::_num_points; ++i )
+    {
+        assert( abs( s._y[ i ] - sam( i ) ) < 1e-9 );
+    }
+
+    return {};
+}
+#endif  // CMAKE_USE_DLIB
+
+
 }  // namespace dat

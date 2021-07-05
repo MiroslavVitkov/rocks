@@ -11,7 +11,13 @@
 
 #include "label.h"
 
+#ifdef CMAKE_USE_DLIB
+#include <dlib/matrix.h>
+#endif
+
+#ifdef CMAKE_USE_SHARK
 #include <shark/Data/Dataset.h>
+#endif
 
 #include <array>
 #include <functional>
@@ -89,6 +95,7 @@ void mutate( std::function< void ( label::Num, Spectrum & ) >
 // Count total number of spectra.
 size_t count( const Dataset & );
 
+#ifdef CMAKE_USE_SHARK
 shark::RealVector to_shark_vector( const Spectrum & );
 shark::ClassificationDataset to_shark_dataset( const Dataset & );
 shark::ClassificationDataset to_shark_dataset( const DataRaw &
@@ -100,7 +107,17 @@ Spectrum from_shark_vector( const shark::RealVector & );
 Dataset from_shark_dataset( const shark::ClassificationDataset &
                           , const label::Codec &
                           );
+#endif  // CMAKE_USE_SHARK
 
+#ifdef CMAKE_USE_DLIB
+// Dlib also features flexible dynamic sizing.
+// But we are using the more type-safe and efficient static version.
+using DlibSample = dlib::matrix< Spectrum::value_type, dat::Spectrum::_num_points, 1 >;
+using DlibFlattened = std::pair< std::vector< DlibSample >
+                               , std::vector< label::Num > >;
+
+DlibSample to_dlib_sample( const Spectrum & );
+#endif  // CMAKE_USE_DLIB
 
 }  // namespace dataset
 

@@ -119,31 +119,9 @@ label::Num Correlation::predict( const dat::Spectrum & test ) const
 }
 
 
-using Sample = dlib::matrix< double, dat::Spectrum::_num_points, 1 >;
-using Flattened = std::pair< std::vector< Sample >
-                           , std::vector< label::Num > >;
-
-
-Sample to_dlib_sample( const dat::Spectrum & s )
-{
-    const auto p = reinterpret_cast< const double ( * )
-                                   [ dat::Spectrum::_num_points ] >
-                   ( s._y.data() );
-    assert( p );
-
-    Sample sam( * p );
-    for( unsigned i {}; i < dat::Spectrum::_num_points; ++i )
-    {
-        assert( abs( s._y[ i ] - sam( i ) ) < 1e-9 );
-    }
-
-    return sam;
-}
-
-
 struct SVM::Impl
 {
-    using Kernel = dlib::linear_kernel< Sample >;
+    using Kernel = dlib::linear_kernel< dat::DlibSample >;
     using Classifier = dlib::multiclass_linear_decision_function< Kernel, label::Num >;
     using Trainer = dlib::svm_multiclass_linear_trainer< Kernel, label::Num >;
 
@@ -156,7 +134,7 @@ struct SVM::Impl
                     return {};
                 }
 
-                Flattened all;
+                dat::DlibFlattened all;
                 std::vector< label::Num > i( d.first.size(), 0 );
                 dat::apply( [ & ] ( label::Num l, const dat::Spectrum & s )
                 {
@@ -176,14 +154,14 @@ struct SVM::Impl
 
     label::Num predict( const dat::Spectrum & test ) const
     {
-        const auto s = to_dlib_sample( test );
+        const auto s = dat::to_dlib_sample( test );
         const auto ret = _svm.predict( s );
         return ret.first;  // what is ret.second?
     }
 
 
 private:
-    void addto( Flattened & f, label::Num l, const dat::Spectrum & s )
+    void addto( dat::DlibFlattened & f, label::Num l, const dat::Spectrum & s )
     {
         f.first.push_back( to_dlib_sample( s ) );
         f.second.push_back( l );
