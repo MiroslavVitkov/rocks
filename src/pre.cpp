@@ -249,28 +249,8 @@ dat::Dataset PCA::operator()( const dat::Dataset & d ) const
     }
               , d );
 
-    const auto sharkd{ shark::createLabeledDataFromRange( inputs, labels ) };
-    return dat::from_shark_dataset( sharkd, d.second );
-}
-
-
-Simple::Simple( const dat::Dataset & )
-{
-}
-
-
-dat::Compressed Simple::operator()( const dat::Spectrum & s ) const
-{
-    const auto mean = std::accumulate( s._y.begin(), s._y.end(), 0 ) / s._num_points;
-    using CompressedValue = dat::Compressed::value_type;
-    const auto squared_diff = [ mean ] ( CompressedValue sum, CompressedValue v )
-        { return sum + ((v - mean) * (v - mean)); };
-    const auto variance = std::accumulate( s._y.begin(), s._y.end(), 0, squared_diff ) / s._num_points;
-
-    dat::Compressed ret{};
-    ret._y[0] = mean;
-    ret._y[1] = variance;
-    return ret;
+    const auto sharked{ shark::createLabeledDataFromRange( inputs, labels ) };
+    return dat::from_shark_dataset( sharked, d.second );
 }
 
 

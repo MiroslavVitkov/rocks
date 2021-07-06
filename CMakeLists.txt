@@ -12,6 +12,7 @@ add_compile_options( -Wall -Wextra -pedantic -Werror -Wfatal-errors )
 # Core sources; others included together with the libraries they use.
 set (SRC src/cli.cpp
          src/dat.cpp
+         src/dim.cpp
          src/cmd.cpp
          src/io.cpp
          src/label.cpp

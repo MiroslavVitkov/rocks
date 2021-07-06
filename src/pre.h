@@ -2,9 +2,7 @@
 #define PRE_H_
 
 
-// In this file: preprocessing of the dataset before feeding it to a model:
-//    - map intensity values to another domain
-//    - dimensionalty reduction
+// In this file: preprocessing of a dataset before feeding it to a model.
 
 
 #include "dat.h"
@@ -12,10 +10,6 @@
 
 #ifdef CMAKE_USE_SHARK
 #include <shark/Algorithms/Trainers/PCA.h>
-#endif
-
-#ifdef CMAKE_USE_OPENCV
-#include <opencv2/core.hpp>
 #endif
 
 #include <vector>
@@ -64,50 +58,6 @@ struct PCA : Base
     const shark::LinearModel<> _enc;
 };
 #endif  // CMAKE_USE_SHARK
-
-
-#ifdef CMAKE_USE_OPENCV
-// Linear Discriminant Analysis
-// Z*x-M maps x into a space where x vectors that share the same class label
-// are near each other.
-// LDA (at least the implementation in sklearn) can produce at most
-// k-1 components (where k is number of classes).
-struct LDA
-{
-    using T = dat::Compressed::value_type;
-
-    LDA( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
-
-private:
-    mutable cv::LDA _lda;
-};
-
-
-struct cvPCA
-{
-    using T = dat::Compressed::value_type;
-
-    cvPCA( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
-
-private:
-    cv::PCA _pca;
-};
-
-
-#endif  // CMAKE_USE_OPENCV
-
-
-// An agegate of simple measures.
-// Intended as a placeholder when no libs are enabled.
-struct Simple
-{
-    using T = dat::Compressed::value_type;
-
-    Simple( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
-};
 
 
 inline std::unique_ptr< Base > create( const std::string & name
