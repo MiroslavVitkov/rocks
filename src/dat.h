@@ -32,14 +32,25 @@ namespace dat
 
 // A single spectroscope measurement for a single point.
 // In some representation.
-// TODO: operator[]
 template < typename ElemT, unsigned num_dims >
 struct Sample
 {
     using value_type = ElemT;
+    using pointer = ElemT *;
+    using const_pointer = ElemT const *;
     static constexpr auto _num_points{ num_dims };
     using Axis = std::array< ElemT, num_dims >;
 
+    value_type operator[]( size_t i ) { return _y[i]; };
+
+    pointer begin(){ return _y; };
+    const_pointer cbegin(){ return & _y; };
+    pointer end(){ return _y + _num_points; };
+    const_pointer cend(){ return & _y; };
+
+    virtual ~Sample() = default;
+
+    // The actual data.
     Axis _y {};
 };
 
@@ -62,7 +73,8 @@ struct Spectrum : Sample< double, 7810 >
 };
 
 
-struct Compressed : Sample< float, 5 >
+// Dimensionality reduction target.
+struct Compressed : Sample< float, 100 >
 {
 };
 
@@ -80,7 +92,7 @@ std::pair< Dataset, Dataset > split( const Dataset &, double traintest=0.66 );
 
 Dataset encode( DataRaw && );
 Dataset encode( DataRaw &&, const label::Codec & );
-Dataset encode( const DataRaw & raw, const label::Codec & t );
+Dataset encode( const DataRaw & raw, const label::Codec & );
 
 DataRaw decode( Dataset &&, const label::Codec & );
 
