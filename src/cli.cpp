@@ -107,13 +107,13 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "h", "Print this." );
     p.add_option( "help", "Print this." );
 
-    p.add_option( "o", "Produce a report on outliers." );
-    p.add_option( "m", "Execute <model>.", 1 );
-    p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
-    p.add_option( "d", "Path to dataset root dir.", 1 );
-    p.add_option( "s", "Show all available models and preprocessing algorithms." );
     p.add_option( "a", "Run all models. Obviously very slow." );
+    p.add_option( "d", "Path to dataset root dir.", 1 );
+    p.add_option( "l", "How many <levels> of subdirs to capture into hierarchic labels.", 1 );
+    p.add_option( "m", "Execute <model>.", 1 );
+    p.add_option( "o", "Produce a report on outliers." );
     p.add_option( "p", "Use <algorithm> to preprocess the dataset.", 1 );
+    p.add_option( "s", "Show all available models and preprocessing algorithms." );
 
     p.parse( argc, const_cast< char** >( argv ) );
 
