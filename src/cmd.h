@@ -36,6 +36,7 @@ struct RunModel : Base
             , const std::string & model_name
             , unsigned labels_depth  // see io.h
             , const std::vector< std::string > & preprocessing
+            , const std::string & reduction
             );
     void execute() override;
 
@@ -43,6 +44,7 @@ struct RunModel : Base
     const std::string _model_name;
     const unsigned _labels_depth;
     const std::vector< std::string > _preprocessing;
+    const std::string _reduction;
 };
 
 

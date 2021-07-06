@@ -22,11 +22,13 @@ RunModel::RunModel( const std::string & data_dir
                   , const std::string & model_name
                   , unsigned labels_depth
                   , const std::vector< std::string > & preprocessing
+                  , const std::string & reduction
                   )
     : _data_dir{ data_dir }
     , _model_name{ model_name }
     , _labels_depth{ labels_depth }
     , _preprocessing{ preprocessing }
+    , _reduction{ reduction }
 {
 }
 
@@ -121,10 +123,12 @@ void RunAllModels::execute()
         {
             for( auto l{ _labels_depth_max }; l; --l )
             {
+                const std::string reduction;
                 RunModel model( _data_dir
                               , m
                               , l
                               , std::vector< std::string >{ p }
+                              , reduction
                               );
                 model.execute();
             }

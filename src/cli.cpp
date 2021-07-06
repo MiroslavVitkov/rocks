@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "dim.h"
 #include "print.h"
 
 #ifdef CMAKE_USE_DLIB
@@ -61,6 +62,19 @@ auto find_preprocessing( const Parser & p )
 }
 
 
+std::string find_reduction( const Parser & p )
+{
+    if( p.option( "r" ) )
+    {
+        return p.option( "r" ).argument();
+    }
+    else
+    {
+        return {};
+    }
+}
+
+
 Cmd create_model( const Parser & p )
 {
     assert( p.option( "m" ).count() );
@@ -73,6 +87,7 @@ Cmd create_model( const Parser & p )
                                             , model_name
                                             , find_labels_depth( p )
                                             , find_preprocessing( p )
+                                            , find_reduction( p )
                                             );
 }
 
@@ -101,6 +116,18 @@ void show_preprocessing()
 }
 
 
+void show_reduction()
+{
+
+    std::string all{ "Dimensionality reduction algos: " };
+    for( const auto & r : dim::ALL )
+    {
+        all += r + ", ";
+    }
+    print::info( all );
+}
+
+
 Cmd parse( int argc, Argv argv )
 {
     Parser p;
@@ -113,6 +140,8 @@ Cmd parse( int argc, Argv argv )
     p.add_option( "m", "Execute <model>.", 1 );
     p.add_option( "o", "Produce a report on outliers." );
     p.add_option( "p", "Use <algorithm> to preprocess the dataset.", 1 );
+    p.add_option( "r", "Use <algorithm> to reduce dimensions in the dataset"
+                       ", currently hardcoded to 100 from 7810.", 1 );
     p.add_option( "s", "Show all available models and preprocessing algorithms." );
 
     p.parse( argc, const_cast< char** >( argv ) );
@@ -137,6 +166,7 @@ Cmd parse( int argc, Argv argv )
     {
         show_models();
         show_preprocessing();
+        show_reduction();
         return std::make_unique< cmd::NoOp >();
     }
 

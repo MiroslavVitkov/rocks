@@ -6,6 +6,7 @@
 
 
 #include "dat.h"
+#include "except.h"
 
 #ifdef CMAKE_USE_OPENCV
 #include <opencv2/core.hpp>
@@ -17,6 +18,13 @@
 
 namespace dim
 {
+
+
+struct Base
+{
+    virtual dat::Compressed operator()( const dat::Spectrum & ) const = 0;
+    virtual ~Base() = default;
+};
 
 
 #ifdef CMAKE_USE_OPENCV
@@ -56,13 +64,32 @@ private:
 
 // An agegate of simple measures.
 // Intended as a placeholder when no libs are enabled.
-struct Simple
+struct Simple : Base
 {
-    using T = dat::Compressed::value_type;
-
     Simple( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
+    dat::Compressed operator()( const dat::Spectrum & ) const override;
 };
+
+
+
+inline std::unique_ptr< Base > create( const std::string & name
+                                     , const dat::Dataset & d )
+{
+    const auto is = [ & name ] ( const char * p )
+        { return ( name.compare( p ) == 0 ); };
+
+    if( is( "simple" ) )
+    {
+        return std::make_unique< Simple >( d );
+    }
+
+    throw Exception( name + ": no such reduction algo found. "
+                     "See 'dim.h' for a list of all algos." );
+}
+
+
+extern const std::vector< std::string > ALL;
+
 
 
 

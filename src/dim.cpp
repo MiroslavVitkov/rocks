@@ -143,4 +143,7 @@ dat::Compressed Simple::operator()( const dat::Spectrum & s ) const
 }
 
 
+const std::vector< std::string > ALL{ "simple"
+                                    };
+
 }  // namespace dim
