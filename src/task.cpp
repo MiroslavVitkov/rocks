@@ -12,7 +12,7 @@ namespace task
 
 
 void run_async( std::promise< std::vector< label::Num > > & p
-              , const model::Model & m
+              , const model::Base & m
               , const std::vector< dat::Spectrum > & spectra )
 {
     std::vector< label::Num > ret;
@@ -24,7 +24,7 @@ void run_async( std::promise< std::vector< label::Num > > & p
 }
 
 
-Task::Task( const model::Model & m, const std::vector< dat::Spectrum > & s )
+Task::Task( const model::Base & m, const std::vector< dat::Spectrum > & s )
         : _p{ }
         , _t{ run_async, std::ref( _p ), std::ref( m ), std::ref( s ) }
 {

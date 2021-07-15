@@ -69,7 +69,7 @@ dat::DatasetCompressed reduce_dataset( const dat::Dataset & d
 
 
 void evaluate( const dat::Dataset & test
-             , const model::Model & m
+             , const model::Base & m
              )
 {
     print::info( "Evaluating the test set." );
@@ -108,15 +108,25 @@ void RunModel::execute()
     auto dataset{ read_dataset( _data_dir, _labels_depth ) };
     preprocess_dataset( dataset, _preprocessing );
 
-    if( ! _reduction.empty() )
-    {
-        auto reduced{ reduce_dataset( dataset, _reduction ) };
-        const auto traintest{ dat::split( std::move( reduced ) ) };
-    }
-    const auto traintest{ dat::split( std::move( dataset ) ) };
-
     print::info( "Training a " + _model_name + " model." );
     const auto m{ model::create( _model_name, traintest.first ) };
+
+    const model::Base traintest
+    {
+        [ this, & dataset ]
+        ()
+        {
+            if( _reduction.empty() )
+            {
+                return dat::split( std::move( dataset ) );
+            }
+            else
+            {
+                auto reduced{ reduce_dataset( dataset, _reduction ) };
+                return dat::split( std::move( reduced ) );
+            }
+        }
+    };
 
     evaluate( traintest.second, * m );
 }

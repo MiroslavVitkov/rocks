@@ -27,15 +27,15 @@ namespace model
 {
 
 
-struct Model
+struct Base
 {
     virtual label::Num predict( const dat::Spectrum & ) const = 0;
 
-    virtual ~Model() = default;
+    virtual ~Base() = default;
 };
 
 
-struct RandomChance : Model
+struct RandomChance : Base
 {
     RandomChance( const dat::Dataset & );
     RandomChance( const dat::DatasetCompressed & d );
@@ -47,7 +47,7 @@ struct RandomChance : Model
 
 
 #ifdef CMAKE_USE_DLIB
-struct Correlation : Model
+struct Correlation : Base
 {
     Correlation( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
@@ -58,7 +58,7 @@ private:
 };
 
 
-struct SVM : Model
+struct SVM : Base
 {
     SVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
@@ -70,7 +70,7 @@ private:
 };
 
 
-struct LDAandSVM : Model
+struct LDAandSVM : Base
 {
     LDAandSVM( const dat::Dataset & );
     label::Num predict( const dat::Spectrum & ) const override;
@@ -84,7 +84,7 @@ private:
 
 
 #ifdef CMAKE_USE_SHARK
-struct Forest : Model
+struct Forest : Base
 {
     constexpr static auto _num_trees{ static_cast< unsigned >( 1e3 ) };
 
@@ -102,7 +102,7 @@ struct Forest : Model
 // TODO: this is a mess!
 // - remove useless copy ctors from std::make_unique()
 // - investigate why it isn't used everywhere
-inline std::unique_ptr< Model > create( const std::string & name
+inline std::unique_ptr< Base > create( const std::string & name
                                       , const dat::Dataset & d )
 {
     const auto is = [ & name ] ( const char * p )

@@ -20,7 +20,7 @@ namespace task
 
 struct Task
 {
-    Task( const model::Model &, const std::vector< dat::Spectrum > & );
+    Task( const model::Base &, const std::vector< dat::Spectrum > & );
     std::vector< label::Num > get();
 
     Task( Task && );
