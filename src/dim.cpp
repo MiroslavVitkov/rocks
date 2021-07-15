@@ -15,6 +15,21 @@ namespace dim
 {
 
 
+dat::DatasetCompressed Base::operator()( const dat::Dataset & d ) const
+{
+    dat::DatasetCompressed ret{ {}, d.second };
+    dat::apply(
+    [ & ret, this ]
+    ( label::Num l, const dat::Spectrum & s )
+    {
+        ret.first[ l ].push_back( ( * this )( s ) );
+    }
+    , d );
+
+    return ret;
+}
+
+
 #ifdef CMAKE_USE_OPENCV
 #if 0
 

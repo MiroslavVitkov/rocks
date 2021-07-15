@@ -14,9 +14,9 @@ void append( std::vector< Spectrum > & v1, const std::vector< Spectrum > & v2 )
 }
 
 
-std::pair< Dataset, Dataset > split( const Dataset & d
-                                   , double traintest
-                                   )
+auto split( const auto & dataset
+          , double traintest
+          )
 {
     assert( traintest > 0 && traintest < 1 );
 
@@ -24,10 +24,11 @@ std::pair< Dataset, Dataset > split( const Dataset & d
     generator.seed( 0 );
     std::uniform_real_distribution distribution( 0., 1. );
 
-    Dataset train{ {}, d.second };
-    Dataset test{ {}, d.second };
+    using T = decltype( dataset );
+    T train{ {}, dataset.second };
+    T test{ {}, dataset.second };
 
-    for( const auto & kv : d.first )
+    for( const auto & kv : dataset.first )
     {
         const auto & label{ kv.first };
         for( const auto & datapoint : kv.second )
@@ -43,7 +44,23 @@ std::pair< Dataset, Dataset > split( const Dataset & d
         }
     }
 
-    return { train, test };
+    return std::pair{ train, test };
+}
+
+
+std::pair< Dataset, Dataset > split( const Dataset & d
+                                   , double traintest
+                                   )
+{
+    return split( d, traintest );
+}
+
+
+std::pair< DatasetCompressed, DatasetCompressed > split( const DatasetCompressed & d
+                                                       , double traintest
+                                                       )
+{
+    return split( d, traintest );
 }
 
 

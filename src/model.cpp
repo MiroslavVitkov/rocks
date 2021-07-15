@@ -22,21 +22,37 @@ namespace model
 {
 
 
-RandomChance::RandomChance( const dat::Dataset & d )
+auto count_fequencies( const auto & d )
 {
+    std::unordered_map<int, double> ret;
+
     // Count instances of each class.
     unsigned datapoints {};
     for( const auto & kv : d.first )
     {
-        _probs.emplace( kv.first, kv.second.size() );
+        ret.emplace( kv.first, kv.second.size() );
         datapoints += kv.second.size();
     }
 
     // Normalize values so that they sum up to 1.
-    for( auto & kv : _probs )
+    for( auto & kv : ret )
     {
         kv.second /= datapoints;
     }
+
+    return ret;
+}
+
+
+RandomChance::RandomChance( const dat::Dataset & d )
+    : _probs{ count_fequencies( d ) }
+{
+}
+
+
+RandomChance::RandomChance( const dat::DatasetCompressed & d )
+    : _probs{ count_fequencies( d ) }
+{
 }
 
 

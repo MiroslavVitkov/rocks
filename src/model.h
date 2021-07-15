@@ -38,10 +38,11 @@ struct Model
 struct RandomChance : Model
 {
     RandomChance( const dat::Dataset & );
+    RandomChance( const dat::DatasetCompressed & d );
+
     label::Num predict( const dat::Spectrum & ) const override;
 
-private:
-    std::unordered_map<int, double> _probs;
+    const std::unordered_map<int, double> _probs;
 };
 
 

@@ -58,6 +58,16 @@ void preprocess_dataset( dat::Dataset & d
 }
 
 
+dat::DatasetCompressed reduce_dataset( const dat::Dataset & d
+                                     , const std::string & algo
+                                     )
+{
+    print::info( "Performing dimensionality reduction via '" + algo + "' algo." );
+    const auto r{ dim::create( algo, d ) };
+    return ( * r )( d );
+}
+
+
 void evaluate( const dat::Dataset & test
              , const model::Model & m
              )
@@ -97,6 +107,12 @@ void RunModel::execute()
 {
     auto dataset{ read_dataset( _data_dir, _labels_depth ) };
     preprocess_dataset( dataset, _preprocessing );
+
+    if( ! _reduction.empty() )
+    {
+        auto reduced{ reduce_dataset( dataset, _reduction ) };
+        const auto traintest{ dat::split( std::move( reduced ) ) };
+    }
     const auto traintest{ dat::split( std::move( dataset ) ) };
 
     print::info( "Training a " + _model_name + " model." );

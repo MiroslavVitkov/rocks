@@ -83,11 +83,18 @@ using DataRaw = std::unordered_map< label::Raw, std::vector< Spectrum > >;
 using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, label::Codec >;
 
+// Dimensionally reduced dataset.
+using DataCompressed = std::unordered_map< label::Num, std::vector< Compressed > >;
+using DatasetCompressed = std::pair< DataCompressed, label::Codec >;
+
 
 // Perform holdout split.
 // Sample points at random without regard to label. TODO: stratified sampler.
 // `traintest` ranges from 0 - only test to 1 - only train.
-std::pair< Dataset, Dataset > split( const Dataset &, double traintest=0.66 );
+std::pair< Dataset, Dataset > split( const Dataset &
+                                   , double traintest=0.66 );
+std::pair< DatasetCompressed, DatasetCompressed > split( const DatasetCompressed &
+                                                       , double traintest=0.66 );
 
 
 Dataset encode( DataRaw && );

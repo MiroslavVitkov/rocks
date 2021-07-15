@@ -23,6 +23,7 @@ namespace dim
 struct Base
 {
     virtual dat::Compressed operator()( const dat::Spectrum & ) const = 0;
+    dat::DatasetCompressed operator()( const dat::Dataset & ) const;
     virtual ~Base() = default;
 };
 
