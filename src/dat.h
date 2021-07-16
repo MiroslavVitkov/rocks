@@ -61,15 +61,18 @@ struct Sample
 // _y: radiance, W·sr−1·m−2
 struct Spectrum : Sample< double, 7810 >
 {
-    static constexpr Axis _x{ [] ()
+    static constexpr Axis _x =
+    []
+    ()
+    {
+        Axis a {};
+        for( unsigned i = 0; i < _num_points; ++i )
         {
-            Axis a {};
-            for( unsigned i = 0; i < _num_points; ++i )
-            {
-                a[ i ] = 180 + 0.1 * i;
-            }
-            return a;
-        } () };
+            a[ i ] = 180 + 0.1 * i;
+        }
+        return a;
+    }
+    ();
 };
 
 

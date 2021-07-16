@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <numeric>
+#include <type_traits>
+#include <variant>
 #include <vector>
 
 
@@ -103,30 +105,34 @@ void evaluate( const dat::Dataset & test
 }
 
 
+// Perform generic polymorphism on the return value
+// which a lambda cannot.
+auto split( auto && dataset, const std::string & reduction )
+{
+    static_assert( std::is_same< decltype( dataset ), dat::Dataset >::value
+                 ||std::is_same< decltype( dataset ), dat::DatasetCompressed >::value
+                 );
+
+    if( reduction.empty() )
+    {
+        return dat::split( std::move( dataset ) );
+    }
+    else
+    {
+        auto reduced{ reduce_dataset( dataset, reduction ) };
+        return dat::split( std::move( reduced ) );
+    }
+}
+
+
 void RunModel::execute()
 {
     auto dataset{ read_dataset( _data_dir, _labels_depth ) };
     preprocess_dataset( dataset, _preprocessing );
+    const auto traintest{ split( std::move( dataset ) ) };
 
     print::info( "Training a " + _model_name + " model." );
     const auto m{ model::create( _model_name, traintest.first ) };
-
-    const model::Base traintest
-    {
-        [ this, & dataset ]
-        ()
-        {
-            if( _reduction.empty() )
-            {
-                return dat::split( std::move( dataset ) );
-            }
-            else
-            {
-                auto reduced{ reduce_dataset( dataset, _reduction ) };
-                return dat::split( std::move( reduced ) );
-            }
-        }
-    };
 
     evaluate( traintest.second, * m );
 }
