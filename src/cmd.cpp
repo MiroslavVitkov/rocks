@@ -109,8 +109,8 @@ void evaluate( const dat::Dataset & test
 // which a lambda cannot.
 auto split( auto && dataset, const std::string & reduction )
 {
-    static_assert( std::is_same< decltype( dataset ), dat::Dataset >::value
-                 ||std::is_same< decltype( dataset ), dat::DatasetCompressed >::value
+    static_assert( std::is_same< decltype( dataset ), dat::Dataset >()
+                 ||std::is_same< decltype( dataset ), dat::DatasetCompressed >()
                  );
 
     if( reduction.empty() )

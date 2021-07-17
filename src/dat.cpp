@@ -14,17 +14,20 @@ void append( std::vector< Spectrum > & v1, const std::vector< Spectrum > & v2 )
 }
 
 
-auto split( const auto & dataset
-          , double traintest
-          )
+auto split_impl( auto & dataset
+               , double traintest
+               )
 {
     assert( traintest > 0 && traintest < 1 );
+    static_assert( std::is_same< decltype( dataset ), const dat::Dataset & >()
+                 ||std::is_same< decltype( dataset ), const dat::DatasetCompressed & >()
+                 );
 
-    std::default_random_engine generator;
-    generator.seed( 0 );
+    std::default_random_engine engine;
+    engine.seed( 0 );
     std::uniform_real_distribution distribution( 0., 1. );
 
-    using T = decltype( dataset );
+    using T = typename std::decay_t< decltype( dataset ) >;
     T train{ {}, dataset.second };
     T test{ {}, dataset.second };
 
@@ -33,7 +36,7 @@ auto split( const auto & dataset
         const auto & label{ kv.first };
         for( const auto & datapoint : kv.second )
         {
-            if( distribution( generator ) < traintest )
+            if( distribution( engine ) < traintest )
             {
                 train.first[ label ].push_back( datapoint );
             }
@@ -52,7 +55,7 @@ std::pair< Dataset, Dataset > split( const Dataset & d
                                    , double traintest
                                    )
 {
-    return split( d, traintest );
+    return split_impl( d, traintest );
 }
 
 
@@ -60,7 +63,7 @@ std::pair< DatasetCompressed, DatasetCompressed > split( const DatasetCompressed
                                                        , double traintest
                                                        )
 {
-    return split( d, traintest );
+    return split_impl( d, traintest );
 }
 
 
