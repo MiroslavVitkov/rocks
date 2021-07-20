@@ -41,12 +41,12 @@ struct Sample
     static constexpr auto _num_points{ num_dims };
     using Axis = std::array< ElemT, num_dims >;
 
-    value_type operator[]( size_t i ) { return _y[i]; };
+    value_type operator[]( size_t i ) { return _y[i]; }
 
-    pointer begin(){ return _y; };
-    const_pointer cbegin(){ return & _y; };
-    pointer end(){ return _y + _num_points; };
-    const_pointer cend(){ return & _y; };
+    pointer begin(){ return _y; }
+    const_pointer cbegin(){ return & _y; }
+    pointer end(){ return _y + _num_points; }
+    const_pointer cend(){ return end(); }
 
     virtual ~Sample() = default;
 
