@@ -129,8 +129,9 @@ inline std::unique_ptr< Base > create( const std::string & name
     }
 #endif
 
-    throw Exception( name + ": no such model found. "
-                     "See 'model.h' for a list of all models." );
+    throw Exception( name + " : no such model found. "
+                     "Use -s to see all available models. Or see 'model.h'"
+                    );
 }
 
 
