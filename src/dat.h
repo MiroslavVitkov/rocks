@@ -77,7 +77,7 @@ struct Spectrum : Sample< double, 7810 >
 
 
 // Dimensionality reduction target.
-struct Compressed : Sample< float, 100 >
+struct SpectrumCompressed : Sample< float, 100 >
 {
 };
 
@@ -87,7 +87,7 @@ using DataEncoded = std::unordered_map< label::Num, std::vector< Spectrum > >;
 using Dataset = std::pair< DataEncoded, label::Codec >;
 
 // Dimensionally reduced dataset.
-using DataCompressed = std::unordered_map< label::Num, std::vector< Compressed > >;
+using DataCompressed = std::unordered_map< label::Num, std::vector< SpectrumCompressed > >;
 using DatasetCompressed = std::pair< DataCompressed, label::Codec >;
 
 

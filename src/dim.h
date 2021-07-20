@@ -22,7 +22,7 @@ namespace dim
 
 struct Base
 {
-    virtual dat::Compressed operator()( const dat::Spectrum & ) const = 0;
+    virtual dat::SpectrumCompressed operator()( const dat::Spectrum & ) const = 0;
     dat::DatasetCompressed operator()( const dat::Dataset & ) const;
     virtual ~Base() = default;
 };
@@ -38,10 +38,8 @@ struct Base
 // k-1 components (where k is number of classes).
 struct LDA
 {
-    using T = dat::Compressed::value_type;
-
     LDA( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
+    dat::SpectrumCompressed operator()( const dat::Spectrum & ) const;
 
 private:
     mutable cv::LDA _lda;
@@ -50,10 +48,8 @@ private:
 
 struct PCA
 {
-    using T = dat::Compressed::value_type;
-
     PCA( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const;
+    dat::SpectrumCompressed operator()( const dat::Spectrum & ) const;
 
 private:
     cv::PCA _pca;
@@ -68,7 +64,7 @@ private:
 struct Simple : Base
 {
     Simple( const dat::Dataset & );
-    dat::Compressed operator()( const dat::Spectrum & ) const override;
+    dat::SpectrumCompressed operator()( const dat::Spectrum & ) const override;
 };
 
 
