@@ -10,3 +10,12 @@ mxnet
 
 ###
 every pooint is burned for 90sec
+29 TODO:                                                                           
+30                                                                                 
+31 APPLY NESTED CROSS=VALIDATION TO MODEL ESTIMATION                               
+32                                                                                 
+33 https://weina.me/nested-cross-validation/                                       
+34                                                                                 
+35 replace Tuning the model table with a plot                                      
+36                                                                                 
+37 recheck reproducibility
