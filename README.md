@@ -8,7 +8,7 @@ Compulsory:
 1. nvidia-cuda-dev, nvidia-smi
 2. (need to register) https://developer.nvidia.com/rdp/cudnn-download
 3. https://github.com/davisking/dlib
-4. CC=gcc-7 CXX=g++-7 cmake .. -DUSE_AVX_INSTRUCTIONS=1
+4. CC=gcc CXX=g++ cmake .. -DUSE_AVX_INSTRUCTIONS=1
 
 Optional:
 
@@ -16,6 +16,7 @@ Optional:
     libqwt-qt5-dev
     https://github.com/ashokpant/accuracy-evaluation-cpp
     https://www.shark-ml.org/
+    texlive-bibtexextra  # for the docs
 
 
 ### Introduction to the domain
